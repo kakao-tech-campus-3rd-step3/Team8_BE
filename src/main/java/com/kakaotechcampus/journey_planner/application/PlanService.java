@@ -83,4 +83,11 @@ public class PlanService {
         );
     }
 
+    @Transactional
+    public void deletePlan(Long id) {
+        Plan plan = planRepository.findById(id)
+                .orElseThrow(() -> new PlanNotFoundException("해당하는 계획을 찾을 수 없습니다."));
+        planRepository.delete(plan);
+    }
+
 }

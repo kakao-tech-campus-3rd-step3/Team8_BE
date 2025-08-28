@@ -47,4 +47,11 @@ public class PlanController {
         PlanResponse response = planService.updatePlan(id, request);
         return ResponseEntity.ok(new ApiResponse<>(200, response));
     }
+
+    //Plan 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePlan(@PathVariable Long id) {
+        planService.deletePlan(id);
+        return ResponseEntity.noContent().build();
+    }
 }
