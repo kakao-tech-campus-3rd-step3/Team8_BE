@@ -29,4 +29,11 @@ public class Plan {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
+    public void update(String title, String description, LocalDate startDate, LocalDate endDate) {
+        this.title = title;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }
