@@ -10,18 +10,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(PlanNotFoundException.class)
-    public ResponseEntity<ApiResponse<?>> handlePlanNotFound(PlanNotFoundException e) {
+    public ResponseEntity<ErrorResponse> handlePlanNotFound(PlanNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ApiResponse<>(404, new ErrorBody("PLAN_NOT_FOUND", e.getMessage())));
+                .body(new ErrorResponse(404, "PLAN_NOT_FOUND", e.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<?>> handleBadRequest(IllegalArgumentException e) {
+    public ResponseEntity<ErrorResponse> handleBadRequest(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponse<>(400, new ErrorBody("INVALID_INPUT", e.getMessage())));
+                .body(new ErrorResponse(400, "INVALID_INPUT", e.getMessage()));
     }
 
 
 
-    record ErrorBody(String code, String message) {}
 }
