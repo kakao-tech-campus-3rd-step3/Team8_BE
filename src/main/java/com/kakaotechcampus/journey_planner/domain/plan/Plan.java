@@ -3,12 +3,14 @@ package com.kakaotechcampus.journey_planner.domain.plan;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@DynamicUpdate
 public class Plan {
 
     @Id
