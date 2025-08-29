@@ -1,6 +1,5 @@
 package com.kakaotechcampus.journey_planner.global.exception;
 
-import com.kakaotechcampus.journey_planner.presentation.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
