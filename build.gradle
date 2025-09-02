@@ -47,6 +47,12 @@ dependencies {
     // * SpringBoot Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // * IText ( PDF )
+    implementation 'com.itextpdf:itextpdf:5.5.13.4'
+
+    // * Apache PDF Box
+    implementation 'org.apache.pdfbox:pdfbox:3.0.5'
 }
 
 tasks.named('test') {
