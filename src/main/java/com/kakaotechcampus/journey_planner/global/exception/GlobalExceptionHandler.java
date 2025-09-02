@@ -7,12 +7,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(CustomRuntimeException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomRuntimeException e) {
         return ResponseEntity
                 .status(e.getStatus())
                 .body(new ErrorResponse(e.getCode(), e.getMessage()));
     }
-
 }
