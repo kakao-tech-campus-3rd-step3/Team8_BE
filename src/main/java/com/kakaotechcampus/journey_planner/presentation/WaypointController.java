@@ -3,7 +3,7 @@ package com.kakaotechcampus.journey_planner.presentation;
 import com.kakaotechcampus.journey_planner.application.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointMapper;
-import com.kakaotechcampus.journey_planner.dto.WaypointRequest;
+import com.kakaotechcampus.journey_planner.presentation.dto.WaypointRequest;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

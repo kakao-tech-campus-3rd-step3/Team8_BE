@@ -1,8 +1,9 @@
-package com.kakaotechcampus.journey_planner.dto;
+package com.kakaotechcampus.journey_planner.presentation.dto;
 
 import java.time.LocalDateTime;
 
-public record WaypointRequest(
+public record WaypointResponse(
+        Long id,
         String name,
         LocationDto location,
         LocalDateTime arriveTime,
