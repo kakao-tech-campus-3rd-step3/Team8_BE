@@ -1,6 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.waypoint;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
+import com.kakaotechcampus.journey_planner.presentation.dto.WaypointRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -42,4 +43,13 @@ public class Waypoint {
     public void assignToPlan(Plan plan) {
         this.plan = plan;
     }
+
+    public void update(String name, Location location, LocalDateTime arriveTime, String locationType, String memo){
+        this.name = name;
+        this.location = location;
+        this.arriveTime = arriveTime;
+        this.locationType = locationType;
+        this.memo = memo;
+    }
+
 }

@@ -38,6 +38,18 @@ public class WaypointController {
         sendFullWaypoints(planId);
     }
 
+    // waypoint 수정 후 전체 리스트 전송
+    @MessageMapping("/{waypointId}/update")
+    public void updateWaypoint(
+            @DestinationVariable Long planId,
+            @DestinationVariable Long waypointId,
+            WaypointRequest request) {
+
+        waypointService.updateWaypoint(planId, waypointId, request);
+
+        sendFullWaypoints(planId);
+    }
+
      // waypoint 삭제 후 전체 리스트 전송
     @MessageMapping("/{waypointId}/delete")
     public void deleteWaypoint(
@@ -49,7 +61,7 @@ public class WaypointController {
         sendFullWaypoints(planId);
     }
 
-    // plan의 전체 waypoint 리스트를 전송
+    // plan의 전체 waypoint 리스트를 전송 (Broadcast)
     private void sendFullWaypoints(Long planId) {
         var waypoints = waypointService.getWaypoints(planId);
         messagingTemplate.convertAndSend(
