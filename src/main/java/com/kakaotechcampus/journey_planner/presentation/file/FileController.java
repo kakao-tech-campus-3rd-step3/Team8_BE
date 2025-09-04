@@ -22,7 +22,7 @@ public class FileController {
     @GetMapping("/{download-link}")
     public ResponseEntity<?> downloadJourneyPlan(@PathVariable("download-link") String key){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        pdfService.createPdfFile(baos);
+        pdfService.createHtmlPdfFile(baos);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_PDF);
