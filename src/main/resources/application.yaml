@@ -6,3 +6,6 @@ spring:
     username:
     password:
     url:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
