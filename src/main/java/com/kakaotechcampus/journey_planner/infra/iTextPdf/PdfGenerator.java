@@ -3,13 +3,14 @@ package com.kakaotechcampus.journey_planner.infra.iTextPdf;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 
 @Component
 public class PdfGenerator {
-    private final static String htmlFileSource = "/templates/html/PdfTemplate.html";
+    private final static String htmlFileSource = "templates/html/PdfTemplate3.html";
 
     /*
      * Make PDF with ITextPdf library
@@ -28,7 +29,9 @@ public class PdfGenerator {
     }
 
     public void createPlanPdf(ByteArrayOutputStream baos) throws IOException {
-        File htmlSource = new File(htmlFileSource);
-        HtmlConverter.convertToPdf(new FileInputStream(htmlSource), baos);
+        ClassPathResource resource = new ClassPathResource(htmlFileSource);
+        try (InputStream inputStream = resource.getInputStream()) {
+            HtmlConverter.convertToPdf(inputStream, baos);
+        }
     }
 }

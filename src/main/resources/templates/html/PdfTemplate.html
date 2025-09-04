@@ -1,0 +1,363 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey Planner PDF 템플릿</title>
+    <style>
+        /* 전체 페이지 스타일 및 폰트 설정 */
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
+        body {
+            font-family: 'Gowun Dodum', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fcfcfc;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: 10px;
+            position: relative; /* QR 코드 위치의 기준점 */
+        }
+
+        /* QR 코드 스타일 */
+        .qr-code {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            width: 80px;
+            height: 80px;
+        }
+
+        /* 헤더 스타일 */
+        header {
+            text-align: center; /* 1. 제목 가운데 정렬 */
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            /* QR코드와 겹치지 않도록 padding-right 제거 후 position relative 추가 */
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        header h1 .j-span { color: #e59401; }
+        header h1 .p-span { color: #31B443; }
+
+        header p {
+            font-size: 16px;
+            color: #777;
+        }
+
+        /* 섹션 공통 스타일 */
+        .section {
+            margin-top: 40px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .section-title .icon-box {
+            display: inline-block;
+            width: 10px;
+            height: 24px;
+            background-color: #31B443;
+            margin-right: 12px;
+            border-radius: 2px;
+        }
+
+        /* 2. 여행자 정보: 아이콘과 말풍선 형식 */
+        .travelers-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .traveler-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .traveler-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .speech-bubble {
+            position: relative;
+            background: #f0f8ff;
+            border-radius: .4em;
+            padding: 12px 16px;
+            min-width: 200px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .speech-bubble:after { /* 말풍선 꼬리 */
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-right-color: #f0f8ff;
+            border-left: 0;
+            margin-top: -10px;
+            margin-left: -10px;
+        }
+
+        .traveler-info p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+        .traveler-info .name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        /* 3. 일정 정보: 보물찾기 지도 형식 */
+        .itinerary-path-container {
+            position: relative;
+            padding: 50px 20px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .path {
+            position: absolute;
+            left: 10%;
+            right: 10%;
+            top: 50%;
+            height: 4px;
+            background-image: linear-gradient(to right, #ccc 40%, transparent 40%);
+            background-size: 15px 4px;
+            transform: translateY(-50%);
+        }
+
+        .path-stops {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .stop {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .stop .flag-icon {
+            width: 40px;
+            height: 40px;
+            color: #d9534f;
+        }
+
+        .stop .stop-name {
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .tree-icon {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            color: #31B443;
+        }
+        .tree-1 { top: 0; left: 20%; }
+        .tree-2 { top: 60%; left: 45%; }
+        .tree-3 { top: 10%; left: 75%; }
+
+
+        /* 4. 준비물: 가방 아이콘과 원형 목록 */
+        .supplies-container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .bag-icon {
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+            object-fit: contain; /* 이미지 비율 유지 */
+        }
+
+        .supplies-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .supply-item {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%; /* 원 모양 */
+            background-color: #fff8e1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .supply-item:hover {
+            transform: scale(1.05);
+        }
+
+        /* 푸터 스타일 */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            background-color: #2b2a2a;
+            color: white;
+            font-size: 14px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- QR 코드 이미지 추가 -->
+    <img
+            class="qr-code"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/640px-QR_code_for_mobile_English_Wikipedia.svg.png"
+            alt="QR Code"
+    />
+
+    <header>
+        <h1>
+            <span class="j-span">J</span>ourney <span class="p-span">P</span>lanner
+        </h1>
+        <p>안선우님 외 4명의 즐거운 일본 여행 계획</p>
+    </header>
+
+    <main>
+        <!-- 여행자 정보 섹션 -->
+        <section class="section">
+            <h2 class="section-title"><div class="icon-box"></div>함께하는 여행자</h2>
+            <div class="travelers-container">
+                <!-- 여행자 1 -->
+                <div class="traveler-card">
+                    <svg class="traveler-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12ZM12 12C10.6667 12 9.33333 12 8 12C4.68629 12 2 14.6863 2 18V20H22V18C22 14.6863 19.3137 12 16 12C14.6667 12 13.3333 12 12 12Z" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="speech-bubble">
+                        <div class="traveler-info">
+                            <p class="name">안선우</p>
+                            <p>📞 +81-33-443-1234</p>
+                            <p>✉️ sunja@nate.net</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 여행자 2 -->
+                <div class="traveler-card">
+                    <svg class="traveler-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12ZM12 12C10.6667 12 9.33333 12 8 12C4.68629 12 2 14.6863 2 18V20H22V18C22 14.6863 19.3137 12 16 12C14.6667 12 13.3333 12 12 12Z" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="speech-bubble">
+                        <div class="traveler-info">
+                            <p class="name">박철수</p>
+                            <p>📞 +82-10-1234-4731</p>
+                            <p>✉️ parkcs@nate.net</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 여행자 3 -->
+                <div class="traveler-card">
+                    <svg class="traveler-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12ZM12 12C10.6667 12 9.33333 12 8 12C4.68629 12 2 14.6863 2 18V20H22V18C22 14.6863 19.3137 12 16 12C14.6667 12 13.3333 12 12 12Z" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="speech-bubble">
+                        <div class="traveler-info">
+                            <p class="name">김영희</p>
+                            <p>📞 +82-10-1004-9541</p>
+                            <p>✉️ kimy@naver.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 일정 정보 섹션 -->
+        <section class="section">
+            <h2 class="section-title"><div class="icon-box"></div>우리의 여정</h2>
+            <div class="itinerary-path-container">
+                <!-- 나무 아이콘 (장식) -->
+                <svg class="tree-icon tree-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22V16M16 12L12 16L8 12M12 16V4C12 2.89543 12.8954 2 14 2C15.1046 2 16 2.89543 16 4V6M12 4C12 2.89543 11.1046 2 10 2C8.89543 2 8 2.89543 8 4V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg class="tree-icon tree-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22V16M16 12L12 16L8 12M12 16V4C12 2.89543 12.8954 2 14 2C15.1046 2 16 2.89543 16 4V6M12 4C12 2.89543 11.1046 2 10 2C8.89543 2 8 2.89543 8 4V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg class="tree-icon tree-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22V16M16 12L12 16L8 12M12 16V4C12 2.89543 12.8954 2 14 2C15.1046 2 16 2.89543 16 4V6M12 4C12 2.89543 11.1046 2 10 2C8.89543 2 8 2.89543 8 4V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+                <div class="path"></div>
+                <div class="path-stops">
+                    <div class="stop">
+                        <svg class="flag-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15C4 15 5 14 8 14C11 14 13 16 16 16C19 16 20 15 20 15V3C20 3 19 4 16 4C13 4 11 2 8 2C5 2 4 3 4 3V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 22V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="stop-name">인천</span>
+                    </div>
+                    <div class="stop">
+                        <svg class="flag-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15C4 15 5 14 8 14C11 14 13 16 16 16C19 16 20 15 20 15V3C20 3 19 4 16 4C13 4 11 2 8 2C5 2 4 3 4 3V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 22V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="stop-name">도쿄</span>
+                    </div>
+                    <div class="stop">
+                        <svg class="flag-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15C4 15 5 14 8 14C11 14 13 16 16 16C19 16 20 15 20 15V3C20 3 19 4 16 4C13 4 11 2 8 2C5 2 4 3 4 3V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 22V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="stop-name">교토</span>
+                    </div>
+                    <div class="stop">
+                        <svg class="flag-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15C4 15 5 14 8 14C11 14 13 16 16 16C19 16 20 15 20 15V3C20 3 19 4 16 4C13 4 11 2 8 2C5 2 4 3 4 3V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 22V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="stop-name">오사카</span>
+                    </div>
+                    <div class="stop">
+                        <svg class="flag-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15C4 15 5 14 8 14C11 14 13 16 16 16C19 16 20 15 20 15V3C20 3 19 4 16 4C13 4 11 2 8 2C5 2 4 3 4 3V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 22V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="stop-name">오키나와</span>
+                    </div>
+                    <div class="stop">
+                        <svg class="flag-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 15C4 15 5 14 8 14C11 14 13 16 16 16C19 16 20 15 20 15V3C20 3 19 4 16 4C13 4 11 2 8 2C5 2 4 3 4 3V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 22V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="stop-name">부산</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 준비물 섹션 -->
+        <section class="section">
+            <h2 class="section-title"><div class="icon-box"></div>잊지 말고 챙겨요!</h2>
+            <div class="supplies-container">
+                <!-- 가방 아이콘을 새 이미지로 변경 -->
+                <img class="bag-icon" src="https://i.pinimg.com/1200x/2c/57/97/2c57978e0669faf3c2dc8eb745a8e540.jpg" alt="준비물 가방">
+                <div class="supplies-list">
+                    <div class="supply-item">정신</div>
+                    <div class="supply-item">개념</div>
+                    <div class="supply-item">여권</div>
+                    <div class="supply-item">칫솔</div>
+                    <div class="supply-item">돈</div>
+                    <div class="supply-item">가방</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Journey Planner Exported PDF
+    </footer>
+</div>
+</body>
+</html>

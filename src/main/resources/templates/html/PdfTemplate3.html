@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<style>
+    * {
+        margin: 0;
+    }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px;
+        height: 40px;
+    }
+
+    content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 40px;
+    }
+
+    footer {
+        color: white;
+        background-color: #2b2a2a;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 24px;
+        font-weight: bold;
+
+        padding: 16px;
+    }
+
+    hr {
+        margin: 10px;
+    }
+
+    .box {
+        margin-right: 10px;
+        display: inline-block;
+        width: 5px;
+        height: 20px;
+        background-color: #2b2a2a;
+    }
+
+    .traveler-table {
+        width: 80%;
+        border-collapse: collapse;
+        margin: 20px auto;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 14px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .traveler-table th,
+    .traveler-table td {
+        border: 1px solid #ddd;
+        padding: 12px 15px;
+        text-align: center;
+    }
+
+    .traveler-table th {
+        background-color: #4caf50;
+        color: white;
+        font-weight: bold;
+    }
+
+    .traveler-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .traveler-table tr:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+
+    .section {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+    }
+</style>
+
+<body>
+<header>
+    <div>
+        <h1>
+            <span style="color: #e59401">J</span>ourney <span style="color: 31B443">P</span>lanner
+        </h1>
+        <p style="font-size: 12px">안선우님 외 4명의 여행 계획</p>
+    </div>
+    <img
+            style="width: 100px"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/640px-QR_code_for_mobile_English_Wikipedia.svg.png"
+            alt="QR_Code"
+    />
+</header>
+
+<content>
+    <h2>
+        <div class="box"></div>
+        기본 정보
+    </h2>
+    <hr />
+    <div class="section">
+        <h3>여행 이름</h3>
+        <p>친구들과 함께하는 일본 여행</p>
+    </div>
+    <div class="section">
+        <h3>여행 설명</h3>
+        <p>도쿄, 교토, 오사카, 오키나와를 경유하는 flex 일본 힐링 여행</p>
+    </div>
+    <div class="section">
+        <h3>여행자</h3>
+        <table class="traveler-table">
+            <tr>
+                <th>이름</th>
+                <th>연락처</th>
+                <th>이메일</th>
+            </tr>
+            <tr>
+                <td>안선우</td>
+                <td>+81-33-443-1234</td>
+                <td>sunja@nate.net</td>
+            </tr>
+            <tr>
+                <td>박철수</td>
+                <td>+82-10-1234-4731</td>
+                <td>parkcs@nate.net</td>
+            </tr>
+            <tr>
+                <td>김영희</td>
+                <td>+82-10-1004-9541</td>
+                <td>kimy@naver.com</td>
+            </tr>
+            <tr>
+                <td>안영희</td>
+                <td>+82-10-1134-8451</td>
+                <td>younghee@gmail.com</td>
+            </tr>
+            <tr>
+                <td>철철수</td>
+                <td>+82-10-5234-4361</td>
+                <td>chulsu@hello.com</td>
+            </tr>
+        </table>
+    </div>
+    <h2>
+        <div class="box"></div>
+        일정 정보
+    </h2>
+    <ul>
+        <li>인천</li>
+        <li>도쿄</li>
+        <li>교토</li>
+        <li>오사카</li>
+        <li>오키나와</li>
+        <li>부산</li>
+    </ul>
+    <hr />
+    <h2>
+        <div class="box"></div>
+        추가 정보
+    </h2>
+    <h3>준비물</h3>
+    <ul>
+        <li>정신</li>
+        <li>개념</li>
+        <li>여권</li>
+        <li>칫솔</li>
+        <li>돈</li>
+        <li>가방</li>
+    </ul>
+    <hr />
+</content>
+
+<footer>Journey Planner exported PDF</footer>
+</body>
+</html>
