@@ -1,6 +1,8 @@
 package com.kakaotechcampus.journey_planner.domain.plan;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -17,12 +19,14 @@ public class Plan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "제목은 비어 있을 수 없습니다.")
     private String title;
 
     private String description;
-
+    @NotNull(message = "시작일은 필수 값입니다.")
     private LocalDate startDate;
 
+    @NotNull(message = "종료일은 필수 값입니다.")
     private LocalDate endDate;
 
     public Plan(String title, String description, LocalDate startDate, LocalDate endDate) {

@@ -14,7 +14,7 @@ public enum ErrorCode {
     ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "ALREADY_REGISTERED", "이미 존재하는 멤버입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "INVALID_TOKEN", "잘못된 토큰입니다."),
     TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "TOKEN_EXPIRED", "만료된 토큰입니다.");
-
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, "INVALID_INPUT", "입력 형식이 잘못되었습니다.");
 
     private HttpStatus status;
     private final String code;
