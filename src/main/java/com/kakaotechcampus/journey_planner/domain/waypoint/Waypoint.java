@@ -1,7 +1,6 @@
 package com.kakaotechcampus.journey_planner.domain.waypoint;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
-import com.kakaotechcampus.journey_planner.presentation.dto.WaypointRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 
