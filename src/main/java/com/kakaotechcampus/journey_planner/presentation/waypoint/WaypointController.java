@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -63,7 +64,7 @@ public class WaypointController {
 
     // plan의 전체 waypoint 리스트를 전송 (Broadcast)
     private void sendFullWaypoints(Long planId) {
-        var waypoints = waypointService.getWaypoints(planId);
+        List<Waypoint> waypoints = waypointService.getWaypoints(planId);
         messagingTemplate.convertAndSend(
                 "/topic/plans/" + planId,
                 Map.of(
