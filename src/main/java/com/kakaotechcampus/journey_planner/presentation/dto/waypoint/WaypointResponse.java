@@ -1,18 +1,22 @@
 package com.kakaotechcampus.journey_planner.presentation.dto.waypoint;
 
+import com.kakaotechcampus.journey_planner.domain.waypoint.LocationCategory;
+
 import java.time.LocalDateTime;
 
 public record WaypointResponse(
         Long id,
+
         String name,
-        LocationDto location,
-        LocalDateTime arriveTime,
-        String locationType,
-        String memo
-) {
-    public record LocationDto(
-            String address,
-            Double latitude,
-            Double longitude
-    ) {}
-}
+        String description,
+
+        String address,
+
+        LocalDateTime startTime,
+        LocalDateTime endTime,
+
+        LocationCategory locationCategory,
+
+        Float xPosition,
+        Float yPosition
+) {}

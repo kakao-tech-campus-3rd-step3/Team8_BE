@@ -11,14 +11,13 @@ public class WaypointMapper {
     public static Waypoint toEntity(WaypointRequest request) {
         return new Waypoint(
                 request.name(),
-                new Location(
-                        request.location().address(),
-                        request.location().latitude(),
-                        request.location().longitude()
-                ),
-                request.arriveTime(),
-                request.locationType(),
-                request.memo()
+                request.description(),
+                request.address(),
+                request.startTime(),
+                request.endTime(),
+                request.locationCategory(),
+                request.xPosition(),
+                request.yPosition()
         );
     }
 
@@ -26,14 +25,13 @@ public class WaypointMapper {
         return new WaypointResponse(
                 waypoint.getId(),
                 waypoint.getName(),
-                new WaypointResponse.LocationDto(
-                        waypoint.getLocation().getAddress(),
-                        waypoint.getLocation().getLatitude(),
-                        waypoint.getLocation().getLongitude()
-                ),
-                waypoint.getArriveTime(),
-                waypoint.getLocationType(),
-                waypoint.getMemo()
+                waypoint.getDescription(),
+                waypoint.getAddress(),
+                waypoint.getStartTime(),
+                waypoint.getEndTime(),
+                waypoint.getLocationCategory(),
+                waypoint.getXPosition(),
+                waypoint.getYPosition()
         );
     }
 

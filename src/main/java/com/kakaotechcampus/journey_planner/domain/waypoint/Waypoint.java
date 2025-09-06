@@ -20,35 +20,44 @@ public class Waypoint {
 
     private String name;
 
-    @Embedded
-    private Location location;
+    private String description;
 
-    private LocalDateTime arriveTime;
+    private String address;
 
-    private String locationType;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
-    private String memo;
+    private LocationCategory locationCategory;
+
+    private Float xPosition;
+    private Float yPosition;
 
     protected Waypoint() {}
 
-    public Waypoint(String name, Location location, LocalDateTime arriveTime, String locationType, String memo) {
+    public Waypoint(String name, String description, String address, LocalDateTime startTime, LocalDateTime endTime, LocationCategory locationCategory, Float xPosition, Float yPosition) {
         this.name = name;
-        this.location = location;
-        this.arriveTime = arriveTime;
-        this.locationType = locationType;
-        this.memo = memo;
+        this.description = description;
+        this.address = address;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.locationCategory = locationCategory;
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
     }
 
     public void assignToPlan(Plan plan) {
         this.plan = plan;
     }
 
-    public void update(String name, Location location, LocalDateTime arriveTime, String locationType, String memo){
+    public void update(String name, String description, String address, LocalDateTime startTime, LocalDateTime endTime, LocationCategory locationCategory, Float xPosition, Float yPosition) {
         this.name = name;
-        this.location = location;
-        this.arriveTime = arriveTime;
-        this.locationType = locationType;
-        this.memo = memo;
+        this.description = description;
+        this.address = address;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.locationCategory = locationCategory;
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
     }
 
 }
