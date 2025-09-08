@@ -1,11 +1,10 @@
-package com.kakaotechcampus.journey_planner.application;
+package com.kakaotechcampus.journey_planner.application.waypoint;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
-import com.kakaotechcampus.journey_planner.domain.waypoint.Location;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointRepository;
-import com.kakaotechcampus.journey_planner.presentation.dto.WaypointRequest;
+import com.kakaotechcampus.journey_planner.presentation.dto.waypoint.WaypointRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,14 +40,13 @@ public class WaypointService {
 
         waypoint.update(
                 request.name(),
-                new Location(
-                        request.location().address(),
-                        request.location().latitude(),
-                        request.location().longitude()
-                ),
-                request.arriveTime(),
-                request.locationType(),
-                request.memo()
+                request.description(),
+                request.address(),
+                request.startTime(),
+                request.endTime(),
+                request.locationCategory(),
+                request.xPosition(),
+                request.yPosition()
         );
     }
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Waypoint WebSocket Test</title>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
@@ -11,92 +11,119 @@
 <h1 class="text-2xl font-bold mb-4">📍 Waypoint WebSocket Test</h1>
 
 <div class="flex w-full max-w-6xl gap-4">
-    <!-- 왼쪽: 컨트롤 + 입력폼 + 로그 -->
-    <div class="flex-1 flex flex-col gap-4">
-        <!-- 컨트롤 UI -->
+    <div class="flex-1 flex flex-col gap-4 min-w-0">
         <div class="bg-white shadow rounded-lg p-4">
             <div class="flex items-center gap-2 mb-4">
                 <label class="font-medium">Plan ID:</label>
-                <input id="planId" type="number" value="1" class="border rounded p-1 w-20">
+                <input id="planId" type="number" value="1" class="border rounded p-1 w-24" />
                 <button onclick="connect()" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">Connect</button>
                 <button onclick="disconnect()" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Disconnect</button>
             </div>
 
             <div class="flex gap-2 mb-4">
-                <button onclick="initWaypoints()" class="flex-1 px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Refresh</button>
+                <button onclick="initWaypoints()" class="flex-1 px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Refresh (init)</button>
                 <button onclick="createWaypoint()" class="flex-1 px-3 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">Create Waypoint</button>
             </div>
         </div>
 
-        <!-- Waypoint 입력 폼 -->
         <div class="bg-white shadow rounded-lg p-4">
             <h2 class="font-semibold mb-2">새 Waypoint 입력</h2>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-3">
                 <label class="flex flex-col">
                     이름
-                    <input type="text" id="wpName" class="border rounded p-1">
+                    <input type="text" id="wpName" class="border rounded p-2" />
                 </label>
                 <label class="flex flex-col">
-                    주소
-                    <input type="text" id="wpAddress" class="border rounded p-1">
+                    카테고리
+                    <select id="wpCategory" class="border rounded p-2">
+                        <option value="" selected disabled>카테고리 선택</option>
+                        <option value="DEFAULT">DEFAULT</option>
+                        <option value="FOOD">FOOD</option>
+                        <option value="CULTURE">CULTURE</option>
+                        <option value="ACCOMMODATION">ACCOMMODATION</option>
+                        <option value="TOUR">TOUR</option>
+                        <option value="TRANSPORTATION">TRANSPORTATION</option>
+                    </select>
                 </label>
-                <label class="flex flex-col">
-                    위도
-                    <input type="number" id="wpLat" step="0.000001" class="border rounded p-1">
-                </label>
-                <label class="flex flex-col">
-                    경도
-                    <input type="number" id="wpLng" step="0.000001" class="border rounded p-1">
-                </label>
-                <label class="flex flex-col">
-                    도착시간
-                    <input type="datetime-local" id="wpArriveTime" class="border rounded p-1">
-                </label>
-                <label class="flex flex-col">
-                    종류
-                    <input type="text" id="wpType" class="border rounded p-1">
-                </label>
+
                 <label class="flex flex-col col-span-2">
-                    메모
-                    <input type="text" id="wpMemo" class="border rounded p-1">
+                    설명
+                    <input type="text" id="wpDescription" class="border rounded p-2" />
+                </label>
+
+                <label class="flex flex-col col-span-2">
+                    주소
+                    <input type="text" id="wpAddress" class="border rounded p-2" />
+                </label>
+
+                <label class="flex flex-col">
+                    시작 시간
+                    <input type="datetime-local" id="wpStartTime" class="border rounded p-2" />
+                </label>
+                <label class="flex flex-col">
+                    종료 시간
+                    <input type="datetime-local" id="wpEndTime" class="border rounded p-2" />
+                </label>
+
+                <label class="flex flex-col">
+                    X 좌표 (float)
+                    <input type="number" id="wpX" step="0.01" class="border rounded p-2" />
+                </label>
+                <label class="flex flex-col">
+                    Y 좌표 (float)
+                    <input type="number" id="wpY" step="0.01" class="border rounded p-2" />
                 </label>
             </div>
         </div>
 
-        <!-- 로그 영역 -->
-        <div class="bg-white shadow rounded-lg p-4 flex-1">
+        <div class="bg-white shadow rounded-lg p-4 flex-1 min-w-0">
             <h2 class="font-semibold mb-2">로그</h2>
-            <div class="border rounded p-2 h-64 overflow-auto bg-gray-50 text-sm font-mono" id="log"></div>
+            <div id="log"
+                 class="border rounded p-2 h-64 overflow-auto bg-gray-50 text-sm font-mono break-all whitespace-pre-wrap"></div>
         </div>
     </div>
 
-    <!-- 오른쪽: Waypoint 카드 영역 -->
     <div class="flex-1">
         <div class="bg-white shadow rounded-lg p-4 h-full flex flex-col">
             <h2 class="font-semibold mb-2">Waypoint 목록</h2>
-            <div class="border rounded p-2 overflow-auto flex-1 bg-gray-50" id="waypointList"></div>
+            <div id="waypointList" class="border rounded p-2 overflow-auto flex-1 bg-gray-50"></div>
         </div>
     </div>
 </div>
+</body>
 
 <script>
     let client = null;
     let connected = false;
 
+    // ---------- 유틸 ----------
     function log(message, type = "info") {
         const logBox = document.getElementById("log");
         const line = document.createElement("div");
-
-        if (type === "success") line.className = "text-green-600";
-        else if (type === "error") line.className = "text-red-600";
-        else if (type === "send") line.className = "text-blue-600";
-        else line.className = "text-gray-800";
-
+        line.className =
+            type === "success" ? "text-green-600"
+                : type === "error" ? "text-red-600"
+                    : type === "send" ? "text-blue-600"
+                        : "text-gray-800";
         line.textContent = message;
         logBox.appendChild(line);
         logBox.scrollTop = logBox.scrollHeight;
     }
 
+    function parseOrNull(numStr) {
+        if (numStr === null || numStr === undefined) return null;
+        const n = parseFloat(numStr);
+        return Number.isNaN(n) ? null : n;
+    }
+
+    // 서버에서 온 ISO-like 문자열을 datetime-local 값으로 맞춤 (초/밀리초 제거)
+    function toLocalDatetimeInput(v) {
+        if (!v) return "";
+        // 예상: "2025-09-06T12:34" 또는 "2025-09-06T12:34:56"
+        return v.toString().slice(0, 16);
+    }
+
+    // ---------- 연결 ----------
     function connect() {
         const planId = document.getElementById("planId").value;
 
@@ -109,30 +136,31 @@
             connected = true;
             log("✅ Connected to WebSocket", "success");
 
-            // 일반 Waypoint 업데이트 구독
+            // 플랜 단위 브로드캐스트 구독
             client.subscribe(`/topic/plans/${planId}`, (msg) => {
                 log("📩 Received: " + msg.body, "info");
                 renderWaypoints(msg.body);
             });
 
-            // 연결과 동시에 initWaypoints 호출
+            // 접속 후 전체 동기화
             initWaypoints();
         };
 
         client.onWebSocketError = (err) => log("WebSocket error: " + err, "error");
-        client.onStompError = (frame) => log("Broker error: " + frame, "error");
+        client.onStompError = (frame) => log("Broker error: " + JSON.stringify(frame), "error");
 
         client.activate();
     }
 
     function disconnect() {
-        if (client !== null) {
+        if (client) {
             client.deactivate();
             connected = false;
             log("❌ Disconnected", "error");
         }
     }
 
+    // ---------- 액션 ----------
     function initWaypoints() {
         const planId = document.getElementById("planId").value;
         client.publish({ destination: `/app/plans/${planId}/waypoints/init` });
@@ -144,29 +172,27 @@
 
         const waypoint = {
             name: document.getElementById("wpName").value,
-            location: {
-                address: document.getElementById("wpAddress").value,
-                latitude: parseFloat(document.getElementById("wpLat").value),
-                longitude: parseFloat(document.getElementById("wpLng").value)
-            },
-            arriveTime: document.getElementById("wpArriveTime").value,
-            locationType: document.getElementById("wpType").value,
-            memo: document.getElementById("wpMemo").value
+            description: document.getElementById("wpDescription").value,
+            address: document.getElementById("wpAddress").value,
+            startTime: document.getElementById("wpStartTime").value || null,
+            endTime: document.getElementById("wpEndTime").value || null,
+            locationCategory: document.getElementById("wpCategory").value || null, // ENUM 이름
+            xPosition: parseFloat(document.getElementById("wpX").value),
+            yPosition: parseFloat(document.getElementById("wpY").value)
         };
 
         client.publish({
-            destination: `/app/plans/${planId}/waypoints/create`,
+            destination: `/app/plans/${planId}/waypoints/create`, // dotted 스타일
             body: JSON.stringify(waypoint),
-            headers: { "content-type": "application/json" }
+            headers: { "content-type": "application/json" },
         });
         log("➡️ Sent create request: " + JSON.stringify(waypoint), "send");
     }
 
     function deleteWaypointById(waypointId) {
         const planId = document.getElementById("planId").value;
-
         client.publish({
-            destination: `/app/plans/${planId}/waypoints/${waypointId}/delete`
+            destination: `/app/plans/${planId}/waypoints/${waypointId}/delete`, // dotted 스타일
         });
         log(`➡️ Sent delete request for waypointId=${waypointId}`, "send");
     }
@@ -174,76 +200,100 @@
     function updateWaypointById(waypointId, card) {
         const updatedWaypoint = {
             name: card.querySelector(".wp-name").value,
-            location: {
-                address: card.querySelector(".wp-address").value,
-                latitude: parseFloat(card.querySelector(".wp-lat").value),
-                longitude: parseFloat(card.querySelector(".wp-lng").value)
-            },
-            arriveTime: card.querySelector(".wp-arriveTime").value,
-            locationType: card.querySelector(".wp-type").value,
-            memo: card.querySelector(".wp-memo").value
+            description: card.querySelector(".wp-description").value,
+            address: card.querySelector(".wp-address").value,
+            startTime: card.querySelector(".wp-startTime").value || null,
+            endTime: card.querySelector(".wp-endTime").value || null,
+            locationCategory: card.querySelector(".wp-category").value || null,
+            xPosition: parseOrNull(card.querySelector(".wp-x").value),
+            yPosition: parseOrNull(card.querySelector(".wp-y").value),
         };
 
         const planId = document.getElementById("planId").value;
         client.publish({
-            destination: `/app/plans/${planId}/waypoints/${waypointId}/update`,
+            destination: `/app/plans/${planId}/waypoints/${waypointId}/update`, // dotted 스타일
             body: JSON.stringify(updatedWaypoint),
-            headers: { "content-type": "application/json" }
+            headers: { "content-type": "application/json" },
         });
         log("➡️ Sent update request: " + JSON.stringify(updatedWaypoint), "send");
     }
 
+    // ---------- 렌더링 ----------
     function renderWaypoints(messageBody) {
         const container = document.getElementById("waypointList");
         container.innerHTML = "";
 
-        const data = JSON.parse(messageBody);
-        if (data.type !== "FULL_UPDATE") return;
+        let payload;
+        try {
+            payload = JSON.parse(messageBody);
+        } catch (e) {
+            log("JSON parse error", "error");
+            return;
+        }
 
-        data.waypoints.forEach(wp => {
+        // 기대 포맷: { type: "FULL_UPDATE", waypoints: WaypointResponse[] }
+        if (!payload || payload.type !== "FULL_UPDATE" || !Array.isArray(payload.waypoints)) {
+            return;
+        }
+
+        payload.waypoints.forEach((wp) => {
             const card = document.createElement("div");
-            card.className = "border rounded p-4 bg-white shadow-sm mb-3 flex flex-col gap-2 min-h-[220px]";
+            card.className = "wp-card border rounded p-4 bg-white shadow-sm mb-3 flex flex-col gap-3";
 
             card.innerHTML = `
-            <div class="flex justify-between items-start gap-2">
-                <input class="wp-name border rounded p-1 flex-1 font-bold text-blue-600" value="${wp.name}">
-                <div class="flex gap-1">
-                    <button onclick="updateWaypointById(${wp.id}, this.closest('div.flex-col'))"
-                        class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm">수정</button>
-                    <button onclick="deleteWaypointById(${wp.id})"
-                        class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">삭제</button>
-                </div>
-            </div>
-            <label class="flex flex-col text-sm">
-                주소
-                <input class="wp-address border rounded p-1" value="${wp.location.address}">
-            </label>
-            <div class="grid grid-cols-2 gap-2 text-sm">
-                <label class="flex flex-col">
-                    위도
-                    <input type="number" step="0.000001" class="wp-lat border rounded p-1" value="${wp.location.latitude}">
-                </label>
-                <label class="flex flex-col">
-                    경도
-                    <input type="number" step="0.000001" class="wp-lng border rounded p-1" value="${wp.location.longitude}">
-                </label>
-            </div>
-            <label class="flex flex-col text-sm">
-                도착시간
-                <input type="datetime-local" class="wp-arriveTime border rounded p-1" value="${wp.arriveTime}">
-            </label>
-            <label class="flex flex-col text-sm">
-                종류
-                <input class="wp-type border rounded p-1" value="${wp.locationType}">
-            </label>
-            <label class="flex flex-col text-sm">
-                메모
-                <input class="wp-memo border rounded p-1" value="${wp.memo}">
-            </label>
-        `;
+        <div class="flex justify-between items-start gap-2">
+          <input class="wp-name border rounded p-2 flex-1 font-bold text-blue-600" value="${wp.name ?? ""}" />
+          <div class="flex gap-1">
+            <button
+              onclick="updateWaypointById(${wp.id}, this.closest('.wp-card'))"
+              class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
+            >수정</button>
+            <button
+              onclick="deleteWaypointById(${wp.id})"
+              class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+            >삭제</button>
+          </div>
+        </div>
+
+        <label class="flex flex-col text-sm">
+          설명
+          <input class="wp-description border rounded p-2" value="${wp.description ?? ""}" />
+        </label>
+
+        <label class="flex flex-col text-sm">
+          주소
+          <input class="wp-address border rounded p-2" value="${wp.address ?? ""}" />
+        </label>
+
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <label class="flex flex-col">
+            시작 시간
+            <input type="datetime-local" class="wp-startTime border rounded p-2" value="${toLocalDatetimeInput(wp.startTime)}" />
+          </label>
+          <label class="flex flex-col">
+            종료 시간
+            <input type="datetime-local" class="wp-endTime border rounded p-2" value="${toLocalDatetimeInput(wp.endTime)}" />
+          </label>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 text-sm">
+          <label class="flex flex-col">
+            카테고리 (ENUM)
+            <input class="wp-category border rounded p-2" value="${wp.locationCategory ?? ""}" />
+          </label>
+          <label class="flex flex-col">
+            X 좌표
+            <input type="number" step="0.01" class="wp-x border rounded p-2" value="${wp.xPosition ?? ""}" />
+          </label>
+          <label class="flex flex-col">
+            Y 좌표
+            <input type="number" step="0.01" class="wp-y border rounded p-2" value="${wp.yPosition ?? ""}" />
+          </label>
+        </div>
+      `;
+
             container.appendChild(card);
         });
     }
 </script>
-</body>
 </html>
