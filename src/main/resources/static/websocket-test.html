@@ -116,10 +116,8 @@
         return Number.isNaN(n) ? null : n;
     }
 
-    // 서버에서 온 ISO-like 문자열을 datetime-local 값으로 맞춤 (초/밀리초 제거)
     function toLocalDatetimeInput(v) {
         if (!v) return "";
-        // 예상: "2025-09-06T12:34" 또는 "2025-09-06T12:34:56"
         return v.toString().slice(0, 16);
     }
 
@@ -140,6 +138,17 @@
             client.subscribe(`/topic/plans/${planId}`, (msg) => {
                 log("📩 Received: " + msg.body, "info");
                 renderWaypoints(msg.body);
+            });
+
+            // ✅ 에러 메시지 구독 (서버에서 /user/queue/errors 로 보낸 경우)
+            client.subscribe(`/user/queue/errors`, (msg) => {
+                log("❌ Error: " + msg.body, "error");
+                try {
+                    const error = JSON.parse(msg.body);
+                    alert(`에러 발생!\n[${error.code}] ${error.message}`);
+                } catch (e) {
+                    alert("에러 발생!\n" + msg.body);
+                }
             });
 
             // 접속 후 전체 동기화
@@ -176,13 +185,13 @@
             address: document.getElementById("wpAddress").value,
             startTime: document.getElementById("wpStartTime").value || null,
             endTime: document.getElementById("wpEndTime").value || null,
-            locationCategory: document.getElementById("wpCategory").value || null, // ENUM 이름
+            locationCategory: document.getElementById("wpCategory").value || null,
             xPosition: parseFloat(document.getElementById("wpX").value),
             yPosition: parseFloat(document.getElementById("wpY").value)
         };
 
         client.publish({
-            destination: `/app/plans/${planId}/waypoints/create`, // dotted 스타일
+            destination: `/app/plans/${planId}/waypoints/create`,
             body: JSON.stringify(waypoint),
             headers: { "content-type": "application/json" },
         });
@@ -192,7 +201,7 @@
     function deleteWaypointById(waypointId) {
         const planId = document.getElementById("planId").value;
         client.publish({
-            destination: `/app/plans/${planId}/waypoints/${waypointId}/delete`, // dotted 스타일
+            destination: `/app/plans/${planId}/waypoints/${waypointId}/delete`,
         });
         log(`➡️ Sent delete request for waypointId=${waypointId}`, "send");
     }
@@ -211,7 +220,7 @@
 
         const planId = document.getElementById("planId").value;
         client.publish({
-            destination: `/app/plans/${planId}/waypoints/${waypointId}/update`, // dotted 스타일
+            destination: `/app/plans/${planId}/waypoints/${waypointId}/update`,
             body: JSON.stringify(updatedWaypoint),
             headers: { "content-type": "application/json" },
         });
@@ -231,7 +240,6 @@
             return;
         }
 
-        // 기대 포맷: { type: "FULL_UPDATE", waypoints: WaypointResponse[] }
         if (!payload || payload.type !== "FULL_UPDATE" || !Array.isArray(payload.waypoints)) {
             return;
         }

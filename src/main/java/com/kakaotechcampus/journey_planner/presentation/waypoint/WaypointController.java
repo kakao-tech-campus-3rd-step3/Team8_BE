@@ -4,8 +4,10 @@ import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointMapper;
 import com.kakaotechcampus.journey_planner.presentation.dto.waypoint.WaypointRequest;
+import jakarta.validation.Valid;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -32,7 +34,7 @@ public class WaypointController {
 
     // 새 waypoint 생성 후 전체 리스트 전송
     @MessageMapping("/create")
-    public void createWaypoint(@DestinationVariable Long planId, WaypointRequest request) {
+    public void createWaypoint(@DestinationVariable Long planId, @Valid @Payload WaypointRequest request) {
         Waypoint waypoint = WaypointMapper.toEntity(request);
         waypointService.addWaypoint(planId, waypoint);
 
@@ -44,7 +46,7 @@ public class WaypointController {
     public void updateWaypoint(
             @DestinationVariable Long planId,
             @DestinationVariable Long waypointId,
-            WaypointRequest request) {
+            @Valid WaypointRequest request) {
 
         waypointService.updateWaypoint(planId, waypointId, request);
 
