@@ -86,6 +86,13 @@ public class RouteService {
         return route;
     }
 
+    public void delete(Long planId, Long routeId) {
+        Route route=routeRepository.findByIdAndPlanId(routeId,planId).orElseThrow(() -> new IllegalArgumentException("루트 없음"));
+        routeRepository.delete(route);
+
+
+    }
+
 
 
 }

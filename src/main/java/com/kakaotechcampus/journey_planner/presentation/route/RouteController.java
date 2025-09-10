@@ -23,7 +23,7 @@ public class RouteController {
     private final SimpMessagingTemplate messagingTemplate;
 
 
-    //클라이언트가 구독 후 초기 상태 요청 시 전체 waypoint 전송
+    //클라이언트가 구독 후 초기 상태 요청 시 전체 Route 전송
     @MessageMapping("/init")
     public void initRoute(@DestinationVariable Long planId) {
         sendFullRoutes(planId);
@@ -32,7 +32,7 @@ public class RouteController {
     @MessageMapping("/create")
     public void create(@DestinationVariable Long planId, @Valid RouteRequest request) {
 
-        Route saved = routeService.create(planId, request);
+        routeService.create(planId, request);
         sendFullRoutes(planId);
     }
 
@@ -42,9 +42,16 @@ public class RouteController {
             @DestinationVariable Long routeId,
             @Valid RouteRequest request
     ) {
-        Route updated = routeService.update(planId, routeId, request);
+        routeService.update(planId, routeId, request);
         sendFullRoutes(planId);
     }
+
+    @MessageMapping("{routeId}/delete")
+    public void delete(@DestinationVariable Long planId, @DestinationVariable Long routeId) {
+        routeService.delete(planId,routeId);
+        sendFullRoutes(planId);
+    }
+
 
     //해당 플랜의 전체 Route 리스트 브로드캐스트
     private void sendFullRoutes(Long planId) {
