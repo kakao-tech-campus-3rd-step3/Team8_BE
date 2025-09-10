@@ -5,11 +5,12 @@ import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Table(name = "route")
 @Getter
+@DynamicUpdate
 @NoArgsConstructor()
 public class Route {
 
@@ -52,6 +53,19 @@ public class Route {
         this.plan = plan;
         this.fromWayPoint = fromWayPoint;
         this.toWayPoint = toWayPoint;
+        this.title = title;
+        this.description = description;
+        this.durationMin = duration;
+        this.transportationCategory = vehicleCategory;
+    }
+
+    public void update(Waypoint from, Waypoint to,
+                       String title,
+                       String description,
+                       Float duration,
+                       TransportationCategory vehicleCategory) {
+        this.fromWayPoint = from;
+        this.toWayPoint = to;
         this.title = title;
         this.description = description;
         this.durationMin = duration;

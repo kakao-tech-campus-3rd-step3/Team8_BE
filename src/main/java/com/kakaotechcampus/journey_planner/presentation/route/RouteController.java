@@ -25,7 +25,7 @@ public class RouteController {
 
     //클라이언트가 구독 후 초기 상태 요청 시 전체 waypoint 전송
     @MessageMapping("/init")
-    public void initWaypoints(@DestinationVariable Long planId) {
+    public void initRoute(@DestinationVariable Long planId) {
         sendFullRoutes(planId);
     }
 
@@ -33,6 +33,16 @@ public class RouteController {
     public void create(@DestinationVariable Long planId, @Valid RouteRequest request) {
 
         Route saved = routeService.create(planId, request);
+        sendFullRoutes(planId);
+    }
+
+    @MessageMapping("/{routeId}/update")
+    public void update(
+            @DestinationVariable Long planId,
+            @DestinationVariable Long routeId,
+            @Valid RouteRequest request
+    ) {
+        Route updated = routeService.update(planId, routeId, request);
         sendFullRoutes(planId);
     }
 

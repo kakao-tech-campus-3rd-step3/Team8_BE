@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>Route WebSocket Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+<h1 class="text-2xl font-bold mb-4">🛣️ Route WebSocket Test</h1>
+
+<div class="flex w-full max-w-6xl gap-4">
+    <!-- 왼쪽: 액션 + 로그 -->
+    <div class="flex-1 flex flex-col gap-4 min-w-0">
+        <!-- 연결 컨트롤 -->
+        <div class="bg-white shadow rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-4">
+                <label class="font-medium">Plan ID:</label>
+                <input id="planId" type="number" value="1" class="border rounded p-1 w-24" />
+                <button onclick="connect()" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">Connect</button>
+                <button onclick="disconnect()" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Disconnect</button>
+            </div>
+
+            <div class="flex gap-2 mb-4">
+                <button onclick="initRoutes()" class="flex-1 px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Refresh (init)</button>
+                <button onclick="createRoute()" class="flex-1 px-3 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">Create Route</button>
+                <button onclick="updateRoute()" class="flex-1 px-3 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Update Route</button>
+            </div>
+        </div>
+
+        <!-- Route 입력 -->
+        <div class="bg-white shadow rounded-lg p-4">
+            <h2 class="font-semibold mb-2">Route 입력</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="flex flex-col">
+                    Route ID (수정용)
+                    <input type="number" id="rtId" class="border rounded p-2" />
+                </label>
+                <label class="flex flex-col">
+                    From Waypoint ID
+                    <input type="number" id="rtFrom" class="border rounded p-2" />
+                </label>
+                <label class="flex flex-col">
+                    To Waypoint ID
+                    <input type="number" id="rtTo" class="border rounded p-2" />
+                </label>
+
+                <label class="flex flex-col col-span-2">
+                    제목
+                    <input type="text" id="rtTitle" class="border rounded p-2" />
+                </label>
+
+                <label class="flex flex-col col-span-2">
+                    설명
+                    <input type="text" id="rtDescription" class="border rounded p-2" />
+                </label>
+
+                <label class="flex flex-col">
+                    Duration (분)
+                    <input type="number" id="rtDuration" step="1" class="border rounded p-2" />
+                </label>
+                <label class="flex flex-col">
+                    Vehicle Category
+                    <select id="rtVehicle" class="border rounded p-2">
+                        <option value="DEFAULT">DEFAULT</option>
+                        <option value="WALK">WALK</option>
+                        <option value="BUS">BUS</option>
+                        <option value="TAXI">TAXI</option>
+                        <option value="CAR">CAR</option>
+                        <option value="BICYCLE">BICYCLE</option>
+                        <option value="AIRPLANE">AIRPLANE</option>
+                        <option value="TRAIN">TRAIN</option>
+                        <option value="SHIP">SHIP</option>
+                        <option value="MOTORCYCLE">MOTORCYCLE</option>
+                        <option value="SCOOTER">SCOOTER</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <!-- 로그 -->
+        <div class="bg-white shadow rounded-lg p-4 flex-1 min-w-0">
+            <h2 class="font-semibold mb-2">로그</h2>
+            <div id="log"
+                 class="border rounded p-2 h-64 overflow-auto bg-gray-50 text-sm font-mono break-all whitespace-pre-wrap"></div>
+        </div>
+    </div>
+
+    <!-- 오른쪽: Route 목록 -->
+    <div class="flex-1">
+        <div class="bg-white shadow rounded-lg p-4 h-full flex flex-col">
+            <h2 class="font-semibold mb-2">Route 목록</h2>
+            <div id="routeList" class="border rounded p-2 overflow-auto flex-1 bg-gray-50"></div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    let client = null;
+
+    // ---------- 유틸 ----------
+    function log(message, type = "info") {
+        const logBox = document.getElementById("log");
+        const line = document.createElement("div");
+        line.className =
+            type === "success" ? "text-green-600"
+                : type === "error" ? "text-red-600"
+                    : type === "send" ? "text-blue-600"
+                        : "text-gray-800";
+        line.textContent = message;
+        logBox.appendChild(line);
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    // ---------- 연결 ----------
+    function connect() {
+        const planId = document.getElementById("planId").value;
+
+        client = new StompJs.Client({
+            webSocketFactory: () => new SockJS("/ws"),
+            reconnectDelay: 5000,
+        });
+
+        client.onConnect = () => {
+            log("✅ Connected to WebSocket", "success");
+
+            client.subscribe(`/topic/plans/${planId}/routes`, (msg) => {
+                log("📩 Received: " + msg.body, "info");
+                renderRoutes(msg.body);
+            });
+
+            initRoutes();
+        };
+
+        client.onWebSocketError = (err) => log("WebSocket error: " + err, "error");
+        client.onStompError = (frame) => log("Broker error: " + JSON.stringify(frame), "error");
+
+        client.activate();
+    }
+
+    function disconnect() {
+        if (client) {
+            client.deactivate();
+            log("❌ Disconnected", "error");
+        }
+    }
+
+    // ---------- 액션 ----------
+    function initRoutes() {
+        const planId = document.getElementById("planId").value;
+        client.publish({ destination: `/app/plans/${planId}/routes/init` });
+        log("➡️ Sent init request", "send");
+    }
+
+    function createRoute() {
+        const planId = document.getElementById("planId").value;
+
+        const route = collectRouteInput();
+
+        client.publish({
+            destination: `/app/plans/${planId}/routes/create`,
+            body: JSON.stringify(route),
+            headers: { "content-type": "application/json" },
+        });
+        log("➡️ Sent create request: " + JSON.stringify(route), "send");
+    }
+
+    function updateRoute() {
+        const planId = document.getElementById("planId").value;
+        const routeId = document.getElementById("rtId").value;
+
+        if (!routeId) {
+            alert("수정하려면 Route ID를 입력하세요!");
+            return;
+        }
+
+        const route = collectRouteInput();
+
+        client.publish({
+            destination: `/app/plans/${planId}/routes/${routeId}/update`,
+            body: JSON.stringify(route),
+            headers: { "content-type": "application/json" },
+        });
+        log("✏️ Sent update request (id=" + routeId + "): " + JSON.stringify(route), "send");
+    }
+
+    // ---------- 입력 수집 ----------
+    function collectRouteInput() {
+        return {
+            fromWaypointId: parseInt(document.getElementById("rtFrom").value),
+            toWaypointId: parseInt(document.getElementById("rtTo").value),
+            title: document.getElementById("rtTitle").value,
+            description: document.getElementById("rtDescription").value,
+            duration: parseFloat(document.getElementById("rtDuration").value),
+            vehicleCategory: document.getElementById("rtVehicle").value
+        };
+    }
+
+    // ---------- 렌더링 ----------
+    function renderRoutes(messageBody) {
+        const container = document.getElementById("routeList");
+        container.innerHTML = "";
+
+        let payload;
+        try {
+            payload = JSON.parse(messageBody);
+        } catch (e) {
+            log("JSON parse error", "error");
+            return;
+        }
+
+        if (payload.type === "FULL_UPDATE" && Array.isArray(payload.routes)) {
+            payload.routes.forEach(addRouteCard);
+        } else {
+            addRouteCard(payload);
+        }
+    }
+
+    function addRouteCard(route) {
+        const container = document.getElementById("routeList");
+
+        const card = document.createElement("div");
+        card.className = "rt-card border rounded p-4 bg-white shadow-sm mb-3 flex flex-col gap-2";
+
+        card.innerHTML = `
+        <div class="font-bold text-blue-600">#${route.id} ${route.title || "(제목 없음)"}</div>
+        <div class="text-sm">${route.description || ""}</div>
+        <div class="text-sm">⏱ ${route.duration ?? "-"}분 | 🚗 ${route.vehicleCategory ?? "-"}</div>
+        <div class="text-sm">From: ${route.fromWaypointId ?? "-"} → To: ${route.toWaypointId ?? "-"}</div>
+        <button class="mt-2 px-2 py-1 bg-yellow-400 rounded text-sm hover:bg-yellow-500"
+            onclick='fillForm(${JSON.stringify(JSON.stringify(route))})'>✏️ 수정</button>
+    `;
+
+        container.appendChild(card);
+    }
+
+    function fillForm(routeJson) {
+        const route = JSON.parse(routeJson);
+
+        document.getElementById("rtId").value = route.id;
+        document.getElementById("rtFrom").value = route.fromWaypointId;
+        document.getElementById("rtTo").value = route.toWaypointId;
+        document.getElementById("rtTitle").value = route.title ?? "";
+        document.getElementById("rtDescription").value = route.description ?? "";
+        document.getElementById("rtDuration").value = route.duration ?? "";
+        document.getElementById("rtVehicle").value = route.vehicleCategory ?? "DEFAULT";
+
+        log("📝 폼에 Route #" + route.id + " 값 채워짐", "info");
+    }
+
+    // ---------- 전역 등록 ----------
+    window.connect = connect;
+    window.disconnect = disconnect;
+    window.initRoutes = initRoutes;
+    window.createRoute = createRoute;
+    window.updateRoute = updateRoute;
+</script>
+</html>

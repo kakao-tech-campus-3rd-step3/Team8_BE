@@ -61,4 +61,31 @@ public class RouteService {
         );
         return saved;
     }
+
+    @Transactional
+    //예외 만들어야함
+    public Route update(Long planId, Long routeId, RouteRequest request) {
+        Route route = routeRepository.findByIdAndPlanId(routeId, planId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 Route 없음: " + routeId));
+
+        Waypoint from = waypointRepository.findById(request.fromWaypointId())
+                .orElseThrow(() -> new IllegalArgumentException("출발 Waypoint 없음: " + request.fromWaypointId()));
+
+        Waypoint to = waypointRepository.findById(request.toWaypointId())
+                .orElseThrow(() -> new IllegalArgumentException("도착 Waypoint 없음: " + request.toWaypointId()));
+
+        route.update(
+                from,
+                to,
+                request.title(),
+                request.description(),
+                request.duration(),
+                request.vehicleCategory()
+        );
+
+        return route;
+    }
+
+
+
 }
