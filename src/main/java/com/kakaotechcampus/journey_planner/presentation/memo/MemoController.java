@@ -4,9 +4,11 @@ import com.kakaotechcampus.journey_planner.application.memo.MemoService;
 import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
 import com.kakaotechcampus.journey_planner.presentation.dto.memo.MemoRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -29,7 +31,7 @@ public class MemoController {
 
     // 새 memo 생성 후 전체 리스트 전송
     @MessageMapping("/create")
-    public void createMemo(@DestinationVariable Long planId, MemoRequest request) {
+    public void createMemo(@DestinationVariable Long planId, @Valid @Payload MemoRequest request) {
         Memo memo = MemoMapper.toEntity(request);
         memoService.addMemo(planId, memo);
 
@@ -41,7 +43,7 @@ public class MemoController {
     public void updateMemo(
             @DestinationVariable Long planId,
             @DestinationVariable Long memoId,
-            MemoRequest request) {
+            @Valid @Payload MemoRequest request) {
 
         memoService.updateMemo(planId, memoId, request);
 
