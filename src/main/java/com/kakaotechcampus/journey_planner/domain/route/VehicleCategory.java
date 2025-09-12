@@ -1,7 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.route;
 
 
-public enum TransportationCategory {
+public enum VehicleCategory {
     DEFAULT,
     WALK,
     BUS,

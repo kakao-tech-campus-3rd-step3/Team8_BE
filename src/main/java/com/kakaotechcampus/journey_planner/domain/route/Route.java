@@ -23,16 +23,16 @@ public class Route {
     private Plan plan;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FromWaypointId", nullable = false)
+    @JoinColumn(name = "from_waypoint_id", nullable = false)
     private Waypoint fromWayPoint;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ToWaypointId", nullable = false)
+    @JoinColumn(name = "to_waypoint_id", nullable = false)
     private Waypoint toWayPoint;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransportationCategory transportationCategory;
+    private VehicleCategory vehicleCategory;
 
     @Column(nullable = false)
     private String title;
@@ -49,26 +49,26 @@ public class Route {
                  String title,
                  String description,
                  Float duration,
-                 TransportationCategory vehicleCategory) {
+                 VehicleCategory vehicleCategory) {
         this.plan = plan;
         this.fromWayPoint = fromWayPoint;
         this.toWayPoint = toWayPoint;
         this.title = title;
         this.description = description;
         this.durationMin = duration;
-        this.transportationCategory = vehicleCategory;
+        this.vehicleCategory = vehicleCategory;
     }
 
     public void update(Waypoint from, Waypoint to,
                        String title,
                        String description,
                        Float duration,
-                       TransportationCategory vehicleCategory) {
+                       VehicleCategory vehicleCategory) {
         this.fromWayPoint = from;
         this.toWayPoint = to;
         this.title = title;
         this.description = description;
         this.durationMin = duration;
-        this.transportationCategory = vehicleCategory;
+        this.vehicleCategory = vehicleCategory;
     }
 }

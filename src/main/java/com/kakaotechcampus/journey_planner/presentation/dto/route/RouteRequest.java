@@ -1,6 +1,7 @@
 package com.kakaotechcampus.journey_planner.presentation.dto.route;
 
-import com.kakaotechcampus.journey_planner.domain.route.TransportationCategory;
+
+import com.kakaotechcampus.journey_planner.domain.route.VehicleCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -23,5 +24,5 @@ public record RouteRequest(
         Float duration,
 
         @NotNull(message = "vehicleCategory는 필수입니다.")
-        TransportationCategory vehicleCategory
+        VehicleCategory vehicleCategory
 ) {}
