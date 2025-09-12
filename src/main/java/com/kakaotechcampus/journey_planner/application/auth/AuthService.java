@@ -26,22 +26,18 @@ public class AuthService {
             throw new CustomRuntimeException(ErrorCode.ALREADY_REGISTERED);
         }
         Member member = new Member(signInRequest.name(), signInRequest.contact(), email, signInRequest.password(), signInRequest.mbti());
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
         if (!memberRepository.existsByEmail(email)) {
             throw new CustomRuntimeException(ErrorCode.MEMBER_NOT_FOUND);
         }
-        Member member1 = memberRepository.findByEmail(member.getEmail()).orElseThrow(() -> new CustomRuntimeException(ErrorCode.MEMBER_NOT_FOUND));
-        String accessToken = jwtProvider.generateAccessToken(member1);
-        String refreshToken = jwtProvider.generateRefreshToken(member1);
+        String accessToken = jwtProvider.generateAccessToken(savedMember);
+        String refreshToken = jwtProvider.generateRefreshToken(savedMember);
         return new TokenResponse(accessToken, refreshToken);
     }
 
     public TokenResponse login(LoginRequest loginRequest) {
         String email = loginRequest.email();
         String password = loginRequest.password();
-        if (!memberRepository.existsByEmail(email)) {
-            throw new CustomRuntimeException(ErrorCode.MEMBER_NOT_FOUND);
-        }
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MEMBER_NOT_FOUND));
         if (!member.verifyPassword(password)) {
