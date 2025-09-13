@@ -20,7 +20,7 @@ public class Memo {
     private Float yPosition;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "plan_id")
+    @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
 
     protected Memo() {}
