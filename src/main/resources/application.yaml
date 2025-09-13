@@ -7,5 +7,5 @@ spring:
     password:
     url:
   thymeleaf:
-    prefix: classpath:/templates/
+    prefix: classpath:/META-INF/templates
     suffix: .html
