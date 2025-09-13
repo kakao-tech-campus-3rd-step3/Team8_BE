@@ -1,12 +1,28 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Journey Planner PDF 템플릿</title>
+
     <style>
         /* 전체 페이지 스타일 및 폰트 설정 */
-        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+        @font-face {
+            font-family: 'Gowun Dodum';
+            src: url('/WEB-INF/font/GowunDodum-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @page {
+            size: A4 landscape;
+        }
+
+        @media (max-width: 6in) {
+            @page {
+                size: letter;
+            }
+        }
 
         body {
             font-family: 'Gowun Dodum', sans-serif;
@@ -342,7 +358,7 @@
             <h2 class="section-title"><div class="icon-box"></div>잊지 말고 챙겨요!</h2>
             <div class="supplies-container">
                 <!-- 가방 아이콘을 새 이미지로 변경 -->
-                <img class="bag-icon" src="https://i.pinimg.com/1200x/2c/57/97/2c57978e0669faf3c2dc8eb745a8e540.jpg" alt="준비물 가방">
+                <img class="bag-icon" src="https://i.pinimg.com/1200x/2c/57/97/2c57978e0669faf3c2dc8eb745a8e540.jpg" alt="준비물 가방" />
                 <div class="supplies-list">
                     <div class="supply-item">정신</div>
                     <div class="supply-item">개념</div>
