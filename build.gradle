@@ -41,9 +41,12 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 
-	// * Lombok
+	// * SpringBoot Websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // * Lombok
 	compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+  annotationProcessor 'org.projectlombok:lombok'
 
     // * H2 Database
 	runtimeOnly 'com.h2database:h2'
@@ -63,6 +66,11 @@ dependencies {
 	implementation 'com.lowagie:itext:2.0.8'
 
 	implementation 'ognl:ognl:3.1.26'
+  
+	// * Json Web Token
+	compileOnly 'io.jsonwebtoken:jjwt-api:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 }
 
 tasks.named('test') {
