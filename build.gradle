@@ -34,7 +34,14 @@ dependencies {
     // * SpringBoot Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // * Lombok
+	// * Thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// * Kafka
+	implementation 'org.springframework.kafka:spring-kafka'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+	// * Lombok
 	compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -48,12 +55,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // * IText ( PDF )
-    implementation 'com.itextpdf:itextpdf:5.5.13.4'
-	implementation 'com.itextpdf:html2pdf:6.1.0'
+	// Flying Saucer Core (equivalent to core-renderer.jar)
+	implementation 'org.xhtmlrenderer:flying-saucer-core:9.1.22'
+	implementation 'org.xhtmlrenderer:flying-saucer-pdf-itext5:9.1.22'
 
-    // * Apache PDF Box
-    implementation 'org.apache.pdfbox:pdfbox:3.0.5'
+	// iText 2.0.8 (equivalent to iText-2.0.8.jar)
+	implementation 'com.lowagie:itext:2.0.8'
+
+	implementation 'ognl:ognl:3.1.26'
 }
 
 tasks.named('test') {
