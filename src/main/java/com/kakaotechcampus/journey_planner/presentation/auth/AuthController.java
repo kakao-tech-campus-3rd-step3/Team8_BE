@@ -19,17 +19,17 @@ public class AuthController {
 
     @PostMapping("/v1/members/signup")
     private ResponseEntity<TokenResponse> signInAndLogin(@RequestBody @Valid SignInRequest signInRequest) {
-        return new ResponseEntity<>(authService.signIn(signInRequest), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signIn(signInRequest));
     }
 
     @PostMapping("/v1/members/login")
     private ResponseEntity<TokenResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
-        return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(authService.login(loginRequest));
     }
 
     @PostMapping("/v1/members/refresh")
     private ResponseEntity<TokenResponse> refresh(@RequestHeader("Refresh-Token") String refreshToken){
         TokenResponse tokenResponse = authService.refresh(refreshToken);
-        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(tokenResponse);
     }
 }
