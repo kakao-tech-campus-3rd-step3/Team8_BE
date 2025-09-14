@@ -22,6 +22,9 @@ public enum ErrorCode {
     // Waypoint
     WAYPOINT_NOT_FOUND(HttpStatus.NOT_FOUND, "WAYPOINT_NOT_FOUND", "해당 웨이포인트를 찾을 수 없습니다."),
 
+    //Route
+    ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND, "ROUTE_NOT_FOUND", "해당 경로를 찾을 수 없습니다."),
+
     // Memo
     MEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMO_NOT_FOUND", "해당 메모를 찾을 수 없습니다."),
 

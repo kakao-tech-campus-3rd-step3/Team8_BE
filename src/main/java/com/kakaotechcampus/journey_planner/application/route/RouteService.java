@@ -37,11 +37,10 @@ public class RouteService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
 
 
-        //에러코드 만들어야함
         Waypoint from = waypointRepository.findById(req.fromWaypointId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.NO_FILE));
+                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
         Waypoint to = waypointRepository.findById(req.toWaypointId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.NO_FILE));
+                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
 
         // 같은 플랜 소속인지 검증
         if (!from.getPlan().getId().equals(planId) || !to.getPlan().getId().equals(planId)) {
@@ -63,16 +62,14 @@ public class RouteService {
     }
 
     @Transactional
-    //예외 만들어야함
     public Route update(Long planId, Long routeId, RouteRequest request) {
         Route route = routeRepository.findByIdAndPlanId(routeId, planId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 Route 없음: " + routeId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
         Waypoint from = waypointRepository.findById(request.fromWaypointId())
-                .orElseThrow(() -> new IllegalArgumentException("출발 Waypoint 없음: " + request.fromWaypointId()));
-
+                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
         Waypoint to = waypointRepository.findById(request.toWaypointId())
-                .orElseThrow(() -> new IllegalArgumentException("도착 Waypoint 없음: " + request.toWaypointId()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
 
         route.update(
                 from,
@@ -87,7 +84,7 @@ public class RouteService {
     }
 
     public void delete(Long planId, Long routeId) {
-        Route route=routeRepository.findByIdAndPlanId(routeId,planId).orElseThrow(() -> new IllegalArgumentException("루트 없음"));
+        Route route=routeRepository.findByIdAndPlanId(routeId,planId).orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
         routeRepository.delete(route);
 
 
