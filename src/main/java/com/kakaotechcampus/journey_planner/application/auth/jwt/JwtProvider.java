@@ -2,7 +2,7 @@ package com.kakaotechcampus.journey_planner.application.auth.jwt;
 
 
 import com.kakaotechcampus.journey_planner.domain.member.Member;
-import com.kakaotechcampus.journey_planner.global.exception.CustomRuntimeException;
+import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -80,13 +80,13 @@ public class JwtProvider {
     private void validateTokenType(Claims claims, String expectedType) {
         String actualType = claims.get("tokenType", String.class);
         if (!expectedType.equals(actualType)) {
-            throw new CustomRuntimeException(ErrorCode.INVALID_TOKEN);
+            throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
     }
 
     private void validateTokenExpiration(Claims claims) {
         if (claims.getExpiration().before(new Date())) {
-            throw new CustomRuntimeException(ErrorCode.TOKEN_EXPIRED);
+            throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
         }
     }
 
