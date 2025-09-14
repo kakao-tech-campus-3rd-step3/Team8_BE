@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(CustomRuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleCustomException(CustomRuntimeException e) {
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleCustomException(BusinessException e) {
         return ResponseEntity
                 .status(e.getStatus())
                 .body(new ErrorResponse(e.getCode(), e.getMessage()));

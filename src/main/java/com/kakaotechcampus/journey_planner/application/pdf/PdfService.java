@@ -1,25 +1,17 @@
 package com.kakaotechcampus.journey_planner.application.pdf;
 
-import com.itextpdf.text.DocumentException;
-import com.kakaotechcampus.journey_planner.application.pdf.utils.PdfUtils;
-import com.kakaotechcampus.journey_planner.global.exception.CustomRuntimeException;
-import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
+import com.kakaotechcampus.journey_planner.domain.pdf.PdfGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
+import java.io.OutputStream;
 
 @Service
 @RequiredArgsConstructor
 public class PdfService {
-    private final PdfUtils pdfUtils;
+    public final PdfGenerator pdfGenerator;
 
-    public void createPdfFile(ByteArrayOutputStream baos){
-        try{
-            pdfUtils.CreatePdf(baos);
-        }catch (FileNotFoundException | DocumentException e){
-            throw new CustomRuntimeException(ErrorCode.NO_FILE);
-        }
+    public void createPDF(OutputStream outputStream) {
+        pdfGenerator.createPdf(outputStream);
     }
 }

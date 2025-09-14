@@ -11,9 +11,9 @@ import java.util.Objects;
 @ControllerAdvice
 public class WebSocketExceptionHandler {
 
-    @MessageExceptionHandler({CustomRuntimeException.class})
+    @MessageExceptionHandler({BusinessException.class})
     @SendToUser(destinations = "/queue/errors", broadcast = false)
-    public WebSocketErrorResponse handleCustomRuntimeException(CustomRuntimeException e) {
+    public WebSocketErrorResponse handleBusinessException(BusinessException e) {
 
         return new WebSocketErrorResponse(e.getCode(), e.getMessage());
     }

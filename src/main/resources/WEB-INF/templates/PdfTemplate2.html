@@ -1,0 +1,338 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<style>
+    * {
+        margin: 0;
+    }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px;
+        height: 40px;
+    }
+
+    content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 40px;
+    }
+
+    footer {
+        color: white;
+        background-color: #2b2a2a;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 24px;
+        font-weight: bold;
+
+        padding: 16px;
+    }
+
+    hr {
+        margin: 10px;
+    }
+
+    .box {
+        margin-right: 10px;
+        display: inline-block;
+        width: 5px;
+        height: 20px;
+        background-color: #2b2a2a;
+    }
+
+    .traveler-table {
+        width: 80%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 20px auto;
+        font-family: "Segoe UI", sans-serif;
+        font-size: 14px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+    .traveler-table th:first-child {
+        border-top-left-radius: 16px;
+    }
+    .traveler-table th:last-child {
+        border-top-right-radius: 16px;
+    }
+    .traveler-table tr:last-child td:first-child {
+        border-bottom-left-radius: 16px;
+    }
+    .traveler-table tr:last-child td:last-child {
+        border-bottom-right-radius: 16px;
+    }
+
+    .traveler-table th,
+    .traveler-table td {
+        border: 1px solid #ddd;
+        padding: 12px 15px;
+        text-align: center;
+    }
+
+    .traveler-table th {
+        background-color: #4caf50;
+        color: white;
+        font-weight: bold;
+    }
+
+    .traveler-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .traveler-table tr:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+
+    .section {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+    }
+    /* 웨이포인트 카드 스타일 */
+    .waypoint-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 28px 18px;
+        align-items: stretch;
+        width: 100%;
+        max-width: 1200px;
+    }
+    .waypoint-grid-item {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+    .waypoint-arrow {
+        font-size: 48px;
+        color: #e59401;
+        font-weight: bold;
+        margin: 0 0 0 16px;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        flex-shrink: 0;
+        -webkit-text-stroke: 2px #e59401;
+    }
+    .waypoint-card {
+        width: 340px;
+        border-radius: 18px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        flex-direction: column;
+    }
+    .waypoint-card-top {
+        background: #4caf50;
+        color: #fff;
+        padding: 16px 20px 8px 20px;
+        font-size: 14px;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+    }
+    .waypoint-card-bottom {
+        background: white;
+        color: black;
+        padding: 6px 14px 10px 18px;
+        border-bottom-left-radius: 18px;
+        border-bottom-right-radius: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .waypoint-card-label {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 6px;
+        color: black;
+    }
+    .waypoint-card-memo {
+        background: white;
+        color: black;
+        font-size: 14px;
+        padding: 10px 18px;
+        border-bottom-left-radius: 18px;
+        border-bottom-right-radius: 18px;
+        border-top: 1px solid #ddd;
+        font-family: "Segoe UI", sans-serif;
+    }
+    .supply-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 12px 0 24px 0;
+    }
+    .supply-card {
+        background: #e59401;
+        color: #fff;
+        border-radius: 14px;
+        padding: 8px 18px;
+        font-size: 15px;
+        font-family: "Segoe UI", sans-serif;
+        box-shadow: 0 2px 8px rgba(229, 148, 1, 0.08);
+        font-weight: 500;
+        white-space: nowrap;
+    }
+</style>
+
+<body>
+<header>
+    <div>
+        <h1>
+            <span style="color: #e59401">J</span>ourney
+            <span style="color: #31B443">P</span>lanner
+        </h1>
+        <p style="font-size: 12px">안선우님 외 4명의 여행 계획</p>
+    </div>
+    <img
+            style="width: 100px"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/640px-QR_code_for_mobile_English_Wikipedia.svg.png"
+            alt="QR_Code"
+    />
+</header>
+
+<content>
+    <h2>
+        <div class="box"></div>
+        기본 정보
+    </h2>
+    <hr />
+    <div class="section">
+        <h3>여행 이름</h3>
+        <p>친구들과 함께하는 일본 여행</p>
+    </div>
+    <div class="section">
+        <h3>여행 설명</h3>
+        <p>도쿄, 교토, 오사카, 오키나와를 경유하는 flex 일본 힐링 여행</p>
+    </div>
+    <div class="section">
+        <h3>여행자</h3>
+        <table class="traveler-table">
+            <tr>
+                <th>이름</th>
+                <th>연락처</th>
+                <th>이메일</th>
+            </tr>
+            <tr>
+                <td>안선우</td>
+                <td>+81-33-443-1234</td>
+                <td>sunja@nate.net</td>
+            </tr>
+            <tr>
+                <td>박철수</td>
+                <td>+82-10-1234-4731</td>
+                <td>parkcs@nate.net</td>
+            </tr>
+            <tr>
+                <td>김영희</td>
+                <td>+82-10-1004-9541</td>
+                <td>kimy@naver.com</td>
+            </tr>
+            <tr>
+                <td>안영희</td>
+                <td>+82-10-1134-8451</td>
+                <td>younghee@gmail.com</td>
+            </tr>
+            <tr>
+                <td>철철수</td>
+                <td>+82-10-5234-4361</td>
+                <td>chulsu@hello.com</td>
+            </tr>
+        </table>
+    </div>
+    <h2>
+        <div class="box"></div>
+        일정 정보
+    </h2>
+    <ul class="waypoint-list">
+        <li class="waypoint-grid-item">
+            <div class="waypoint-card">
+                <div class="waypoint-card-top">8/6 ~ 06:00</div>
+                <div class="waypoint-card-bottom">
+                    <span class="waypoint-card-label">인천</span>
+                </div>
+                <div class="waypoint-card-memo">
+                    <span>✈️ 인천공항 3터미널 집결, 아침식사 후 출국</span>
+                </div>
+            </div>
+            <span class="waypoint-arrow">&#8594;</span>
+        </li>
+        <li class="waypoint-grid-item">
+            <div class="waypoint-card">
+                <div class="waypoint-card-top">8/6 08:00 ~ 8/7 10:00</div>
+                <div class="waypoint-card-bottom">
+                    <span class="waypoint-card-label">도쿄</span>
+                </div>
+            </div>
+            <span class="waypoint-arrow">&#8594;</span>
+        </li>
+        <li class="waypoint-grid-item">
+            <div class="waypoint-card">
+                <div class="waypoint-card-top">8/7 10:00 ~ 8/7 14:00</div>
+                <div class="waypoint-card-bottom">
+                    <span class="waypoint-card-label">교토</span>
+                </div>
+            </div>
+            <span class="waypoint-arrow">&#8594;</span>
+        </li>
+        <li class="waypoint-grid-item">
+            <div class="waypoint-card">
+                <div class="waypoint-card-top">8/7 14:00 ~ 8/8 12:00</div>
+                <div class="waypoint-card-bottom">
+                    <span class="waypoint-card-label">오사카</span>
+                </div>
+            </div>
+            <span class="waypoint-arrow">&#8594;</span>
+        </li>
+        <li class="waypoint-grid-item">
+            <div class="waypoint-card">
+                <div class="waypoint-card-top">8/8 12:00 ~ 8/9 14:00</div>
+                <div class="waypoint-card-bottom">
+                    <span class="waypoint-card-label">오키나와</span>
+                </div>
+            </div>
+            <span class="waypoint-arrow">&#8594;</span>
+        </li>
+        <li class="waypoint-grid-item">
+            <div class="waypoint-card">
+                <div class="waypoint-card-top">8/9 14:00 ~ 8/9 18:00</div>
+                <div class="waypoint-card-bottom">
+                    <span class="waypoint-card-label">부산</span>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <hr />
+    <h2>
+        <div class="box"></div>
+        추가 정보
+    </h2>
+    <h3>준비물</h3>
+    <div class="supply-list">
+        <div class="supply-card">정신</div>
+        <div class="supply-card">개념</div>
+        <div class="supply-card">여권</div>
+        <div class="supply-card">칫솔</div>
+        <div class="supply-card">돈</div>
+        <div class="supply-card">가방</div>
+    </div>
+    <hr />
+</content>
+
+<footer>Journey Planner exported PDF</footer>
+</body>
+</html>
