@@ -5,6 +5,7 @@ import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointMapper;
 import com.kakaotechcampus.journey_planner.presentation.dto.waypoint.WaypointRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -15,16 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 @MessageMapping("/plans/{planId}/waypoints")
 public class WaypointController {
 
     private final WaypointService waypointService;
     private final SimpMessagingTemplate messagingTemplate;
-
-    public WaypointController(WaypointService waypointService, SimpMessagingTemplate messagingTemplate) {
-        this.waypointService = waypointService;
-        this.messagingTemplate = messagingTemplate;
-    }
 
     //클라이언트가 구독 후 초기 상태 요청 시 전체 waypoint 전송
     @MessageMapping("/init")
@@ -68,7 +65,7 @@ public class WaypointController {
     private void sendFullWaypoints(Long planId) {
         List<Waypoint> waypoints = waypointService.getWaypoints(planId);
         messagingTemplate.convertAndSend(
-                "/topic/plans/" + planId,
+                "/topic/plans/" + planId + "/waypoints",
                 Map.of(
                 "type", "FULL_UPDATE",
                 "waypoints", WaypointMapper.toResponseList(waypoints)

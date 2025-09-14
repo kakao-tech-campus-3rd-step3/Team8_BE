@@ -7,21 +7,18 @@ import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.dto.waypoint.WaypointRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class WaypointService {
 
     private final PlanRepository planRepository;
     private final WaypointRepository waypointRepository;
-
-    public WaypointService(PlanRepository planRepository, WaypointRepository waypointRepository) {
-        this.planRepository = planRepository;
-        this.waypointRepository = waypointRepository;
-    }
 
      // planId에 해당하는 plan에 waypoint 추가
     @Transactional
