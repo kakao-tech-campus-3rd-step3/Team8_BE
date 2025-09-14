@@ -1,4 +1,4 @@
-package com.kakaotechcampus.journey_planner.annotation;
+package com.kakaotechcampus.journey_planner.global.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

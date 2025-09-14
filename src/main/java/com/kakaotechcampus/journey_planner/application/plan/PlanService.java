@@ -1,4 +1,4 @@
-package com.kakaotechcampus.journey_planner.application;
+package com.kakaotechcampus.journey_planner.application.plan;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;

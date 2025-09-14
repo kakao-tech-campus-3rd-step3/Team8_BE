@@ -1,6 +1,6 @@
-package com.kakaotechcampus.journey_planner.resolver;
+package com.kakaotechcampus.journey_planner.global.resolver;
 
-import com.kakaotechcampus.journey_planner.annotation.LoginMember;
+import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
 import com.kakaotechcampus.journey_planner.application.auth.jwt.JwtProvider;
 import com.kakaotechcampus.journey_planner.application.member.MemberService;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;

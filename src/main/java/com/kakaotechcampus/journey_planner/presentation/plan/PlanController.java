@@ -1,6 +1,6 @@
-package com.kakaotechcampus.journey_planner.presentation;
+package com.kakaotechcampus.journey_planner.presentation.plan;
 
-import com.kakaotechcampus.journey_planner.application.PlanService;
+import com.kakaotechcampus.journey_planner.application.plan.PlanService;
 import com.kakaotechcampus.journey_planner.presentation.dto.CreatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.dto.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.dto.UpdatePlanRequest;
