@@ -8,17 +8,14 @@ import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.dto.auth.LoginRequest;
 import com.kakaotechcampus.journey_planner.presentation.dto.auth.SignInRequest;
 import com.kakaotechcampus.journey_planner.presentation.dto.auth.TokenResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
-
-    public AuthService(MemberRepository memberRepository, JwtProvider jwtProvider) {
-        this.memberRepository = memberRepository;
-        this.jwtProvider = jwtProvider;
-    }
 
     public TokenResponse signIn(SignInRequest signInRequest) {
         String email = signInRequest.email();
