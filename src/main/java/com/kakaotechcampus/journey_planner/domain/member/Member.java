@@ -1,8 +1,10 @@
 package com.kakaotechcampus.journey_planner.domain.member;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -23,30 +25,6 @@ public class Member {
         this.email = email;
         this.password = password;
         this.mbtiType = MbtiType.valueOf(mbti.toUpperCase());
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getContact() {
-        return contact;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getMbtiType() {
-        return mbtiType.toString();
     }
 
     public boolean verifyPassword(String password) {
