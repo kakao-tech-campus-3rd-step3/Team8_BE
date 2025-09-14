@@ -4,7 +4,7 @@ import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
-import com.kakaotechcampus.journey_planner.global.exception.CustomRuntimeException;
+import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.dto.memo.MemoRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class MemoService {
     @Transactional
     public void addMemo(Long planId, Memo memo) {
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.PLAN_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
 
         memo.assignToPlan(plan);
         memoRepository.save(memo);
@@ -32,7 +32,7 @@ public class MemoService {
     @Transactional
     public void updateMemo(Long planId, Long memoId, MemoRequest request) {
          Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
-                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MEMO_NOT_FOUND));
+                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 
          memo.update(
              request.title(),
@@ -46,7 +46,7 @@ public class MemoService {
     @Transactional
     public void removeMemo(Long planId, Long memoId) {
         Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.MEMO_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 
         memoRepository.delete(memo);
     }

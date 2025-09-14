@@ -4,7 +4,7 @@ import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointRepository;
-import com.kakaotechcampus.journey_planner.global.exception.CustomRuntimeException;
+import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.dto.waypoint.WaypointRequest;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class WaypointService {
     @Transactional
     public void addWaypoint(Long planId, Waypoint waypoint) {
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.PLAN_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
 
         // 단방향: Waypoint 쪽에 Plan을 세팅
         waypoint.assignToPlan(plan);
@@ -37,7 +37,7 @@ public class WaypointService {
     @Transactional
     public void updateWaypoint(Long planId, Long waypointId, WaypointRequest request) {
         Waypoint waypoint = waypointRepository.findByIdAndPlanId(waypointId, planId)
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.WAYPOINT_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
 
         waypoint.update(
                 request.name(),
@@ -55,7 +55,7 @@ public class WaypointService {
     @Transactional
     public void removeWaypoint(Long planId, Long waypointId) {
         Waypoint waypoint = waypointRepository.findByIdAndPlanId(waypointId, planId)
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.WAYPOINT_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
 
         waypointRepository.delete(waypoint);
     }
