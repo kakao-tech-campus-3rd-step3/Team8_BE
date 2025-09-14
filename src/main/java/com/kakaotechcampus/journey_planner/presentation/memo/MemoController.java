@@ -65,7 +65,7 @@ public class MemoController {
     private void sendFullMemos(Long planId) {
         List<Memo> memos = memoService.getMemos(planId);
         messagingTemplate.convertAndSend(
-                "/topic/plans/" + planId,
+                "/topic/plans/" + planId + "/memos",
                 Map.of(
                         "type", "FULL_UPDATE",
                         "memos", MemoMapper.toResponseList(memos)

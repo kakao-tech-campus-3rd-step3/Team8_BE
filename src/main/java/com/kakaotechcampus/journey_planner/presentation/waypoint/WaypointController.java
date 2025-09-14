@@ -68,7 +68,7 @@ public class WaypointController {
     private void sendFullWaypoints(Long planId) {
         List<Waypoint> waypoints = waypointService.getWaypoints(planId);
         messagingTemplate.convertAndSend(
-                "/topic/plans/" + planId,
+                "/topic/plans/" + planId + "/waypoints",
                 Map.of(
                 "type", "FULL_UPDATE",
                 "waypoints", WaypointMapper.toResponseList(waypoints)
