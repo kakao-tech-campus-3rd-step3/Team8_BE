@@ -23,6 +23,9 @@ public enum ErrorCode {
     // Waypoint
     WAYPOINT_NOT_FOUND(HttpStatus.NOT_FOUND, "WAYPOINT_NOT_FOUND", "해당 웨이포인트를 찾을 수 없습니다."),
 
+    // Memo
+    MEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMO_NOT_FOUND", "해당 메모를 찾을 수 없습니다."),
+
     // Member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_NOT_FOUND", "해당 멤버를 찾을 수 없습니다."),
     ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "ALREADY_REGISTERED", "이미 존재하는 멤버입니다."),
