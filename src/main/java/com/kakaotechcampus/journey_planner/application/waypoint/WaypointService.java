@@ -3,10 +3,12 @@ package com.kakaotechcampus.journey_planner.application.waypoint;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
+import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointMapper;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request.WaypointRequest;
+import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.response.WaypointResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,9 @@ public class WaypointService {
 
      // planId에 해당하는 plan에 waypoint 추가
     @Transactional
-    public void addWaypoint(Long planId, Waypoint waypoint) {
+    public void addWaypoint(Long planId, WaypointRequest request) {
+        Waypoint waypoint = WaypointMapper.toEntity(request);
+
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
 
@@ -57,10 +61,9 @@ public class WaypointService {
         waypointRepository.delete(waypoint);
     }
 
-
     // planId에 속한 모든 waypoint 조회
-    @Transactional(readOnly = true)
-    public List<Waypoint> getWaypoints(Long planId) {
-        return waypointRepository.findAllByPlanId(planId);
+    public List<WaypointResponse> getWaypoints(Long planId) {
+        List<Waypoint> waypoints = waypointRepository.findAllByPlanId(planId);
+        return WaypointMapper.toResponseList(waypoints);
     }
 }

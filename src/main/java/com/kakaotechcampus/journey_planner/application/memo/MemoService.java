@@ -1,12 +1,14 @@
 package com.kakaotechcampus.journey_planner.application.memo;
 
 import com.kakaotechcampus.journey_planner.domain.memo.Memo;
+import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
+import com.kakaotechcampus.journey_planner.presentation.memo.dto.response.MemoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,9 @@ public class MemoService {
     private final MemoRepository memoRepository;
 
     @Transactional
-    public void addMemo(Long planId, Memo memo) {
+    public void addMemo(Long planId, MemoRequest request) {
+        Memo memo = MemoMapper.toEntity(request);
+
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
 
@@ -51,9 +55,9 @@ public class MemoService {
         memoRepository.delete(memo);
     }
 
-    @Transactional(readOnly = true)
-    public List<Memo> getMemos(Long planId) {
-        return memoRepository.findByPlanId(planId);
+    public List<MemoResponse> getMemos(Long planId) {
+        List<Memo> memos = memoRepository.findByPlanId(planId);
+        return MemoMapper.toResponseList(memos);
     }
 
 }
