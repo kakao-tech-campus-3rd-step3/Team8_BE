@@ -25,48 +25,52 @@ public class WaypointController {
     //클라이언트가 구독 후 초기 상태 요청 시 전체 waypoint 전송
     @MessageMapping("/init")
     public void initWaypoints(@DestinationVariable Long planId) {
-        sendFullWaypoints(planId);
+
+        List<WaypointResponse> waypointResponses = waypointService.getWaypoints(planId);
+
+        sendResponse(planId, "WAYPOINT_INIT", "waypoints", waypointResponses);
     }
 
-    // 새 waypoint 생성 후 전체 리스트 전송
+    // 새 waypoint 생성 후 단건 전송
     @MessageMapping("/create")
     public void createWaypoint(@DestinationVariable Long planId, @Valid @Payload WaypointRequest request) {
-        waypointService.addWaypoint(planId, request);
 
-        sendFullWaypoints(planId);
+        WaypointResponse response = waypointService.addWaypoint(planId, request);
+
+        sendResponse(planId, "WAYPOINT_CREATE",  "waypoint", response);
     }
 
-    // waypoint 수정 후 전체 리스트 전송
+    // waypoint 수정 후 단건 전송
     @MessageMapping("/{waypointId}/update")
     public void updateWaypoint(
             @DestinationVariable Long planId,
             @DestinationVariable Long waypointId,
             @Valid WaypointRequest request) {
 
-        waypointService.updateWaypoint(planId, waypointId, request);
+        WaypointResponse response = waypointService.updateWaypoint(planId, waypointId, request);
 
-        sendFullWaypoints(planId);
+        sendResponse(planId, "WAYPOINT_UPDATE", "waypoint", response);
     }
 
-     // waypoint 삭제 후 전체 리스트 전송
+     // waypoint 삭제 후 해당 Id 전송
     @MessageMapping("/{waypointId}/delete")
     public void deleteWaypoint(
             @DestinationVariable Long planId,
-            @DestinationVariable Long waypointId
-    ) {
+            @DestinationVariable Long waypointId) {
+
         waypointService.removeWaypoint(planId, waypointId);
 
-        sendFullWaypoints(planId);
+        sendResponse(planId, "WAYPOINT_DELETE", "waypointId", waypointId);
     }
 
-    // plan의 전체 waypoint 리스트를 전송 (Broadcast)
-    private void sendFullWaypoints(Long planId) {
-        List<WaypointResponse> waypointResponses = waypointService.getWaypoints(planId);
+    // 변경 사항을 클라이언트에 전송 (Broadcast)
+    private void sendResponse(Long planId, String type, String payloadType, Object payload) {
+
         messagingTemplate.convertAndSend(
                 "/topic/plans/" + planId + "/waypoints",
                 Map.of(
-                "type", "FULL_UPDATE",
-                "waypoints", waypointResponses
+                        "type", type,
+                        payloadType, payload
                 )
         );
     }
