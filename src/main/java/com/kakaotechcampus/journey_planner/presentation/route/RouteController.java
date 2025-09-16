@@ -32,14 +32,14 @@ public class RouteController {
 
     // 새 route 생성 후 단건 전송
     @MessageMapping("/create")
-    public void create(@DestinationVariable Long planId, @Valid @Payload RouteRequest request) {
+    public void createRoute(@DestinationVariable Long planId, @Valid @Payload RouteRequest request) {
         RouteResponse response = routeService.create(planId, request);
         sendResponse(planId, "ROUTE_CREATE", "route", response);
     }
 
     // route 수정 후 단건 전송
     @MessageMapping("/{routeId}/update")
-    public void update(
+    public void updateRoute(
             @DestinationVariable Long planId,
             @DestinationVariable Long routeId,
             @Valid @Payload RouteRequest request
@@ -50,7 +50,7 @@ public class RouteController {
 
     // route 삭제 후 해당 Id 전송
     @MessageMapping("/{routeId}/delete")
-    public void delete(@DestinationVariable Long planId, @DestinationVariable Long routeId) {
+    public void removeRoute(@DestinationVariable Long planId, @DestinationVariable Long routeId) {
         routeService.delete(planId, routeId);
         sendResponse(planId, "ROUTE_DELETE", "routeId", routeId);
     }
