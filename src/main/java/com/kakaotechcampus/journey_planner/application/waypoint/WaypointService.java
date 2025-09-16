@@ -67,7 +67,10 @@ public class WaypointService {
 
     // planId에 속한 모든 waypoint 조회
     public List<WaypointResponse> getWaypoints(Long planId) {
-        List<Waypoint> waypoints = waypointRepository.findAllByPlanId(planId);
-        return WaypointMapper.toResponseList(waypoints);
+        if (planRepository.existsById(planId)){
+            List<Waypoint> waypoints = waypointRepository.findAllByPlanId(planId);
+            return WaypointMapper.toResponseList(waypoints);
+        }
+        throw new BusinessException(ErrorCode.PLAN_NOT_FOUND);
     }
 }

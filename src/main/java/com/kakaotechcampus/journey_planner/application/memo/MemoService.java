@@ -59,8 +59,11 @@ public class MemoService {
     }
 
     public List<MemoResponse> getMemos(Long planId) {
-        List<Memo> memos = memoRepository.findByPlanId(planId);
-        return MemoMapper.toResponseList(memos);
+        if (planRepository.existsById(planId)) {
+            List<Memo> memos = memoRepository.findByPlanId(planId);
+            return MemoMapper.toResponseList(memos);
+        }
+        throw new BusinessException(ErrorCode.PLAN_NOT_FOUND);
     }
 
 }
