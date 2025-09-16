@@ -1,13 +1,13 @@
 package com.kakaotechcampus.journey_planner.presentation.route;
 
 import com.kakaotechcampus.journey_planner.application.route.RouteService;
-import com.kakaotechcampus.journey_planner.domain.route.Route;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.request.RouteRequest;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.response.RouteResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -16,51 +16,52 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
-@MessageMapping("/plans/{planId}/routes") // 클라 → 서버: /app/plans/{planId}/routes/...
+@MessageMapping("/plans/{planId}/routes")
 public class RouteController {
 
     private final RouteService routeService;
     private final SimpMessagingTemplate messagingTemplate;
 
-
-    //클라이언트가 구독 후 초기 상태 요청 시 전체 Route 전송
+    // 클라이언트가 구독 후 초기 상태 요청 시 전체 Route 전송
     @MessageMapping("/init")
-    public void initRoute(@DestinationVariable Long planId) {
-        sendFullRoutes(planId);
+    public void initRoutes(@DestinationVariable Long planId) {
+        List<RouteResponse> routeResponses = routeService.getRoutes(planId);
+
+        sendResponse(planId, "ROUTE_INIT", "routes", routeResponses);
     }
 
+    // 새 route 생성 후 단건 전송
     @MessageMapping("/create")
-    public void create(@DestinationVariable Long planId, @Valid RouteRequest request) {
-
-        routeService.create(planId, request);
-        sendFullRoutes(planId);
+    public void create(@DestinationVariable Long planId, @Valid @Payload RouteRequest request) {
+        RouteResponse response = routeService.create(planId, request);
+        sendResponse(planId, "ROUTE_CREATE", "route", response);
     }
 
+    // route 수정 후 단건 전송
     @MessageMapping("/{routeId}/update")
     public void update(
             @DestinationVariable Long planId,
             @DestinationVariable Long routeId,
-            @Valid RouteRequest request
+            @Valid @Payload RouteRequest request
     ) {
-        routeService.update(planId, routeId, request);
-        sendFullRoutes(planId);
+        RouteResponse response = routeService.update(planId, routeId, request);
+        sendResponse(planId, "ROUTE_UPDATE", "route", response);
     }
 
-    @MessageMapping("{routeId}/delete")
+    // route 삭제 후 해당 Id 전송
+    @MessageMapping("/{routeId}/delete")
     public void delete(@DestinationVariable Long planId, @DestinationVariable Long routeId) {
-        routeService.delete(planId,routeId);
-        sendFullRoutes(planId);
+        routeService.delete(planId, routeId);
+        sendResponse(planId, "ROUTE_DELETE", "routeId", routeId);
     }
 
-
-    //해당 플랜의 전체 Route 리스트 브로드캐스트
-    private void sendFullRoutes(Long planId) {
-        List<Route> routes = routeService.getRoutes(planId);
+    // 변경 사항을 클라이언트에 전송 (Broadcast)
+    private void sendResponse(Long planId, String type, String payloadType, Object payload) {
         messagingTemplate.convertAndSend(
                 "/topic/plans/" + planId + "/routes",
                 Map.of(
-                        "type", "FULL_UPDATE",
-                        "routes", routes.stream().map(RouteResponse::from).toList()
+                        "type", type,
+                        payloadType, payload
                 )
         );
     }
