@@ -23,18 +23,20 @@ public class MemoService {
     private final MemoRepository memoRepository;
 
     @Transactional
-    public void addMemo(Long planId, MemoRequest request) {
+    public MemoResponse addMemo(Long planId, MemoRequest request) {
         Memo memo = MemoMapper.toEntity(request);
 
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
 
         memo.assignToPlan(plan);
-        memoRepository.save(memo);
+        Memo savedMemo = memoRepository.save(memo);
+
+        return MemoMapper.toResponse(savedMemo);
     }
 
     @Transactional
-    public void updateMemo(Long planId, Long memoId, MemoRequest request) {
+    public MemoResponse updateMemo(Long planId, Long memoId, MemoRequest request) {
          Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
                  .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 
@@ -45,6 +47,7 @@ public class MemoService {
              request.yPosition()
          );
 
+         return MemoMapper.toResponse(memo);
     }
 
     @Transactional

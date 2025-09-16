@@ -22,51 +22,48 @@ public class MemoController {
     private final MemoService memoService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    //클라이언트가 구독 후 초기 상태 요청 시 전체 memo 전송
+    // 클라이언트가 구독 후 초기 상태 요청 시 전체 memo 전송
     @MessageMapping("/init")
     public void initMemos(@DestinationVariable Long planId) {
-        sendFullMemos(planId);
+        List<MemoResponse> memoResponses = memoService.getMemos(planId);
+        sendResponse(planId, "MEMO_INIT", "memos", memoResponses);
     }
 
-    // 새 memo 생성 후 전체 리스트 전송
+    // 새 memo 생성 후 단건 전송
     @MessageMapping("/create")
     public void createMemo(@DestinationVariable Long planId, @Valid @Payload MemoRequest request) {
-        memoService.addMemo(planId, request);
-
-        sendFullMemos(planId);
+        MemoResponse response = memoService.addMemo(planId, request);
+        sendResponse(planId, "MEMO_CREATE", "memo", response);
     }
 
-    // memo 수정 후 전체 리스트 전송
+    // memo 수정 후 단건 전송
     @MessageMapping("/{memoId}/update")
     public void updateMemo(
             @DestinationVariable Long planId,
             @DestinationVariable Long memoId,
             @Valid @Payload MemoRequest request) {
 
-        memoService.updateMemo(planId, memoId, request);
-
-        sendFullMemos(planId);
+        MemoResponse response = memoService.updateMemo(planId, memoId, request);
+        sendResponse(planId, "MEMO_UPDATE", "memo", response);
     }
 
-    // memo 삭제 후 전체 리스트 전송
+    // memo 삭제 후 해당 Id 전송
     @MessageMapping("/{memoId}/delete")
     public void deleteMemo(
             @DestinationVariable Long planId,
             @DestinationVariable Long memoId
     ) {
         memoService.removeMemo(planId, memoId);
-
-        sendFullMemos(planId);
+        sendResponse(planId, "MEMO_DELETE", "memoId", memoId);
     }
 
-    // plan의 전체 memo 리스트를 전송 (Broadcast)
-    private void sendFullMemos(Long planId) {
-        List<MemoResponse> memoResponses = memoService.getMemos(planId);
+    // 변경 사항을 클라이언트에 전송 (Broadcast)
+    private void sendResponse(Long planId, String type, String payloadType, Object payload) {
         messagingTemplate.convertAndSend(
                 "/topic/plans/" + planId + "/memos",
                 Map.of(
-                        "type", "FULL_UPDATE",
-                        "memos", memoResponses
+                        "type", type,
+                        payloadType, payload
                 )
         );
     }
