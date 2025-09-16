@@ -55,7 +55,6 @@ public class MemoService {
         memoRepository.delete(memo);
     }
 
-    @Transactional(readOnly = true)
     public List<MemoResponse> getMemos(Long planId) {
         List<Memo> memos = memoRepository.findByPlanId(planId);
         return MemoMapper.toResponseList(memos);

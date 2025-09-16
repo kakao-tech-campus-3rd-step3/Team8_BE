@@ -62,7 +62,6 @@ public class WaypointService {
     }
 
     // planId에 속한 모든 waypoint 조회
-    @Transactional(readOnly = true)
     public List<WaypointResponse> getWaypoints(Long planId) {
         List<Waypoint> waypoints = waypointRepository.findAllByPlanId(planId);
         return WaypointMapper.toResponseList(waypoints);
