@@ -27,11 +27,7 @@ public class AuthService {
 
         Member member = signUpRequestDto.toEntity();
         passwordEncodeUtil.passwordEncoding(member);
-
         Member savedMember = memberRepository.save(member);
-        if (!memberRepository.existsByEmail(email)) {
-            throw new BusinessException(ErrorCode.MEMBER_NOT_FOUND);
-        }
 
         String accessToken = jwtProvider.generateAccessToken(savedMember);
         String refreshToken = jwtProvider.generateRefreshToken(savedMember);
