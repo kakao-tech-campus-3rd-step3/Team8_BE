@@ -1,9 +1,8 @@
 package com.kakaotechcampus.journey_planner.presentation.memo;
 
 import com.kakaotechcampus.journey_planner.application.memo.MemoService;
-import com.kakaotechcampus.journey_planner.domain.memo.Memo;
-import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
+import com.kakaotechcampus.journey_planner.presentation.memo.dto.response.MemoResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -32,8 +31,7 @@ public class MemoController {
     // 새 memo 생성 후 전체 리스트 전송
     @MessageMapping("/create")
     public void createMemo(@DestinationVariable Long planId, @Valid @Payload MemoRequest request) {
-        Memo memo = MemoMapper.toEntity(request);
-        memoService.addMemo(planId, memo);
+        memoService.addMemo(planId, request);
 
         sendFullMemos(planId);
     }
@@ -63,12 +61,12 @@ public class MemoController {
 
     // plan의 전체 memo 리스트를 전송 (Broadcast)
     private void sendFullMemos(Long planId) {
-        List<Memo> memos = memoService.getMemos(planId);
+        List<MemoResponse> memoResponses = memoService.getMemos(planId);
         messagingTemplate.convertAndSend(
                 "/topic/plans/" + planId + "/memos",
                 Map.of(
                         "type", "FULL_UPDATE",
-                        "memos", MemoMapper.toResponseList(memos)
+                        "memos", memoResponses
                 )
         );
     }

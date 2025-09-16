@@ -1,9 +1,8 @@
 package com.kakaotechcampus.journey_planner.presentation.waypoint;
 
 import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
-import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
-import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointMapper;
 import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request.WaypointRequest;
+import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.response.WaypointResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -32,8 +31,7 @@ public class WaypointController {
     // 새 waypoint 생성 후 전체 리스트 전송
     @MessageMapping("/create")
     public void createWaypoint(@DestinationVariable Long planId, @Valid @Payload WaypointRequest request) {
-        Waypoint waypoint = WaypointMapper.toEntity(request);
-        waypointService.addWaypoint(planId, waypoint);
+        waypointService.addWaypoint(planId, request);
 
         sendFullWaypoints(planId);
     }
@@ -63,12 +61,12 @@ public class WaypointController {
 
     // plan의 전체 waypoint 리스트를 전송 (Broadcast)
     private void sendFullWaypoints(Long planId) {
-        List<Waypoint> waypoints = waypointService.getWaypoints(planId);
+        List<WaypointResponse> waypointResponses = waypointService.getWaypoints(planId);
         messagingTemplate.convertAndSend(
                 "/topic/plans/" + planId + "/waypoints",
                 Map.of(
                 "type", "FULL_UPDATE",
-                "waypoints", WaypointMapper.toResponseList(waypoints)
+                "waypoints", waypointResponses
                 )
         );
     }
