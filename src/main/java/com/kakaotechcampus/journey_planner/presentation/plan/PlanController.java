@@ -1,9 +1,9 @@
 package com.kakaotechcampus.journey_planner.presentation.plan;
 
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
-import com.kakaotechcampus.journey_planner.presentation.dto.CreatePlanRequest;
-import com.kakaotechcampus.journey_planner.presentation.dto.PlanResponse;
-import com.kakaotechcampus.journey_planner.presentation.dto.UpdatePlanRequest;
+import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
+import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
+import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

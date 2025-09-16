@@ -3,7 +3,7 @@ package com.kakaotechcampus.journey_planner.presentation.memo;
 import com.kakaotechcampus.journey_planner.application.memo.MemoService;
 import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
-import com.kakaotechcampus.journey_planner.presentation.dto.memo.MemoRequest;
+import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

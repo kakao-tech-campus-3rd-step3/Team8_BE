@@ -1,4 +1,4 @@
-package com.kakaotechcampus.journey_planner.presentation.dto.route;
+package com.kakaotechcampus.journey_planner.presentation.route.dto.request;
 
 
 import com.kakaotechcampus.journey_planner.domain.route.VehicleCategory;

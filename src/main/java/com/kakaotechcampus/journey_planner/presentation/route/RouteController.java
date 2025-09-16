@@ -2,8 +2,8 @@ package com.kakaotechcampus.journey_planner.presentation.route;
 
 import com.kakaotechcampus.journey_planner.application.route.RouteService;
 import com.kakaotechcampus.journey_planner.domain.route.Route;
-import com.kakaotechcampus.journey_planner.presentation.dto.route.RouteRequest;
-import com.kakaotechcampus.journey_planner.presentation.dto.route.RouteResponse;
+import com.kakaotechcampus.journey_planner.presentation.route.dto.request.RouteRequest;
+import com.kakaotechcampus.journey_planner.presentation.route.dto.response.RouteResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

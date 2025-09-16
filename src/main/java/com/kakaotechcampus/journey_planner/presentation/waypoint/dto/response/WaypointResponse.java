@@ -1,4 +1,4 @@
-package com.kakaotechcampus.journey_planner.presentation.dto.waypoint;
+package com.kakaotechcampus.journey_planner.presentation.waypoint.dto.response;
 
 import com.kakaotechcampus.journey_planner.domain.waypoint.LocationCategory;
 

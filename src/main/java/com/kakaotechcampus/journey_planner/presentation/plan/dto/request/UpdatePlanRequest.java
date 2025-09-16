@@ -1,4 +1,4 @@
-package com.kakaotechcampus.journey_planner.presentation.dto;
+package com.kakaotechcampus.journey_planner.presentation.plan.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
