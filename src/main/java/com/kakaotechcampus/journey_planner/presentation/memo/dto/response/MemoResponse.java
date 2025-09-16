@@ -1,4 +1,4 @@
-package com.kakaotechcampus.journey_planner.presentation.dto.memo;
+package com.kakaotechcampus.journey_planner.presentation.memo.dto.response;
 
 public record MemoResponse(
         Long id,

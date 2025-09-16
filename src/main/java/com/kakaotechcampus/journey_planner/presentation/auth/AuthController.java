@@ -1,9 +1,9 @@
 package com.kakaotechcampus.journey_planner.presentation.auth;
 
 import com.kakaotechcampus.journey_planner.application.auth.AuthService;
-import com.kakaotechcampus.journey_planner.presentation.dto.auth.LoginRequest;
-import com.kakaotechcampus.journey_planner.presentation.dto.auth.SignInRequest;
-import com.kakaotechcampus.journey_planner.presentation.dto.auth.TokenResponse;
+import com.kakaotechcampus.journey_planner.presentation.auth.dto.request.LoginRequestDto;
+import com.kakaotechcampus.journey_planner.presentation.auth.dto.request.SignUpRequestDto;
+import com.kakaotechcampus.journey_planner.presentation.auth.dto.response.TokenResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +18,18 @@ public class AuthController {
     }
 
     @PostMapping("/v1/members/signup")
-    private ResponseEntity<TokenResponse> signInAndLogin(@RequestBody @Valid SignInRequest signInRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signIn(signInRequest));
+    private ResponseEntity<TokenResponseDto> signInAndLogin(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signIn(signUpRequestDto));
     }
 
     @PostMapping("/v1/members/login")
-    private ResponseEntity<TokenResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.login(loginRequest));
+    private ResponseEntity<TokenResponseDto> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(authService.login(loginRequestDto));
     }
 
     @PostMapping("/v1/members/refresh")
-    private ResponseEntity<TokenResponse> refresh(@RequestHeader("Refresh-Token") String refreshToken){
-        TokenResponse tokenResponse = authService.refresh(refreshToken);
-        return ResponseEntity.status(HttpStatus.OK).body(tokenResponse);
+    private ResponseEntity<TokenResponseDto> refresh(@RequestHeader("Refresh-Token") String refreshToken){
+        TokenResponseDto tokenResponseDto = authService.refresh(refreshToken);
+        return ResponseEntity.status(HttpStatus.OK).body(tokenResponseDto);
     }
 }

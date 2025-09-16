@@ -6,7 +6,7 @@ import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
-import com.kakaotechcampus.journey_planner.presentation.dto.waypoint.WaypointRequest;
+import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request.WaypointRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

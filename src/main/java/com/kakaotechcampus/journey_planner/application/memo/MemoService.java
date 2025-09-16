@@ -6,7 +6,7 @@ import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
-import com.kakaotechcampus.journey_planner.presentation.dto.memo.MemoRequest;
+import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
