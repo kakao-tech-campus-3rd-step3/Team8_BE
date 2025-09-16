@@ -23,12 +23,10 @@ public class RouteService {
     private final WaypointRepository waypointRepository;
     private final RouteRepository routeRepository;
 
-
-
     public List<Route> getRoutes(Long planId) {
         planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-        return routeRepository.findAllByPlan_Id(planId);
+        return routeRepository.findAllByPlanId(planId);
     }
 
     public Route create(Long planId, RouteRequest req) {
