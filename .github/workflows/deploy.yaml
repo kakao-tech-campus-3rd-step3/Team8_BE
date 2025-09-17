@@ -35,7 +35,7 @@ jobs:
 
       # 6. 빌드된 JAR 파일을 서버로 전송
       - name: Transfer Jar to Server
-        uses: appleboy/scp-action@releases/v1
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -46,7 +46,7 @@ jobs:
 
       # 7. 서버에 접속하여 배포 스크립트 실행
       - name: Execute Deploy Script on Server
-        uses: appleboy/ssh-action@releases/v1
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
