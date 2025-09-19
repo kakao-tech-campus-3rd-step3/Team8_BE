@@ -3,18 +3,25 @@ spring:
     import: optional:file:dev.env[.properties]
   application:
     name: JourneyPlanner
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        use_sql_comments: true
   datasource:
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: test
-    url: jdbc:h2:mem:journey-planner;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: ${DRIVER_CLASS_NAME}
+    url: jdbc:mysql://${RDS_HOST}:${RDS_PORT}/${RDS_DB_NAME}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
+    hikari:
+      max-lifetime: 170000
   thymeleaf:
     prefix: classpath:/META-INF/templates
     suffix: .html
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
 
 jwt:
   secret: ${JWT_SECRET_KEY}
