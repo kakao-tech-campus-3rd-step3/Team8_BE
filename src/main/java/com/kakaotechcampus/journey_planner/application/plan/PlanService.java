@@ -23,8 +23,8 @@ public class PlanService {
     @Transactional
     public PlanResponse createPlan(CreatePlanRequest request) {
         Plan plan = PlanMapper.toEntity(request);
-        Plan saved = planRepository.save(plan);
-        return PlanMapper.toResponse(saved);
+        Plan savedPlan = planRepository.save(plan);
+        return PlanMapper.toResponse(savedPlan);
     }
 
     @Transactional
