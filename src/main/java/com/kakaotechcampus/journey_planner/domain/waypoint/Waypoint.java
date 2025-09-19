@@ -2,12 +2,15 @@ package com.kakaotechcampus.journey_planner.domain.waypoint;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Waypoint {
 
     @Id
@@ -32,7 +35,6 @@ public class Waypoint {
     private Float xPosition;
     private Float yPosition;
 
-    protected Waypoint() {}
 
     public Waypoint(String name, String description, String address, LocalDateTime startTime, LocalDateTime endTime, LocationCategory locationCategory, Float xPosition, Float yPosition) {
         this.name = name;
