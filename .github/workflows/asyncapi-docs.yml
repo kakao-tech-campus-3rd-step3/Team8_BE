@@ -5,7 +5,7 @@ name: Generate and Commit AsyncAPI Docs to Project
 on:
   push:
     branches:
-      - feature/websocket-api-docs
+      - main
 
 jobs:
   # 문서 생성 및 커밋 작업
