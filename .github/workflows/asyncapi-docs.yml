@@ -1,0 +1,36 @@
+# 워크플로우 이름
+name: Generate and Commit AsyncAPI Docs
+
+# 언제 실행할지 정의
+on:
+  push:
+    branches:
+      - feature/websocket-api-docs
+
+jobs:
+  # 문서 생성 및 커밋 작업
+  build-and-commit-docs:
+    runs-on: ubuntu-latest # 실행 환경
+    steps:
+      # 1. 저장소 코드 가져오기
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. AsyncAPI 문서 생성
+      - name: Generate AsyncAPI HTML documentation
+        uses: asyncapi/cli@v3.0.1
+        with:
+          # 원본 명세 파일 경로
+          filepath: ./asyncapi.yaml
+          # 사용할 HTML 템플릿
+          template: '@asyncapi/html-template@3.0.3'
+          # 생성된 문서를 저장할 폴더 이름 (요청하신 대로)
+          output: ./docs/asyncapi
+
+      # 3. 생성된 문서를 Git 저장소에 커밋 및 푸시 (가장 큰 변경점)
+      - name: Commit and push generated HTML files
+        # 파일 변경이 있을 경우 자동으로 커밋해주는 유명한 액션입니다.
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # 커밋 메시지를 지정합니다.
+          commit_message: "docs: Auto-generate AsyncAPI documentation"
