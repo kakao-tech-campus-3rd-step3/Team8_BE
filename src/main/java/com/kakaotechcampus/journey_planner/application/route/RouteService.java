@@ -26,7 +26,7 @@ public class RouteService {
     private final RouteRepository routeRepository;
 
     @Transactional
-    public RouteResponse create(Long planId, RouteRequest request) {
+    public RouteResponse createRoute(Long planId, RouteRequest request) {
 
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
@@ -47,7 +47,7 @@ public class RouteService {
     }
 
     @Transactional
-    public RouteResponse update(Long planId, Long routeId, RouteRequest request) {
+    public RouteResponse updateRoute(Long planId, Long routeId, RouteRequest request) {
         Route route = routeRepository.findByIdAndPlanId(routeId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
@@ -69,7 +69,7 @@ public class RouteService {
     }
 
     @Transactional
-    public void delete(Long planId, Long routeId) {
+    public void deleteRoute(Long planId, Long routeId) {
         Route route = routeRepository.findByIdAndPlanId(routeId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 

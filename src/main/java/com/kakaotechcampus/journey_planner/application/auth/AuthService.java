@@ -37,7 +37,7 @@ public class AuthService {
     public TokenResponseDto login(LoginRequestDto loginRequestDto) {
         String email = loginRequestDto.email();
         String password = loginRequestDto.password();
-      
+
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
         if (!member.verifyPassword(password)) {

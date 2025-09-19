@@ -35,7 +35,7 @@ public class WaypointController {
     @MessageMapping("/create")
     public void createWaypoint(@DestinationVariable Long planId, @Valid @Payload WaypointRequest request) {
 
-        WaypointResponse response = waypointService.addWaypoint(planId, request);
+        WaypointResponse response = waypointService.createWaypoint(planId, request);
 
         messagingUtil.sendResponse(planId, destination, "WAYPOINT_CREATE",  "waypoint", response);
     }
@@ -58,7 +58,7 @@ public class WaypointController {
             @DestinationVariable Long planId,
             @DestinationVariable Long waypointId) {
 
-        waypointService.removeWaypoint(planId, waypointId);
+        waypointService.deleteWaypoint(planId, waypointId);
 
         messagingUtil.sendResponse(planId, destination, "WAYPOINT_DELETE", "waypointId", waypointId);
     }

@@ -32,7 +32,7 @@ public class MemoController {
     // 새 memo 생성 후 단건 전송
     @MessageMapping("/create")
     public void createMemo(@DestinationVariable Long planId, @Valid @Payload MemoRequest request) {
-        MemoResponse response = memoService.addMemo(planId, request);
+        MemoResponse response = memoService.createMemo(planId, request);
         messagingUtil.sendResponse(planId, destination, "MEMO_CREATE", "memo", response);
     }
 
@@ -53,7 +53,7 @@ public class MemoController {
             @DestinationVariable Long planId,
             @DestinationVariable Long memoId
     ) {
-        memoService.removeMemo(planId, memoId);
+        memoService.deleteMemo(planId, memoId);
         messagingUtil.sendResponse(planId, destination, "MEMO_DELETE", "memoId", memoId);
     }
 }

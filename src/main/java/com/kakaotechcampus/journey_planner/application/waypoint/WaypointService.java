@@ -24,7 +24,7 @@ public class WaypointService {
 
      // planId에 해당하는 plan에 waypoint 추가
     @Transactional
-    public WaypointResponse addWaypoint(Long planId, WaypointRequest request) {
+    public WaypointResponse createWaypoint(Long planId, WaypointRequest request) {
         Waypoint waypoint = WaypointMapper.toEntity(request);
 
         Plan plan = planRepository.findById(planId)
@@ -58,7 +58,7 @@ public class WaypointService {
 
      // planId 및 waypointId에 해당하는 waypoint 삭제
     @Transactional
-    public void removeWaypoint(Long planId, Long waypointId) {
+    public void deleteWaypoint(Long planId, Long waypointId) {
         Waypoint waypoint = waypointRepository.findByIdAndPlanId(waypointId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
 
