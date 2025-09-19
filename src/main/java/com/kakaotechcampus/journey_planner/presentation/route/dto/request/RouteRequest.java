@@ -25,4 +25,5 @@ public record RouteRequest(
 
         @NotNull(message = "vehicleCategory는 필수입니다.")
         VehicleCategory vehicleCategory
-) {}
+) {
+}

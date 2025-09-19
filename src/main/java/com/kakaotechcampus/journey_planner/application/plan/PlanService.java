@@ -40,7 +40,7 @@ public class PlanService {
     @Transactional
     public PlanResponse getPlan(Long id) {
         Plan plan = planRepository.findById(id)
-                .orElseThrow(() ->  new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
         return new PlanResponse(
                 plan.getId(),
                 plan.getTitle(),
@@ -66,7 +66,7 @@ public class PlanService {
     @Transactional
     public PlanResponse updatePlan(Long id, UpdatePlanRequest request) {
         Plan plan = planRepository.findById(id)
-                .orElseThrow(() ->  new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
 
         plan.update(
                 request.title(),
@@ -87,7 +87,7 @@ public class PlanService {
     @Transactional
     public void deletePlan(Long id) {
         Plan plan = planRepository.findById(id)
-                .orElseThrow(() ->  new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
         planRepository.delete(plan);
     }
 

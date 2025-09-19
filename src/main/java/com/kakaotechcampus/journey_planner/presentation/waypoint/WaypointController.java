@@ -37,7 +37,7 @@ public class WaypointController {
 
         WaypointResponse response = waypointService.createWaypoint(planId, request);
 
-        messagingUtil.sendResponse(planId, destination, "WAYPOINT_CREATE",  "waypoint", response);
+        messagingUtil.sendResponse(planId, destination, "WAYPOINT_CREATE", "waypoint", response);
     }
 
     // waypoint 수정 후 단건 전송
@@ -52,7 +52,7 @@ public class WaypointController {
         messagingUtil.sendResponse(planId, destination, "WAYPOINT_UPDATE", "waypoint", response);
     }
 
-     // waypoint 삭제 후 해당 Id 전송
+    // waypoint 삭제 후 해당 Id 전송
     @MessageMapping("/{waypointId}/delete")
     public void deleteWaypoint(
             @DestinationVariable Long planId,

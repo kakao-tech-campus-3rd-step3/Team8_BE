@@ -34,7 +34,9 @@ public class Memo {
         this.yPosition = yPosition;
     }
 
-    public void assignToPlan(Plan plan) {this.plan = plan;}
+    public void assignToPlan(Plan plan) {
+        this.plan = plan;
+    }
 
     public void update(String title, String content, float xPosition, float yPosition) {
         this.title = title;

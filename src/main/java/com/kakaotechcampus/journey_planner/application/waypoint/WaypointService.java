@@ -22,7 +22,7 @@ public class WaypointService {
     private final PlanRepository planRepository;
     private final WaypointRepository waypointRepository;
 
-     // planId에 해당하는 plan에 waypoint 추가
+    // planId에 해당하는 plan에 waypoint 추가
     @Transactional
     public WaypointResponse createWaypoint(Long planId, WaypointRequest request) {
         Waypoint waypoint = WaypointMapper.toEntity(request);
@@ -56,7 +56,7 @@ public class WaypointService {
         return WaypointMapper.toResponse(waypoint);
     }
 
-     // planId 및 waypointId에 해당하는 waypoint 삭제
+    // planId 및 waypointId에 해당하는 waypoint 삭제
     @Transactional
     public void deleteWaypoint(Long planId, Long waypointId) {
         Waypoint waypoint = waypointRepository.findByIdAndPlanId(waypointId, planId)
@@ -67,7 +67,7 @@ public class WaypointService {
 
     // planId에 속한 모든 waypoint 조회
     public List<WaypointResponse> getWaypoints(Long planId) {
-        if (planRepository.existsById(planId)){
+        if (planRepository.existsById(planId)) {
             List<Waypoint> waypoints = waypointRepository.findAllByPlanId(planId);
             return WaypointMapper.toResponseList(waypoints);
         }

@@ -15,7 +15,7 @@ public class PdfController {
     private final PdfResponseFactory pdfResponseFactory;
 
     @GetMapping
-    public ResponseEntity<StreamingResponseBody> downloadJourneyPlan(){
+    public ResponseEntity<StreamingResponseBody> downloadJourneyPlan() {
         return ResponseEntity.ok()
                 .headers(pdfResponseFactory.getPdfHeader(""))
                 .body(pdfResponseFactory.linkToPdfFile());

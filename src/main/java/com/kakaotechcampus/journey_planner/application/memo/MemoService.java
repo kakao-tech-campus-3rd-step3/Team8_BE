@@ -37,17 +37,17 @@ public class MemoService {
 
     @Transactional
     public MemoResponse updateMemo(Long planId, Long memoId, MemoRequest request) {
-         Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
-                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
+        Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 
-         memo.update(
-             request.title(),
-             request.content(),
-             request.xPosition(),
-             request.yPosition()
-         );
+        memo.update(
+                request.title(),
+                request.content(),
+                request.xPosition(),
+                request.yPosition()
+        );
 
-         return MemoMapper.toResponse(memo);
+        return MemoMapper.toResponse(memo);
     }
 
     @Transactional

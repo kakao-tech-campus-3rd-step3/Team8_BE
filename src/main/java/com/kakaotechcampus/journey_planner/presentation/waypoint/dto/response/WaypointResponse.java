@@ -1,7 +1,6 @@
 package com.kakaotechcampus.journey_planner.presentation.waypoint.dto.response;
 
 import com.kakaotechcampus.journey_planner.domain.waypoint.LocationCategory;
-
 import java.time.LocalDateTime;
 
 public record WaypointResponse(
@@ -19,4 +18,5 @@ public record WaypointResponse(
 
         Float xPosition,
         Float yPosition
-) {}
+) {
+}

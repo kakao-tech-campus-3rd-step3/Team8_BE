@@ -28,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/v1/members/refresh")
-    private ResponseEntity<TokenResponseDto> refresh(@RequestHeader("Refresh-Token") String refreshToken){
+    private ResponseEntity<TokenResponseDto> refresh(@RequestHeader("Refresh-Token") String refreshToken) {
         TokenResponseDto tokenResponseDto = authService.refresh(refreshToken);
         return ResponseEntity.status(HttpStatus.OK).body(tokenResponseDto);
     }

@@ -11,11 +11,11 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 public class PdfResponseFactory {
     private final PdfService pdfService;
 
-    public StreamingResponseBody linkToPdfFile(){
+    public StreamingResponseBody linkToPdfFile() {
         return pdfService::createPDF;
     }
 
-    public HttpHeaders getPdfHeader(String pdfName){
+    public HttpHeaders getPdfHeader(String pdfName) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDispositionFormData("attachment", pdfName);
         return headers;

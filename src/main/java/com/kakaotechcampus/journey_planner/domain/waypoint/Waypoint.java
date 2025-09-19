@@ -18,7 +18,7 @@ public class Waypoint {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "plan_id",  nullable = false)
+    @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
 
     private String name;

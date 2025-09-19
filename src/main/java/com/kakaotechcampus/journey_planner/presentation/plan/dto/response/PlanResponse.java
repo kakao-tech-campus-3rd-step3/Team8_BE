@@ -1,7 +1,6 @@
 package com.kakaotechcampus.journey_planner.presentation.plan.dto.response;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
-
 import java.time.LocalDate;
 
 public record PlanResponse(
