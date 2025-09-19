@@ -23,7 +23,7 @@ public class MemoService {
     private final MemoRepository memoRepository;
 
     @Transactional
-    public MemoResponse addMemo(Long planId, MemoRequest request) {
+    public MemoResponse createMemo(Long planId, MemoRequest request) {
         Memo memo = MemoMapper.toEntity(request);
 
         Plan plan = planRepository.findById(planId)
@@ -37,21 +37,21 @@ public class MemoService {
 
     @Transactional
     public MemoResponse updateMemo(Long planId, Long memoId, MemoRequest request) {
-         Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
-                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
+        Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 
-         memo.update(
-             request.title(),
-             request.content(),
-             request.xPosition(),
-             request.yPosition()
-         );
+        memo.update(
+                request.title(),
+                request.content(),
+                request.xPosition(),
+                request.yPosition()
+        );
 
-         return MemoMapper.toResponse(memo);
+        return MemoMapper.toResponse(memo);
     }
 
     @Transactional
-    public void removeMemo(Long planId, Long memoId) {
+    public void deleteMemo(Long planId, Long memoId) {
         Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 

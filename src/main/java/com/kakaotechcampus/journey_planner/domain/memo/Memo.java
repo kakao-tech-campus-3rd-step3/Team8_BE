@@ -2,10 +2,13 @@ package com.kakaotechcampus.journey_planner.domain.memo;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Memo {
 
     @Id
@@ -23,7 +26,6 @@ public class Memo {
     @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
 
-    protected Memo() {}
 
     public Memo(String title, String content, float xPosition, float yPosition) {
         this.title = title;
@@ -32,7 +34,9 @@ public class Memo {
         this.yPosition = yPosition;
     }
 
-    public void assignToPlan(Plan plan) {this.plan = plan;}
+    public void assignToPlan(Plan plan) {
+        this.plan = plan;
+    }
 
     public void update(String title, String content, float xPosition, float yPosition) {
         this.title = title;

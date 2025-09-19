@@ -10,7 +10,6 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
-
 import java.util.List;
 
 @Controller
@@ -33,7 +32,7 @@ public class RouteController {
     // 새 route 생성 후 단건 전송
     @MessageMapping("/create")
     public void createRoute(@DestinationVariable Long planId, @Valid @Payload RouteRequest request) {
-        RouteResponse response = routeService.create(planId, request);
+        RouteResponse response = routeService.createRoute(planId, request);
         messagingUtil.sendResponse(planId, destination, "ROUTE_CREATE", "route", response);
     }
 
@@ -44,14 +43,14 @@ public class RouteController {
             @DestinationVariable Long routeId,
             @Valid @Payload RouteRequest request
     ) {
-        RouteResponse response = routeService.update(planId, routeId, request);
+        RouteResponse response = routeService.updateRoute(planId, routeId, request);
         messagingUtil.sendResponse(planId, destination, "ROUTE_UPDATE", "route", response);
     }
 
     // route 삭제 후 해당 Id 전송
     @MessageMapping("/{routeId}/delete")
-    public void removeRoute(@DestinationVariable Long planId, @DestinationVariable Long routeId) {
-        routeService.delete(planId, routeId);
+    public void deleteRoute(@DestinationVariable Long planId, @DestinationVariable Long routeId) {
+        routeService.deleteRoute(planId, routeId);
         messagingUtil.sendResponse(planId, destination, "ROUTE_DELETE", "routeId", routeId);
     }
 }

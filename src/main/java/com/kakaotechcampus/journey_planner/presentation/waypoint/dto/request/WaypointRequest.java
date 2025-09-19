@@ -4,7 +4,6 @@ import com.kakaotechcampus.journey_planner.domain.waypoint.LocationCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
 import java.time.LocalDateTime;
 
 public record WaypointRequest(
@@ -31,4 +30,5 @@ public record WaypointRequest(
 
         @NotNull(message = "y좌표는 필수 입력값입니다.")
         Float yPosition
-) {}
+) {
+}

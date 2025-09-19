@@ -17,13 +17,13 @@ public record SignUpRequestDto(
         @NotBlank(message = "MBTI는 비워둘 수 없습니다.")
         String mbti
 ) {
-        public Member toEntity() {
-                return new Member(
-                        name,
-                        contact,
-                        email,
-                        password,
-                        mbti
-                );
-        }
+    public Member toEntity() {
+        return new Member(
+                name,
+                contact,
+                email,
+                password,
+                mbti
+        );
+    }
 }

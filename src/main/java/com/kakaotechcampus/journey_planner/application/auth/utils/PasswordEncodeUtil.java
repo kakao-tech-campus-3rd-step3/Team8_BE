@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class PasswordEncodeUtil {
     private final PasswordEncoder bCryptPasswordEncoder;
 
-    public void passwordEncoding(Member member){
+    public void passwordEncoding(Member member) {
         member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
     }
 }

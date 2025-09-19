@@ -14,4 +14,5 @@ public record CreatePlanRequest(
         LocalDate startDate,
         @NotNull(message = "종료일은 필수 값입니다.")
         LocalDate endDate
-) {}
+) {
+}
