@@ -1,0 +1,525 @@
+asyncapi: 3.0.0
+info:
+  title: 실시간 여행 계획 협업 API
+  version: 1.2.0
+  description: |
+    STOMP over WebSocket을 사용한 실시간 여행 계획(waypoints, memos, routes) 동기화 API 명세입니다.
+    클라이언트는 '/topic/plans/{planId}/...'를 구독하여 업데이트를 받고,
+    '/app/plans/{planId}/...'로 메시지를 보내 데이터를 조작합니다.
+
+servers:
+  production:
+    host: 'localhost:8080'
+    pathname: /ws
+    protocol: stomp
+    description: 개발 및 프로덕션 WebSocket 서버
+
+channels:
+  #============ Waypoints Channels ============
+  waypointsTopic:
+    address: /topic/plans/{planId}/waypoints
+    messages:
+      waypointInit:
+        $ref: '#/components/messages/WaypointInitEvent'
+      waypointCreate:
+        $ref: '#/components/messages/WaypointCreateEvent'
+      waypointUpdate:
+        $ref: '#/components/messages/WaypointUpdateEvent'
+      waypointDelete:
+        $ref: '#/components/messages/WaypointDeleteEvent'
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+
+  waypointsInit:
+    address: /app/plans/{planId}/waypoints/init
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+  waypointsCreate:
+    address: /app/plans/{planId}/waypoints/create
+    messages:
+      creationRequest:
+        $ref: '#/components/messages/WaypointCreationRequest'
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+  waypointsUpdate:
+    address: /app/plans/{planId}/waypoints/{waypointId}/update
+    messages:
+      updateRequest:
+        $ref: '#/components/messages/WaypointUpdateRequest'
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+      waypointId:
+        $ref: '#/components/parameters/waypointId'
+  waypointsDelete:
+    address: /app/plans/{planId}/waypoints/{waypointId}/delete
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+      waypointId:
+        $ref: '#/components/parameters/waypointId'
+
+  #============ Memos Channels ============
+  memosTopic:
+    address: /topic/plans/{planId}/memos
+    messages:
+      memoInit:
+        $ref: '#/components/messages/MemoInitEvent'
+      memoCreate:
+        $ref: '#/components/messages/MemoCreateEvent'
+      memoUpdate:
+        $ref: '#/components/messages/MemoUpdateEvent'
+      memoDelete:
+        $ref: '#/components/messages/MemoDeleteEvent'
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+
+  memosInit:
+    address: /app/plans/{planId}/memos/init
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+  memosCreate:
+    address: /app/plans/{planId}/memos/create
+    messages:
+      creationRequest:
+        $ref: '#/components/messages/MemoCreationRequest'
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+  memosUpdate:
+    address: /app/plans/{planId}/memos/{memoId}/update
+    messages:
+      updateRequest:
+        $ref: '#/components/messages/MemoUpdateRequest'
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+      memoId:
+        $ref: '#/components/parameters/memoId'
+  memosDelete:
+    address: /app/plans/{planId}/memos/{memoId}/delete
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+      memoId:
+        $ref: '#/components/parameters/memoId'
+
+  #============ Routes Channels ============
+  routesTopic:
+    address: /topic/plans/{planId}/routes
+    messages:
+      routeInit:
+        $ref: '#/components/messages/RouteInitEvent'
+      routeCreate:
+        $ref: '#/components/messages/RouteCreateEvent'
+      routeUpdate:
+        $ref: '#/components/messages/RouteUpdateEvent'
+      routeDelete:
+        $ref: '#/components/messages/RouteDeleteEvent'
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+
+  routesInit:
+    address: /app/plans/{planId}/routes/init
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+  routesCreate:
+    address: /app/plans/{planId}/routes/create
+    messages:
+      creationRequest:
+        $ref: '#/components/messages/RouteCreationRequest'
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+  routesUpdate:
+    address: /app/plans/{planId}/routes/{routeId}/update
+    messages:
+      updateRequest:
+        $ref: '#/components/messages/RouteUpdateRequest'
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+      routeId:
+        $ref: '#/components/parameters/routeId'
+  routesDelete:
+    address: /app/plans/{planId}/routes/{routeId}/delete
+    parameters:
+      planId:
+        $ref: '#/components/parameters/planId'
+      routeId:
+        $ref: '#/components/parameters/routeId'
+
+operations:
+  #============ Waypoint Operations ============
+  initWaypoints:
+    action: receive
+    channel: { $ref: '#/channels/waypointsInit' }
+    summary: Waypoint 목록 초기화 요청
+    reply:
+      channel: { $ref: '#/channels/waypointsTopic' }
+      messages: [ { $ref: '#/channels/waypointsTopic/messages/waypointInit' } ]
+  createWaypoint:
+    action: receive
+    channel: { $ref: '#/channels/waypointsCreate' }
+    summary: 새 Waypoint 생성
+    messages: [ { $ref: '#/channels/waypointsCreate/messages/creationRequest' } ]
+    reply:
+      channel: { $ref: '#/channels/waypointsTopic' }
+      messages: [ { $ref: '#/channels/waypointsTopic/messages/waypointCreate' } ]
+  updateWaypoint:
+    action: receive
+    channel: { $ref: '#/channels/waypointsUpdate' }
+    summary: 기존 Waypoint 수정
+    messages: [ { $ref: '#/channels/waypointsUpdate/messages/updateRequest' } ]
+    reply:
+      channel: { $ref: '#/channels/waypointsTopic' }
+      messages: [ { $ref: '#/channels/waypointsTopic/messages/waypointUpdate' } ]
+  deleteWaypoint:
+    action: receive
+    channel: { $ref: '#/channels/waypointsDelete' }
+    summary: Waypoint 삭제
+    reply:
+      channel: { $ref: '#/channels/waypointsTopic' }
+      messages: [ { $ref: '#/channels/waypointsTopic/messages/waypointDelete' } ]
+
+  #============ Memo Operations ============
+  initMemos:
+    action: receive
+    channel: { $ref: '#/channels/memosInit' }
+    summary: Memo 목록 초기화 요청
+    reply:
+      channel: { $ref: '#/channels/memosTopic' }
+      messages: [ { $ref: '#/channels/memosTopic/messages/memoInit' } ]
+  createMemo:
+    action: receive
+    channel: { $ref: '#/channels/memosCreate' }
+    summary: 새 Memo 생성
+    messages: [ { $ref: '#/channels/memosCreate/messages/creationRequest' } ]
+    reply:
+      channel: { $ref: '#/channels/memosTopic' }
+      messages: [ { $ref: '#/channels/memosTopic/messages/memoCreate' } ]
+  updateMemo:
+    action: receive
+    channel: { $ref: '#/channels/memosUpdate' }
+    summary: 기존 Memo 수정
+    messages: [ { $ref: '#/channels/memosUpdate/messages/updateRequest' } ]
+    reply:
+      channel: { $ref: '#/channels/memosTopic' }
+      messages: [ { $ref: '#/channels/memosTopic/messages/memoUpdate' } ]
+  deleteMemo:
+    action: receive
+    channel: { $ref: '#/channels/memosDelete' }
+    summary: Memo 삭제
+    reply:
+      channel: { $ref: '#/channels/memosTopic' }
+      messages: [ { $ref: '#/channels/memosTopic/messages/memoDelete' } ]
+
+  #============ Route Operations ============
+  initRoutes:
+    action: receive
+    channel: { $ref: '#/channels/routesInit' }
+    summary: Route 목록 초기화 요청
+    reply:
+      channel: { $ref: '#/channels/routesTopic' }
+      messages: [ { $ref: '#/channels/routesTopic/messages/routeInit' } ]
+  createRoute:
+    action: receive
+    channel: { $ref: '#/channels/routesCreate' }
+    summary: 새 Route 생성
+    messages: [ { $ref: '#/channels/routesCreate/messages/creationRequest' } ]
+    reply:
+      channel: { $ref: '#/channels/routesTopic' }
+      messages: [ { $ref: '#/channels/routesTopic/messages/routeCreate' } ]
+  updateRoute:
+    action: receive
+    channel: { $ref: '#/channels/routesUpdate' }
+    summary: 기존 Route 수정
+    messages: [ { $ref: '#/channels/routesUpdate/messages/updateRequest' } ]
+    reply:
+      channel: { $ref: '#/channels/routesTopic' }
+      messages: [ { $ref: '#/channels/routesTopic/messages/routeUpdate' } ]
+  deleteRoute:
+    action: receive
+    channel: { $ref: '#/channels/routesDelete' }
+    summary: Route 삭제
+    reply:
+      channel: { $ref: '#/channels/routesTopic' }
+      messages: [ { $ref: '#/channels/routesTopic/messages/routeDelete' } ]
+
+components:
+  parameters:
+    planId:
+      description: 계획의 고유 ID
+    waypointId:
+      description: 경유지의 고유 ID
+    memoId:
+      description: 메모의 고유 ID
+    routeId:
+      description: 경로의 고유 ID
+
+  schemas:
+    # Waypoint 스키마
+    WaypointRequest:
+      type: object
+      required: [name, address, startTime, endTime, locationCategory, xPosition, yPosition]
+      properties:
+        name:
+          type: string
+          maxLength: 20
+          description: 경유지 이름
+        description:
+          type: string
+          description: 경유지 설명
+        address:
+          type: string
+          description: 주소
+        startTime:
+          type: string
+          format: date-time
+          description: 시작 시각
+        endTime:
+          type: string
+          format: date-time
+          description: 종료 시각
+        locationCategory:
+          type: string
+          description: 위치 카테고리 (e.g., FOOD, CULTURE)
+        xPosition:
+          type: number
+          format: float
+          description: x 좌표
+        yPosition:
+          type: number
+          format: float
+          description: y 좌표
+    WaypointResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 경유지 ID
+        name:
+          type: string
+        description:
+          type: string
+        address:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        locationCategory:
+          type: string
+        xPosition:
+          type: number
+          format: float
+        yPosition:
+          type: number
+          format: float
+
+    # Memo 스키마
+    MemoRequest:
+      type: object
+      required: [title, content, xPosition, yPosition]
+      properties:
+        title:
+          type: string
+          description: 메모 제목
+        content:
+          type: string
+          description: 메모 내용
+        xPosition:
+          type: number
+          format: float
+          description: x 좌표
+        yPosition:
+          type: number
+          format: float
+          description: y 좌표
+    MemoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 메모 ID
+        title:
+          type: string
+        content:
+          type: string
+        xPosition:
+          type: number
+          format: float
+        yPosition:
+          type: number
+          format: float
+
+    # Route 스키마
+    RouteRequest:
+      type: object
+      required: [fromWaypointId, toWaypointId, title, duration, vehicleCategory]
+      properties:
+        fromWaypointId:
+          type: integer
+          format: int64
+          description: 출발 웨이포인트 ID
+        toWaypointId:
+          type: integer
+          format: int64
+          description: 도착 웨이포인트 ID
+        title:
+          type: string
+          description: 경로 제목
+        description:
+          type: string
+          description: 경로 설명
+        duration:
+          type: number
+          format: float
+          description: 예상 소요 시간 (분)
+          minimum: 0
+        vehicleCategory:
+          type: string
+          description: 이동 수단 (e.g., WALK, CAR)
+    RouteResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 경로 ID
+        planId:
+          type: integer
+          format: int64
+          description: 계획 ID
+        fromWaypointId:
+          type: integer
+          format: int64
+        toWaypointId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        description:
+          type: string
+        duration:
+          type: number
+          format: float
+        vehicleCategory:
+          type: string
+
+  messages:
+    #============ Waypoint Messages ============
+    WaypointCreationRequest:
+      summary: 새 경유지 생성을 위한 요청 페이로드
+      payload: { $ref: '#/components/schemas/WaypointRequest' }
+    WaypointUpdateRequest:
+      summary: 기존 경유지 수정을 위한 요청 페이로드
+      payload: { $ref: '#/components/schemas/WaypointRequest' }
+
+    WaypointInitEvent:
+      summary: 구독 시 전체 경유지 목록.
+      payload:
+        type: object
+        properties:
+          type: { const: WAYPOINT_INIT }
+          waypoints:
+            type: array
+            items: { $ref: '#/components/schemas/WaypointResponse' }
+    WaypointCreateEvent:
+      summary: 새로 생성된 경유지 정보.
+      payload:
+        type: object
+        properties:
+          type: { const: WAYPOINT_CREATE }
+          waypoint: { $ref: '#/components/schemas/WaypointResponse' }
+    WaypointUpdateEvent:
+      summary: 수정된 경유지 정보.
+      payload:
+        type: object
+        properties:
+          type: { const: WAYPOINT_UPDATE }
+          waypoint: { $ref: '#/components/schemas/WaypointResponse' }
+    WaypointDeleteEvent:
+      summary: 삭제된 경유지의 ID.
+      payload:
+        type: object
+        properties:
+          type: { const: WAYPOINT_DELETE }
+          waypointId: { type: integer, format: int64 }
+
+    #============ Memo Messages ============
+    MemoCreationRequest:
+      payload: { $ref: '#/components/schemas/MemoRequest' }
+    MemoUpdateRequest:
+      payload: { $ref: '#/components/schemas/MemoRequest' }
+
+    MemoInitEvent:
+      payload:
+        type: object
+        properties:
+          type: { const: MEMO_INIT }
+          memos:
+            type: array
+            items: { $ref: '#/components/schemas/MemoResponse' }
+    MemoCreateEvent:
+      payload:
+        type: object
+        properties:
+          type: { const: MEMO_CREATE }
+          memo: { $ref: '#/components/schemas/MemoResponse' }
+    MemoUpdateEvent:
+      payload:
+        type: object
+        properties:
+          type: { const: MEMO_UPDATE }
+          memo: { $ref: '#/components/schemas/MemoResponse' }
+    MemoDeleteEvent:
+      payload:
+        type: object
+        properties:
+          type: { const: MEMO_DELETE }
+          memoId: { type: integer, format: int64 }
+
+    #============ Route Messages ============
+    RouteCreationRequest:
+      payload: { $ref: '#/components/schemas/RouteRequest' }
+    RouteUpdateRequest:
+      payload: { $ref: '#/components/schemas/RouteRequest' }
+
+    RouteInitEvent:
+      payload:
+        type: object
+        properties:
+          type: { const: ROUTE_INIT }
+          routes:
+            type: array
+            items: { $ref: '#/components/schemas/RouteResponse' }
+    RouteCreateEvent:
+      payload:
+        type: object
+        properties:
+          type: { const: ROUTE_CREATE }
+          route: { $ref: '#/components/schemas/RouteResponse' }
+    RouteUpdateEvent:
+      payload:
+        type: object
+        properties:
+          type: { const: ROUTE_UPDATE }
+          route: { $ref: '#/components/schemas/RouteResponse' }
+    RouteDeleteEvent:
+      payload:
+        type: object
+        properties:
+          type: { const: ROUTE_DELETE }
+          routeId: { type: integer, format: int64 }
