@@ -45,14 +45,14 @@ public class WaypointController {
     public void updateWaypoint(
             @DestinationVariable Long planId,
             @DestinationVariable Long waypointId,
-            @Valid WaypointRequest request) {
+            @Valid @Payload WaypointRequest request) {
 
         WaypointResponse response = waypointService.updateWaypoint(planId, waypointId, request);
 
         messagingUtil.sendResponse(planId, destination, "WAYPOINT_UPDATE", "waypoint", response);
     }
 
-     // waypoint 삭제 후 해당 Id 전송
+    // waypoint 삭제 후 해당 Id 전송
     @MessageMapping("/{waypointId}/delete")
     public void deleteWaypoint(
             @DestinationVariable Long planId,
