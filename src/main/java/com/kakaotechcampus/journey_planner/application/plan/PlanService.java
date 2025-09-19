@@ -1,6 +1,7 @@
 package com.kakaotechcampus.journey_planner.application.plan;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
+import com.kakaotechcampus.journey_planner.domain.plan.PlanMapper;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
@@ -21,46 +22,21 @@ public class PlanService {
 
     @Transactional
     public PlanResponse createPlan(CreatePlanRequest request) {
-        Plan plan = new Plan(
-                request.title(),
-                request.description(),
-                request.startDate(),
-                request.endDate()
-        );
+        Plan plan = PlanMapper.toEntity(request);
         Plan saved = planRepository.save(plan);
-        return new PlanResponse(
-                saved.getId(),
-                saved.getTitle(),
-                saved.getDescription(),
-                saved.getStartDate(),
-                saved.getEndDate()
-        );
+        return PlanMapper.toResponse(saved);
     }
 
     @Transactional
     public PlanResponse getPlan(Long id) {
         Plan plan = planRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-        return new PlanResponse(
-                plan.getId(),
-                plan.getTitle(),
-                plan.getDescription(),
-                plan.getStartDate(),
-                plan.getEndDate()
-        );
+        return PlanMapper.toResponse(plan);
     }
 
     @Transactional(readOnly = true)
     public List<PlanResponse> getAllPlans() {
-        return planRepository.findAll().stream()
-                .map(plan -> new PlanResponse(
-                        plan.getId(),
-                        plan.getTitle(),
-                        plan.getDescription(),
-                        plan.getStartDate(),
-                        plan.getEndDate()
-                ))
-                .toList();
+        return PlanMapper.toResponseList(planRepository.findAll());
     }
 
     @Transactional
@@ -75,13 +51,7 @@ public class PlanService {
                 request.endDate()
         );
 
-        return new PlanResponse(
-                plan.getId(),
-                plan.getTitle(),
-                plan.getDescription(),
-                plan.getStartDate(),
-                plan.getEndDate()
-        );
+        return PlanMapper.toResponse(plan);
     }
 
     @Transactional
