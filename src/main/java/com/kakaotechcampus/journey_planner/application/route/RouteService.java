@@ -37,10 +37,8 @@ public class RouteService {
         Waypoint toWaypoint = waypointRepository.findById(request.toWaypointId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
 
-        // 같은 플랜 소속인지 검증
-        if (!fromWaypoint.getPlan().getId().equals(planId) || !toWaypoint.getPlan().getId().equals(planId)) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT, "웨이포인트가 해당 플랜에 속해있지 않습니다.");
-        }
+
+        validateWaypointsBelongToPlan(planId, fromWaypoint, toWaypoint);
 
         Route route = RouteMapper.toEntity(plan, fromWaypoint, toWaypoint, request);
 
@@ -72,7 +70,7 @@ public class RouteService {
 
     @Transactional
     public void delete(Long planId, Long routeId) {
-        Route route = routeRepository.findByIdAndPlanId(routeId,planId)
+        Route route = routeRepository.findByIdAndPlanId(routeId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
         routeRepository.delete(route);
@@ -80,11 +78,21 @@ public class RouteService {
 
     // planId에 속한 모든 route 조회
     public List<RouteResponse> getRoutes(Long planId) {
-        if (planRepository.existsById(planId)){
+        if (planRepository.existsById(planId)) {
             List<Route> routes = routeRepository.findAllByPlanId(planId);
             return RouteMapper.toResponseList(routes);
         }
         throw new BusinessException(ErrorCode.PLAN_NOT_FOUND);
     }
 
+
+    private void validateWaypointsBelongToPlan(Long planId, Waypoint fromWaypoint, Waypoint toWaypoint) {
+        if (!fromWaypoint.getPlan().getId().equals(planId) ||
+                !toWaypoint.getPlan().getId().equals(planId)) {
+            throw new BusinessException(
+                    ErrorCode.INVALID_INPUT,
+                    "웨이포인트가 해당 플랜에 속해있지 않습니다."
+            );
+        }
+    }
 }
