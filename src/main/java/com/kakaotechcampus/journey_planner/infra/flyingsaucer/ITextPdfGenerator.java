@@ -27,6 +27,7 @@ public class ITextPdfGenerator implements PdfGenerator {
             renderer.setDocumentFromString(htmlConverter.convert(DEFAULT_TEMPLATE));
             renderer.layout();
             renderer.createPDF(outputStream);
+            outputStream.flush();
         }catch(DocumentException | IOException e){
             throw new BusinessException(CANNOT_CREATE);
         }

@@ -3,6 +3,7 @@ package com.kakaotechcampus.journey_planner.domain.route;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -11,7 +12,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Table(name = "route")
 @Getter
 @DynamicUpdate
-@NoArgsConstructor()
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Route {
 
     @Id

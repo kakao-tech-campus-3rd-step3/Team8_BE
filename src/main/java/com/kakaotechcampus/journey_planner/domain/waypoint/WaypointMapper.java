@@ -1,7 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.waypoint;
 
-import com.kakaotechcampus.journey_planner.presentation.dto.waypoint.WaypointRequest;
-import com.kakaotechcampus.journey_planner.presentation.dto.waypoint.WaypointResponse;
+import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request.WaypointRequest;
+import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.response.WaypointResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;

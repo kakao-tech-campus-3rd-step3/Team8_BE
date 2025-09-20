@@ -28,6 +28,7 @@ public class JwtProvider {
         this.accessTokenValidityInMilliseconds = expiration;
         this.refreshTokenValidityInMilliseconds = refreshTokenExpiration;
     }
+
     public String generateAccessToken(Member member) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + accessTokenValidityInMilliseconds);

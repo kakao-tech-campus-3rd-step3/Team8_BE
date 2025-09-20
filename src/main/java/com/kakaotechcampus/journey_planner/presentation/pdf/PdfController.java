@@ -1,5 +1,6 @@
 package com.kakaotechcampus.journey_planner.presentation.pdf;
 
+import com.kakaotechcampus.journey_planner.application.pdf.PdfService;
 import com.kakaotechcampus.journey_planner.presentation.support.PdfResponseFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,13 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 @RequestMapping("/v1/files")
 @RequiredArgsConstructor
 public class PdfController {
-    private final PdfResponseFactory pdfResponseFactory;
+    private final PdfService pdfService;
 
     @GetMapping
     public ResponseEntity<StreamingResponseBody> downloadJourneyPlan(){
+        StreamingResponseBody responseBody = pdfService::createPDF;
         return ResponseEntity.ok()
-                .headers(pdfResponseFactory.getPdfHeader(""))
-                .body(pdfResponseFactory.linkToPdfFile());
+                .headers(PdfResponseFactory.getPdfHeader("Journey Planner PDF"))
+                .body(responseBody);
     }
 }

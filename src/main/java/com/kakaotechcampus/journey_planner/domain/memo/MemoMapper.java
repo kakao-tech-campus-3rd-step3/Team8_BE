@@ -1,7 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.memo;
 
-import com.kakaotechcampus.journey_planner.presentation.dto.memo.MemoRequest;
-import com.kakaotechcampus.journey_planner.presentation.dto.memo.MemoResponse;
+import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
+import com.kakaotechcampus.journey_planner.presentation.memo.dto.response.MemoResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;

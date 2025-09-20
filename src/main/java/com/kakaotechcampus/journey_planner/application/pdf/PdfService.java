@@ -9,7 +9,7 @@ import java.io.OutputStream;
 @Service
 @RequiredArgsConstructor
 public class PdfService {
-    public final PdfGenerator pdfGenerator;
+    private final PdfGenerator pdfGenerator;
 
     public void createPDF(OutputStream outputStream) {
         pdfGenerator.createPdf(outputStream);

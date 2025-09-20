@@ -46,7 +46,7 @@ dependencies {
 
     // * Lombok
 	compileOnly 'org.projectlombok:lombok'
-  annotationProcessor 'org.projectlombok:lombok'
+  	annotationProcessor 'org.projectlombok:lombok'
 
     // * H2 Database
 	runtimeOnly 'com.h2database:h2'
@@ -65,12 +65,19 @@ dependencies {
 	// iText 2.0.8 (equivalent to iText-2.0.8.jar)
 	implementation 'com.lowagie:itext:2.0.8'
 
+	// * iText 2.0.8
 	implementation 'ognl:ognl:3.1.26'
+
+	// * Password Encoder ( in spring security )
+	implementation 'org.springframework.security:spring-security-crypto:5.7.0'
   
 	// * Json Web Token
 	compileOnly 'io.jsonwebtoken:jjwt-api:0.12.6'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+	// * Swagger UI
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 }
 
 tasks.named('test') {

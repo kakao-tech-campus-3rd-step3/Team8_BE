@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RouteRepository extends JpaRepository<Route, Long> {
-    List<Route> findAllByPlan_Id(Long planId);
+    List<Route> findAllByPlanId(Long planId);
     Optional<Route> findByIdAndPlanId(Long id, Long planId);
 }
