@@ -1,7 +1,10 @@
 name: Deploy to EC2
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Generate and Commit AsyncAPI Docs to Project"]
+    types:
+      - completed
     branches:
       - develop
 
@@ -9,6 +12,8 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    # 문서 생성에 실패해도 배포는 진행
+    if: ${{ always() }}
     steps:
       # 1. 소스 코드 체크아웃
       - name: Checkout Source Code
