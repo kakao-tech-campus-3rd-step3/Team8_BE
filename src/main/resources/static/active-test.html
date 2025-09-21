@@ -86,7 +86,8 @@
     if(!planId){ alert("Plan ID를 입력해주세요."); return; }
     if(client && client.connected){ log("이미 연결되어 있습니다.", "info"); return; }
     client = new StompJs.Client({
-      webSocketFactory: ()=> new SockJS("http://localhost:8080/ws"), reconnectDelay: 5000
+      // 같은 서버를 쓰는 경우 "/ws"로 가능, 만약 프론트와 백의 서버가 다르다면 "localhost:8080/ws" 와 같이 전체를 입력
+      webSocketFactory: ()=> new SockJS("/ws"), reconnectDelay: 5000
     });
     client.onConnect = ()=>{
       log(`✅ Connected to WebSocket for Plan ID: ${planId}`, "success");
@@ -169,12 +170,8 @@
             log(`⚠️ Unknown route message type: ${payload.type}`, "error");
             return;
         }
-        renderItems(); // routes가 변경되어도 전체를 다시 그려야 함
+        renderItems();
       });
-
-      // ==================================================================
-      // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ 이 부분 수정 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-      // ==================================================================
 
       client.subscribe(`/user/queue/errors`, (msg)=>{
         log("❌ Error: "+msg.body,"error");
@@ -581,12 +578,6 @@
 
     renderRoutes();
   }
-
-  // interact.js 리스너에서 드래그 중인 카드에 클래스 추가/제거 로직 수정
-  // (createItemCard 함수 내부 interact 리스너 수정)
-  // start 리스너 추가: event.target.classList.add('interact-dragging');
-  // end 리스너 수정: event.target.classList.remove('interact-dragging');
-  // (이 코드는 이미 간접적으로 반영되어 있으므로, 설명만으로 충분)
 
 </script>
 </body>
