@@ -1,7 +1,6 @@
 package com.kakaotechcampus.journey_planner.application.auth;
 
 import com.kakaotechcampus.journey_planner.application.auth.jwt.JwtProvider;
-import com.kakaotechcampus.journey_planner.application.auth.utils.PasswordEncodeUtil;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.member.MemberRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
@@ -10,6 +9,7 @@ import com.kakaotechcampus.journey_planner.presentation.auth.dto.request.LoginRe
 import com.kakaotechcampus.journey_planner.presentation.auth.dto.request.SignUpRequestDto;
 import com.kakaotechcampus.journey_planner.presentation.auth.dto.response.TokenResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
-    private final PasswordEncodeUtil passwordEncodeUtil;
+    private final PasswordEncoder bCryptPasswordEncoder;
 
     public TokenResponseDto signIn(SignUpRequestDto signUpRequestDto) {
         String email = signUpRequestDto.email();
@@ -26,7 +26,7 @@ public class AuthService {
         }
 
         Member member = signUpRequestDto.toEntity();
-        passwordEncodeUtil.passwordEncoding(member);
+        member.encodePassword(bCryptPasswordEncoder);
         Member savedMember = memberRepository.save(member);
 
         String accessToken = jwtProvider.generateAccessToken(savedMember);
