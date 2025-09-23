@@ -1,10 +1,10 @@
 package com.kakaotechcampus.journey_planner.application.memo;
 
+import com.kakaotechcampus.journey_planner.application.plan.PlanService;
 import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
-import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
@@ -19,16 +19,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemoService {
 
-    private final PlanRepository planRepository;
     private final MemoRepository memoRepository;
+    private final PlanService planService;
 
     @Transactional
     public MemoResponse createMemo(Long planId, MemoRequest request) {
         Memo memo = MemoMapper.toEntity(request);
 
-        Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-
+        Plan plan = planService.getPlanEntity(planId);
         memo.assignToPlan(plan);
         Memo savedMemo = memoRepository.save(memo);
 
@@ -59,11 +57,9 @@ public class MemoService {
     }
 
     public List<MemoResponse> getMemos(Long planId) {
-        if (planRepository.existsById(planId)) {
-            List<Memo> memos = memoRepository.findByPlanId(planId);
-            return MemoMapper.toResponseList(memos);
-        }
-        throw new BusinessException(ErrorCode.PLAN_NOT_FOUND);
-    }
+        Plan plan = planService.getPlanEntity(planId);
 
+        List<Memo> memos = memoRepository.findByPlanId(plan.getId());
+        return MemoMapper.toResponseList(memos);
+    }
 }

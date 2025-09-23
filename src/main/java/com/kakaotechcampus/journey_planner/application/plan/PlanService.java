@@ -61,4 +61,9 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
+    @Transactional(readOnly = true)
+    public Plan getPlanEntity(Long id) {
+        return planRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+    }
 }

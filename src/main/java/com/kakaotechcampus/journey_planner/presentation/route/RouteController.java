@@ -19,21 +19,21 @@ public class RouteController {
 
     private final RouteService routeService;
     private final MessagingUtil messagingUtil;
-    static final String destination = "routes";
+    private static final String DESTINATION = "routes";
 
     // 클라이언트가 구독 후 초기 상태 요청 시 전체 Route 전송
     @MessageMapping("/init")
     public void initRoutes(@DestinationVariable Long planId) {
         List<RouteResponse> routeResponses = routeService.getRoutes(planId);
 
-        messagingUtil.sendResponse(planId, destination, "ROUTE_INIT", "routes", routeResponses);
+        messagingUtil.sendResponse(planId, DESTINATION, "ROUTE_INIT", "routes", routeResponses);
     }
 
     // 새 route 생성 후 단건 전송
     @MessageMapping("/create")
     public void createRoute(@DestinationVariable Long planId, @Valid @Payload RouteRequest request) {
         RouteResponse response = routeService.createRoute(planId, request);
-        messagingUtil.sendResponse(planId, destination, "ROUTE_CREATE", "route", response);
+        messagingUtil.sendResponse(planId, DESTINATION, "ROUTE_CREATE", "route", response);
     }
 
     // route 수정 후 단건 전송
@@ -44,13 +44,13 @@ public class RouteController {
             @Valid @Payload RouteRequest request
     ) {
         RouteResponse response = routeService.updateRoute(planId, routeId, request);
-        messagingUtil.sendResponse(planId, destination, "ROUTE_UPDATE", "route", response);
+        messagingUtil.sendResponse(planId, DESTINATION, "ROUTE_UPDATE", "route", response);
     }
 
     // route 삭제 후 해당 Id 전송
     @MessageMapping("/{routeId}/delete")
     public void deleteRoute(@DestinationVariable Long planId, @DestinationVariable Long routeId) {
         routeService.deleteRoute(planId, routeId);
-        messagingUtil.sendResponse(planId, destination, "ROUTE_DELETE", "routeId", routeId);
+        messagingUtil.sendResponse(planId, DESTINATION, "ROUTE_DELETE", "routeId", routeId);
     }
 }
