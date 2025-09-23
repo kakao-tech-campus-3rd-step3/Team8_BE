@@ -27,7 +27,7 @@ public class PlanService {
         return PlanMapper.toResponse(savedPlan);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public PlanResponse getPlan(Long id) {
         Plan plan = planRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
