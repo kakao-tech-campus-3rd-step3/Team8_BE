@@ -11,9 +11,9 @@ import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.request.RouteRequest;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.response.RouteResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -85,5 +85,11 @@ public class RouteService {
                     "웨이포인트가 해당 플랜에 속해있지 않습니다."
             );
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Route getRouteEntity(Long id) {
+        return routeRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
     }
 }
