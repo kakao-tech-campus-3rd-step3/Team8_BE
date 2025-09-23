@@ -20,7 +20,7 @@ public class WaypointController {
 
     private final WaypointService waypointService;
     private final MessagingUtil messagingUtil;
-    static final String destination = "waypoints";
+    private static final String DESTINATION = "waypoints";
 
     //클라이언트가 구독 후 초기 상태 요청 시 전체 waypoint 전송
     @MessageMapping("/init")
@@ -28,7 +28,7 @@ public class WaypointController {
 
         List<WaypointResponse> waypointResponses = waypointService.getWaypoints(planId);
 
-        messagingUtil.sendResponse(planId, destination, "WAYPOINT_INIT", "waypoints", waypointResponses);
+        messagingUtil.sendResponse(planId, DESTINATION, "WAYPOINT_INIT", "waypoints", waypointResponses);
     }
 
     // 새 waypoint 생성 후 단건 전송
@@ -37,7 +37,7 @@ public class WaypointController {
 
         WaypointResponse response = waypointService.createWaypoint(planId, request);
 
-        messagingUtil.sendResponse(planId, destination, "WAYPOINT_CREATE", "waypoint", response);
+        messagingUtil.sendResponse(planId, DESTINATION, "WAYPOINT_CREATE", "waypoint", response);
     }
 
     // waypoint 수정 후 단건 전송
@@ -49,7 +49,7 @@ public class WaypointController {
 
         WaypointResponse response = waypointService.updateWaypoint(planId, waypointId, request);
 
-        messagingUtil.sendResponse(planId, destination, "WAYPOINT_UPDATE", "waypoint", response);
+        messagingUtil.sendResponse(planId, DESTINATION, "WAYPOINT_UPDATE", "waypoint", response);
     }
 
     // waypoint 삭제 후 해당 Id 전송
@@ -60,6 +60,6 @@ public class WaypointController {
 
         waypointService.deleteWaypoint(planId, waypointId);
 
-        messagingUtil.sendResponse(planId, destination, "WAYPOINT_DELETE", "waypointId", waypointId);
+        messagingUtil.sendResponse(planId, DESTINATION, "WAYPOINT_DELETE", "waypointId", waypointId);
     }
 }
