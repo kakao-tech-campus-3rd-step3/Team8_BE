@@ -45,6 +45,8 @@ public class MemoService {
                 request.yPosition()
         );
 
+        assignTarget(memo, request);
+
         return MemoMapper.toResponse(memo);
     }
 
@@ -62,4 +64,23 @@ public class MemoService {
         List<Memo> memos = memoRepository.findByPlanId(plan.getId());
         return MemoMapper.toResponseList(memos);
     }
+
+    private void assignTarget(Memo memo, MemoRequest request) {
+        if (request.waypointId() != null) {
+            memo.assignToWayPoint(
+                    waypointRepository.findById(request.waypointId())
+                            .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND))
+            );
+        } else if (request.routeId() != null) {
+            memo.assignToRoute(
+                    routeRepository.findById(request.routeId())
+                            .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND))
+            );
+        } else {
+            // 둘 다 null이면 Plan에만 속하는 Memo
+            memo.assignToWayPoint(null);
+            memo.assignToRoute(null);
+        }
+    }
+
 }
