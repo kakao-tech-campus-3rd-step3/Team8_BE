@@ -21,7 +21,7 @@ public enum ErrorCode {
 
     // Waypoint
     WAYPOINT_NOT_FOUND(HttpStatus.NOT_FOUND, "WAYPOINT_NOT_FOUND", "해당 웨이포인트를 찾을 수 없습니다."),
-
+    INVALID_LOCATION_CATEGORY(HttpStatus.BAD_REQUEST, "WAYPOINT_NOT_FOUND", "잘못된 카테고리 입니다"),
     //Route
     ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND, "ROUTE_NOT_FOUND", "해당 경로를 찾을 수 없습니다."),
 
