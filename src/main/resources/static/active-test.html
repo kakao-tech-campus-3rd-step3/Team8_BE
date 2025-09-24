@@ -66,6 +66,15 @@
 </div>
 
 <script>
+  const subCategoryOptions = {
+    DEFAULT: ["DEFAULT"],
+    FOOD: ["RESTAURANT", "CAFE", "BAR"],
+    CULTURE: ["MUSEUM", "LIBRARY", "CENTER"],
+    ACCOMMODATION: ["HOTEL"],
+    TOUR: ["STORE", "LANDMARK", "ACTIVITY"],
+    TRANSPORTATION: ["AIRPORT", "TERMINAL", "STATION"]
+  };
+
   let client = null;
   let waypoints = [], memos = [], routes = [];
   let isRouteCreationMode = false, startWaypoint = null;
@@ -232,21 +241,45 @@
     }
 
     if (type === 'waypoint') {
+      const selectedCategory = item?.locationCategory ?? "DEFAULT";
+      const selectedSubCategory = item?.locationSubCategory ?? "DEFAULT";
+
+      const subOptions = (subCategoryOptions[selectedCategory] || [])
+              .map(opt => `<option value="${opt}" ${opt === selectedSubCategory ? "selected" : ""}>${opt}</option>`)
+              .join("");
+
       bodyHtml = `
-            <label class="flex flex-col">이름<input id="modalName" class="border rounded p-2" value="${item?.name ?? ''}"/></label>
-            <label class="flex flex-col">카테고리<select id="modalCategory" class="border rounded p-2">
-                <option value="DEFAULT" ${item?.locationCategory === 'DEFAULT' ? 'selected' : ''}>DEFAULT</option>
-                <option value="FOOD" ${item?.locationCategory === 'FOOD' ? 'selected' : ''}>FOOD</option>
-                <option value="CULTURE" ${item?.locationCategory === 'CULTURE' ? 'selected' : ''}>CULTURE</option>
-                <option value="ACCOMMODATION" ${item?.locationCategory === 'ACCOMMODATION' ? 'selected' : ''}>ACCOMMODATION</option>
-                <option value="TOUR" ${item?.locationCategory === 'TOUR' ? 'selected' : ''}>TOUR</option>
-                <option value="TRANSPORTATION" ${item?.locationCategory === 'TRANSPORTATION' ? 'selected' : ''}>TRANSPORTATION</option>
-            </select></label>
-            <label class="flex flex-col">설명<input id="modalDescription" class="border rounded p-2" value="${item?.description ?? ''}"/></label>
-            <label class="flex flex-col">주소<input id="modalAddress" class="border rounded p-2" value="${item?.address ?? ''}"/></label>
-            <label class="flex flex-col">시작 시간<input id="modalStartTime" type="datetime-local" class="border rounded p-2" value="${toLocalDatetimeString(item?.startTime)}"/></label>
-            <label class="flex flex-col">종료 시간<input id="modalEndTime" type="datetime-local" class="border rounded p-2" value="${toLocalDatetimeString(item?.endTime)}"/></label>
-        `;
+    <label class="flex flex-col">이름
+      <input id="modalName" class="border rounded p-2" value="${item?.name ?? ''}"/>
+    </label>
+    <label class="flex flex-col">대분류
+      <select id="modalCategory" class="border rounded p-2" onchange="updateSubCategoryOptions()">
+          <option value="DEFAULT" ${selectedCategory === 'DEFAULT' ? 'selected' : ''}>DEFAULT</option>
+          <option value="FOOD" ${selectedCategory === 'FOOD' ? 'selected' : ''}>FOOD</option>
+          <option value="CULTURE" ${selectedCategory === 'CULTURE' ? 'selected' : ''}>CULTURE</option>
+          <option value="ACCOMMODATION" ${selectedCategory === 'ACCOMMODATION' ? 'selected' : ''}>ACCOMMODATION</option>
+          <option value="TOUR" ${selectedCategory === 'TOUR' ? 'selected' : ''}>TOUR</option>
+          <option value="TRANSPORTATION" ${selectedCategory === 'TRANSPORTATION' ? 'selected' : ''}>TRANSPORTATION</option>
+      </select>
+    </label>
+    <label class="flex flex-col">소분류
+      <select id="modalSubCategory" class="border rounded p-2">
+        ${subOptions}
+      </select>
+    </label>
+    <label class="flex flex-col">설명
+      <input id="modalDescription" class="border rounded p-2" value="${item?.description ?? ''}"/>
+    </label>
+    <label class="flex flex-col">주소
+      <input id="modalAddress" class="border rounded p-2" value="${item?.address ?? ''}"/>
+    </label>
+    <label class="flex flex-col">시작 시간
+      <input id="modalStartTime" type="datetime-local" class="border rounded p-2" value="${toLocalDatetimeString(item?.startTime)}"/>
+    </label>
+    <label class="flex flex-col">종료 시간
+      <input id="modalEndTime" type="datetime-local" class="border rounded p-2" value="${toLocalDatetimeString(item?.endTime)}"/>
+    </label>
+  `;
     } else if (type === 'memo') {
       bodyHtml = `
             <label class="flex flex-col">제목<input id="modalName" class="border rounded p-2" value="${item?.title ?? ''}"/></label>
@@ -296,6 +329,7 @@
         startTime: document.getElementById("modalStartTime").value || null,
         endTime: document.getElementById("modalEndTime").value || null,
         locationCategory: document.getElementById("modalCategory").value,
+        locationSubCategory: document.getElementById("modalSubCategory").value, // ✅ 추가
         xPosition: originalWp.xPosition,
         yPosition: originalWp.yPosition
       };
@@ -577,6 +611,14 @@
     });
 
     renderRoutes();
+  }
+
+  function updateSubCategoryOptions() {
+    const category = document.getElementById("modalCategory").value;
+    const subSelect = document.getElementById("modalSubCategory");
+    subSelect.innerHTML = (subCategoryOptions[category] || [])
+            .map(opt => `<option value="${opt}">${opt}</option>`)
+            .join("");
   }
 
 </script>
