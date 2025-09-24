@@ -6,6 +6,7 @@ import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanRe
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -21,7 +22,7 @@ public class PlanController {
     @PostMapping
     public ResponseEntity<PlanResponse> createPlan(@Valid @RequestBody CreatePlanRequest request) {
         PlanResponse response = planService.createPlan(request);
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Plan 단건 조회
