@@ -1,6 +1,8 @@
 package com.kakaotechcampus.journey_planner.presentation.plan;
 
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
+import com.kakaotechcampus.journey_planner.domain.member.Member;
+import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
@@ -34,8 +36,8 @@ public class PlanController {
 
     // Plan 전체 조회
     @GetMapping
-    public ResponseEntity<List<PlanResponse>> getAllPlans() {
-        List<PlanResponse> response = planService.getAllPlans();
+    public ResponseEntity<List<PlanResponse>> getAllPlans(@LoginMember Member member) {
+        List<PlanResponse> response = planService.getAllPlans(member.getId());
         return ResponseEntity.ok(response);
     }
 
