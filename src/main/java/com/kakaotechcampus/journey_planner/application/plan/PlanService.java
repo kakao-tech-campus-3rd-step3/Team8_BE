@@ -36,7 +36,7 @@ public class PlanService {
 
     @Transactional(readOnly = true)
     public List<PlanResponse> getAllPlans(Long userId) {
-        return PlanMapper.toResponseList(planRepository.getAllPlanByUserId());
+        return PlanMapper.toResponseList(planRepository.getAllPlanByUserId(userId));
     }
 
     @Transactional
