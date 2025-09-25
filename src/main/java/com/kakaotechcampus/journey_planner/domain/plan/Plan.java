@@ -1,5 +1,6 @@
 package com.kakaotechcampus.journey_planner.domain.plan;
 
+import com.kakaotechcampus.journey_planner.domain.member.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,6 +30,9 @@ public class Plan {
 
     @NotNull(message = "종료일은 필수 값입니다.")
     private LocalDate endDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
     public Plan(String title, String description, LocalDate startDate, LocalDate endDate) {
         this.title = title;
