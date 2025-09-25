@@ -22,8 +22,11 @@ public class PlanController {
 
     // Plan 생성
     @PostMapping
-    public ResponseEntity<PlanResponse> createPlan(@Valid @RequestBody CreatePlanRequest request) {
-        PlanResponse response = planService.createPlan(request);
+    public ResponseEntity<PlanResponse> createPlan(
+            @Valid @RequestBody CreatePlanRequest request,
+            @LoginMember Member member
+    ) {
+        PlanResponse response = planService.createPlan(request, member);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

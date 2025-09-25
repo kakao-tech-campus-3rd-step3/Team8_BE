@@ -1,5 +1,6 @@
 package com.kakaotechcampus.journey_planner.application.plan;
 
+import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanMapper;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
@@ -21,8 +22,8 @@ public class PlanService {
     private final PlanRepository planRepository;
 
     @Transactional
-    public PlanResponse createPlan(CreatePlanRequest request) {
-        Plan plan = PlanMapper.toEntity(request);
+    public PlanResponse createPlan(CreatePlanRequest request, Member member) {
+        Plan plan = PlanMapper.toEntity(request, member);
         Plan savedPlan = planRepository.save(plan);
         return PlanMapper.toResponse(savedPlan);
     }
