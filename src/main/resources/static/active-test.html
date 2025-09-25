@@ -284,6 +284,12 @@
       bodyHtml = `
             <label class="flex flex-col">제목<input id="modalName" class="border rounded p-2" value="${item?.title ?? ''}"/></label>
             <label class="flex flex-col">내용<textarea id="modalContent" class="border rounded p-2 h-24">${item?.content ?? ''}</textarea></label>
+            <label class="flex flex-col">Waypoint ID (선택)
+            <input id="modalWaypointId" type="number" class="border rounded p-2" value="${item?.waypointId ?? ''}"/>
+        </label>
+        <label class="flex flex-col">Route ID (선택)
+            <input id="modalRouteId" type="number" class="border rounded p-2" value="${item?.routeId ?? ''}"/>
+        </label>
         `;
     } else if (type === 'route') {
       const fromWpName = waypoints.find(wp => wp.id === (item?.fromWaypointId ?? data.fromId))?.name;
@@ -346,6 +352,8 @@
       data = {
         title: document.getElementById("modalName").value,
         content: document.getElementById("modalContent").value,
+        waypointId: parseInt(document.getElementById("modalWaypointId").value) || null,
+        routeId: parseInt(document.getElementById("modalRouteId").value) || null,
         xPosition: originalMemo.xPosition,
         yPosition: originalMemo.yPosition
       };
