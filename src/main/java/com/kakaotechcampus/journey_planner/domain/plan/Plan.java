@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -16,7 +17,6 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 public class Plan {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,11 +34,18 @@ public class Plan {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    public Plan(String title, String description, LocalDate startDate, LocalDate endDate) {
+    public Plan(
+            String title,
+            String description,
+            LocalDate startDate,
+            LocalDate endDate,
+            Member member
+    ) {
         this.title = title;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.member = member;
     }
 
     public void update(String title, String description, LocalDate startDate, LocalDate endDate) {
