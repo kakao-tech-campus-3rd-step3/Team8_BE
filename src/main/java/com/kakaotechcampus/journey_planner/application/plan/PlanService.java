@@ -26,7 +26,7 @@ public class PlanService {
 
     @Transactional
     public PlanResponse createPlan(Member member, CreatePlanRequest request) {
-        Plan plan = PlanMapper.toEntity(request);
+        Plan plan = PlanMapper.toEntity(request, member);
         Plan savedPlan = planRepository.save(plan);
         MemberPlan savedMemberPlan = memberPlanService.createMemberPlan(member, savedPlan);
         member.addMemberPlan(savedMemberPlan);
