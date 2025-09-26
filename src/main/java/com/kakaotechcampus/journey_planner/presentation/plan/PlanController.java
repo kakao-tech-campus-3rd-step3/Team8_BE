@@ -60,8 +60,11 @@ public class PlanController {
 
     // Plan 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlan(@PathVariable Long id) {
-        planService.deletePlan(id);
+    public ResponseEntity<Void> deletePlan(
+            @LoginMember Member member,
+            @PathVariable Long id
+    ) {
+        planService.deletePlan(member, id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -69,9 +69,13 @@ public class PlanService {
     }
 
     @Transactional
-    public void deletePlan(Long id) {
+    public void deletePlan(Member member, Long id) {
         Plan plan = planRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+        boolean isMemberInPlan = plan.hasMember(member);
+        if (!isMemberInPlan) {
+            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
+        }
         planRepository.delete(plan);
     }
 
