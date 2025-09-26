@@ -11,6 +11,7 @@ public enum ErrorCode {
 
     // * PLAN
     PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "PLAN_NOT_FOUND", "해당 계획을 찾을 수 없습니다."),
+    PLAN_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "PLAN_ACCESS_DENIED", "해당 계획에 접근할 권한이 없습니다."),
 
     // * Resource
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "NO_RESOURCE", "리소스를 찾을 수 없습니다."),
