@@ -4,6 +4,7 @@ import com.kakaotechcampus.journey_planner.application.plan.PlanService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
+import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -86,5 +88,13 @@ public class PlanController {
     ) {
         planService.acceptInvitation(member, invitationId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/invitations")
+    public ResponseEntity<List<InvitationResponse>> getInvitations(
+            @LoginMember Member member
+    ) {
+        List<InvitationResponse> invitations = planService.getInvitations(member);
+        return ResponseEntity.status(HttpStatus.OK).body(invitations);
     }
 }

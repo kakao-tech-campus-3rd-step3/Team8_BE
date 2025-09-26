@@ -5,6 +5,7 @@ import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.member.MemberRepository;
 import com.kakaotechcampus.journey_planner.domain.memberplan.InvitationStatus;
 import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlan;
+import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlanMapper;
 import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlanRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanMapper;
@@ -12,6 +13,7 @@ import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
+import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import lombok.RequiredArgsConstructor;
@@ -124,5 +126,11 @@ public class PlanService {
         }
 
         invitation.accept();
+    }
+
+    @Transactional(readOnly = true)
+    public List<InvitationResponse> getInvitations(Member member) {
+        List<MemberPlan> invitations = memberPlanRepository.findByMemberAndStatus(member, InvitationStatus.INVITED);
+        return MemberPlanMapper.toInvitationResponse(invitations);
     }
 }
