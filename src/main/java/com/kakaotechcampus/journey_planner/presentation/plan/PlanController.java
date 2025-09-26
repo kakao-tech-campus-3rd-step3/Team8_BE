@@ -32,8 +32,11 @@ public class PlanController {
 
     // Plan 단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<PlanResponse> getPlan(@PathVariable Long id) {
-        PlanResponse response = planService.getPlan(id);
+    public ResponseEntity<PlanResponse> getPlan(
+            @LoginMember Member member,
+            @PathVariable Long id
+    ) {
+        PlanResponse response = planService.getPlan(member, id);
         return ResponseEntity.ok(response);
     }
 

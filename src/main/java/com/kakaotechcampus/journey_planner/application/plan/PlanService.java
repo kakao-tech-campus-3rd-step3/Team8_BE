@@ -35,9 +35,17 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
-    public PlanResponse getPlan(Long id) {
-        Plan plan = planRepository.findById(id)
+    public PlanResponse getPlan(Member member, Long planId) {
+        Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+
+        boolean isMemberInPlan = plan.getMemberPlans().stream()
+                .map(MemberPlan::getMember)
+                .anyMatch(planMember -> planMember.equals(member));
+
+        if (!isMemberInPlan) {
+            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED); // 예시 ErrorCode
+        }
         return PlanMapper.toResponse(plan);
     }
 
