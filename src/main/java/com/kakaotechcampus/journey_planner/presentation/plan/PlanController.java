@@ -1,6 +1,8 @@
 package com.kakaotechcampus.journey_planner.presentation.plan;
 
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
+import com.kakaotechcampus.journey_planner.domain.member.Member;
+import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
@@ -8,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -19,8 +22,11 @@ public class PlanController {
 
     // Plan 생성
     @PostMapping
-    public ResponseEntity<PlanResponse> createPlan(@Valid @RequestBody CreatePlanRequest request) {
-        PlanResponse response = planService.createPlan(request);
+    public ResponseEntity<PlanResponse> createPlan(
+            @LoginMember Member member,
+            @Valid @RequestBody CreatePlanRequest request
+    ) {
+        PlanResponse response = planService.createPlan(member, request);
         return ResponseEntity.status(201).body(response);
     }
 
