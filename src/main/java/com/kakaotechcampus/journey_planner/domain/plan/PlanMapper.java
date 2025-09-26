@@ -9,14 +9,13 @@ import java.util.stream.Collectors;
 
 public class PlanMapper {
 
-    public static Plan toEntity(CreatePlanRequest request, Member member) {
+    public static Plan toEntity(CreatePlanRequest request, Member organizer) {
         return new Plan(
                 request.title(),
                 request.description(),
                 request.startDate(),
                 request.endDate(),
-                member
-        );
+                organizer);
     }
 
     public static PlanResponse toResponse(Plan plan) {
