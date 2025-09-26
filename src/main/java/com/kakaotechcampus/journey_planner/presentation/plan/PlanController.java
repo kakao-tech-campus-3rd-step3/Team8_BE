@@ -30,7 +30,7 @@ public class PlanController {
             @Valid @RequestBody CreatePlanRequest request
     ) {
         PlanResponse response = planService.createPlan(member, request);
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Plan 단건 조회
@@ -45,8 +45,8 @@ public class PlanController {
 
     // Plan 전체 조회
     @GetMapping
-    public ResponseEntity<List<PlanResponse>> getAllPlans() {
-        List<PlanResponse> response = planService.getAllPlans();
+    public ResponseEntity<List<PlanResponse>> getAllPlans(@LoginMember Member member) {
+        List<PlanResponse> response = planService.getAllPlans(member.getId());
         return ResponseEntity.ok(response);
     }
 

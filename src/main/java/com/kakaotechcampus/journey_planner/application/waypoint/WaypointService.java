@@ -26,6 +26,7 @@ public class WaypointService {
     @Transactional
     public WaypointResponse createWaypoint(Long planId, WaypointRequest request) {
         Waypoint waypoint = WaypointMapper.toEntity(request);
+        waypoint.validateCategory(waypoint.getLocationCategory(),waypoint.getLocationSubCategory());
 
         Plan plan = planService.getPlanEntity(planId);
 
@@ -40,6 +41,7 @@ public class WaypointService {
     public WaypointResponse updateWaypoint(Long planId, Long waypointId, WaypointRequest request) {
         Waypoint waypoint = waypointRepository.findByIdAndPlanId(waypointId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
+        waypoint.validateCategory(waypoint.getLocationCategory(),waypoint.getLocationSubCategory());
 
         waypoint.update(
                 request.name(),
@@ -48,6 +50,7 @@ public class WaypointService {
                 request.startTime(),
                 request.endTime(),
                 request.locationCategory(),
+                request.locationSubCategory(),
                 request.xPosition(),
                 request.yPosition()
         );

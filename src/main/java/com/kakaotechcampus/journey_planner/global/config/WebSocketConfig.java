@@ -12,6 +12,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        // 순수 WebSocket (k6 같은 부하테스트용)
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns("*");
+
         // 클라이언트가 연결할 WebSocket 엔드포인트
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*") // 개발 단계에서 모든 origin 허용
