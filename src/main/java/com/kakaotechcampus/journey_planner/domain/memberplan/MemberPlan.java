@@ -27,5 +27,8 @@ public class MemberPlan {
     public MemberPlan(Member member, Plan plan) {
         this.member = member;
         this.plan = plan;
+    @Enumerated(EnumType.STRING)
+    private InvitationStatus status;
+
     }
 }
