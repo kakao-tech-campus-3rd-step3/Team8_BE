@@ -2,7 +2,10 @@ package com.kakaotechcampus.journey_planner.application.plan;
 
 import com.kakaotechcampus.journey_planner.application.memberplan.MemberPlanService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
+import com.kakaotechcampus.journey_planner.domain.member.MemberRepository;
+import com.kakaotechcampus.journey_planner.domain.memberplan.InvitationStatus;
 import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlan;
+import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlanRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanMapper;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
@@ -106,5 +109,20 @@ public class PlanService {
 
         MemberPlan invitation = MemberPlan.createInvitation(invitee, plan);
         memberPlanRepository.save(invitation);
+    }
+
+    @Transactional
+    public void acceptInvitation(Member accepter, Long invitationId) {
+        MemberPlan invitation = memberPlanRepository.findById(invitationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVITATION_NOT_FOUND));
+        if (!invitation.getMember().equals(accepter)) {
+            throw new BusinessException(ErrorCode.INVITATION_ACCESS_DENIED);
+        }
+
+        if (invitation.getStatus() != InvitationStatus.INVITED) {
+            throw new BusinessException(ErrorCode.INVITATION_ALREADY_PROCESSED);
+        }
+
+        invitation.accept();
     }
 }

@@ -8,6 +8,7 @@ import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanRe
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,4 +79,12 @@ public class PlanController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/invitations/{invitationId}/accept")
+    public ResponseEntity<Void> acceptInvitation(
+            @LoginMember Member member,
+            @PathVariable Long invitationId
+    ) {
+        planService.acceptInvitation(member, invitationId);
+        return ResponseEntity.ok().build();
+    }
 }
