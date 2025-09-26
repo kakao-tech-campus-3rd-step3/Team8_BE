@@ -15,7 +15,7 @@ public class MemberPlanService {
 
     @Transactional
     public MemberPlan createMemberPlan(Member member, Plan plan) {
-        MemberPlan memberPlan = new MemberPlan(member, plan);
+        MemberPlan memberPlan = MemberPlan.createPlan(member, plan);
         MemberPlan savedMemberPlan = memberPlanRepository.save(memberPlan);
         return savedMemberPlan;
     }

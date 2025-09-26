@@ -24,11 +24,26 @@ public class MemberPlan {
     @JoinColumn(name = "plan_id")
     private Plan plan;
 
-    public MemberPlan(Member member, Plan plan) {
-        this.member = member;
-        this.plan = plan;
     @Enumerated(EnumType.STRING)
     private InvitationStatus status;
 
+    public static MemberPlan createPlan(Member member, Plan plan) {
+        MemberPlan memberPlan = new MemberPlan();
+        memberPlan.member = member;
+        memberPlan.plan = plan;
+        memberPlan.status = InvitationStatus.ACCEPTED;
+        return memberPlan;
+    }
+
+    public static MemberPlan createInvitation(Member member, Plan plan) {
+        MemberPlan memberPlan = new MemberPlan();
+        memberPlan.member = member;
+        memberPlan.plan = plan;
+        memberPlan.status = InvitationStatus.INVITED;
+        return memberPlan;
+    }
+
+    public void accept() {
+        status = InvitationStatus.ACCEPTED;
     }
 }
