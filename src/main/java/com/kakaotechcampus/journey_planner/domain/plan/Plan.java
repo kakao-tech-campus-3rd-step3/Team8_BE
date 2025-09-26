@@ -22,6 +22,7 @@ public class Plan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "plan_id")
     private Long id;
 
     @NotBlank(message = "제목은 비어 있을 수 없습니다.")
