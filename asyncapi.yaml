@@ -263,9 +263,10 @@ components:
         address: { type: string, description: '주소' }
         startTime: { type: string, format: 'date-time', description: '시작 시각' }
         endTime: { type: string, format: 'date-time', description: '종료 시각' }
-        locationCategory: { type: string, enum: [DEFAULT, FOOD, CULTURE, ACCOMMODATION, TOUR, TRANSPORTATION], description: '위치 카테고리' }
-        xPosition: { type: number, format: 'float', description: '지도상 x좌표 (경도)' }
-        yPosition: { type: number, format: 'float', description: '지도상 y좌표 (위도)' }
+        locationCategory: { type: string, enum: [DEFAULT, FOOD, CULTURE, ACCOMMODATION, TOUR, TRANSPORTATION], description: '상위 위치 카테고리' }
+        locationSubCategory: { type: string, enum: [DEFAULT, FOOD, CULTURE, ACCOMMODATION, TOUR, TRANSPORTATION], description: '하위 위치 카테고리' }
+        xPosition: { type: number, format: 'float', description: '화면상 x좌표 (경도)' }
+        yPosition: { type: number, format: 'float', description: '회면상 y좌표 (위도)' }
     WaypointResponse:
       allOf:
         - $ref: '#/components/schemas/WaypointRequest'
