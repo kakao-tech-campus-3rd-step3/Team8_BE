@@ -36,8 +36,8 @@ public class Member {
         this.mbtiType = MbtiType.valueOf(mbti.toUpperCase());
     }
 
-    public boolean verifyPassword(String password) {
-        return this.password.equals(password);
+    public boolean verifyPassword(String rawPassword, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(rawPassword, this.password);
     }
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
