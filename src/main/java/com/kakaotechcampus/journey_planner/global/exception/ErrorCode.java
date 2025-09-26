@@ -12,7 +12,10 @@ public enum ErrorCode {
     // * PLAN
     PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "PLAN_NOT_FOUND", "해당 계획을 찾을 수 없습니다."),
     PLAN_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "PLAN_ACCESS_DENIED", "해당 계획에 접근할 권한이 없습니다."),
-
+    MEMBER_ALREADY_IN_PLAN(HttpStatus.BAD_REQUEST, "MEMBER_ALREADY_IN_PLAN", "해당 계획에 이미 참여 중입니다."),
+    INVITATION_NOT_FOUND(HttpStatus.NOT_FOUND, "INVITATION_NOT_FOUND", "해당 초대장이 존재하지 않습니다."),
+    INVITATION_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "INVITATION_ACCESS_DENIED", "해당 초대장에 접근할 권한이 없습니다."),
+    INVITATION_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "INVITATION_ALREADY_PROCESSED", "이미 승인된 초대장 입니다."),
     // * Resource
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "NO_RESOURCE", "리소스를 찾을 수 없습니다."),
     FONT_NOT_FOUND(HttpStatus.NOT_FOUND, "NO_FONT_RESOURCE", "폰트를 찾을 수 없습니다."),
