@@ -67,4 +67,15 @@ public class PlanController {
         planService.deletePlan(member, id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/invitations/{planId}")
+    public ResponseEntity<Void> inviteMember(
+            @LoginMember Member member,
+            @PathVariable Long planId,
+            @RequestParam("email") String inviteeEmail
+    ){
+        planService.inviteMember(member, planId, inviteeEmail);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }

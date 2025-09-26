@@ -23,6 +23,8 @@ public class PlanService {
 
     private final PlanRepository planRepository;
     private final MemberPlanService memberPlanService;
+    private final MemberRepository memberRepository;
+    private final MemberPlanRepository memberPlanRepository;
 
     @Transactional
     public PlanResponse createPlan(Member member, CreatePlanRequest request) {
@@ -83,5 +85,26 @@ public class PlanService {
     public Plan getPlanEntity(Long id) {
         return planRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+    }
+
+    @Transactional
+    public void inviteMember(Member inviter, Long planId, String inviteeEmail) {
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+        boolean isMemberOrganized = plan.isOrganizer(inviter);
+        if (!isMemberOrganized) {
+            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
+        }
+
+        Member invitee = memberRepository.findByEmail(inviteeEmail)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+        boolean alreadyExists = plan.hasMember(invitee);
+        if (alreadyExists) {
+            throw new BusinessException(ErrorCode.MEMBER_ALREADY_IN_PLAN);
+        }
+
+        MemberPlan invitation = MemberPlan.createInvitation(invitee, plan);
+        memberPlanRepository.save(invitation);
     }
 }
