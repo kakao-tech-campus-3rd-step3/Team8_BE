@@ -50,10 +50,11 @@ public class PlanController {
     // Plan 수정
     @PatchMapping("/{id}")
     public ResponseEntity<PlanResponse> updatePlan(
+            @LoginMember Member member,
             @PathVariable Long id,
             @Valid @RequestBody UpdatePlanRequest request
     ) {
-        PlanResponse response = planService.updatePlan(id, request);
+        PlanResponse response = planService.updatePlan(member, id, request);
         return ResponseEntity.ok(response);
     }
 
