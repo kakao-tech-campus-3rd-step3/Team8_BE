@@ -1,6 +1,8 @@
 package com.kakaotechcampus.journey_planner.application.memo;
 
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
+import com.kakaotechcampus.journey_planner.application.route.RouteService;
+import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoRepository;
@@ -21,6 +23,8 @@ public class MemoService {
 
     private final MemoRepository memoRepository;
     private final PlanService planService;
+    private final WaypointService waypointService;
+    private final RouteService routeService;
 
     @Transactional
     public MemoResponse createMemo(Long planId, MemoRequest request) {
@@ -28,6 +32,7 @@ public class MemoService {
 
         Plan plan = planService.getPlanEntity(planId);
         memo.assignToPlan(plan);
+        assignTarget(memo, request);
         Memo savedMemo = memoRepository.save(memo);
 
         return MemoMapper.toResponse(savedMemo);
@@ -44,6 +49,8 @@ public class MemoService {
                 request.xPosition(),
                 request.yPosition()
         );
+
+        assignTarget(memo, request);
 
         return MemoMapper.toResponse(memo);
     }
@@ -62,4 +69,21 @@ public class MemoService {
         List<Memo> memos = memoRepository.findByPlanId(plan.getId());
         return MemoMapper.toResponseList(memos);
     }
+
+    private void assignTarget(Memo memo, MemoRequest request) {
+        if (request.waypointId() != null) {
+            memo.assignToWayPoint(
+                    waypointService.getWaypointEntity(request.waypointId())
+            );
+        } else if (request.routeId() != null) {
+            memo.assignToRoute(
+                    routeService.getRouteEntity(request.routeId())
+            );
+        } else {
+            // 둘 다 null이면 Plan에만 속하는 Memo
+            memo.assignToWayPoint(null);
+            memo.assignToRoute(null);
+        }
+    }
+
 }
