@@ -38,13 +38,9 @@ public class PlanService {
     public PlanResponse getPlan(Member member, Long planId) {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-
-        boolean isMemberInPlan = plan.getMemberPlans().stream()
-                .map(MemberPlan::getMember)
-                .anyMatch(planMember -> planMember.equals(member));
-
+        boolean isMemberInPlan = plan.hasMember(member);
         if (!isMemberInPlan) {
-            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED); // 예시 ErrorCode
+            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
         }
         return PlanMapper.toResponse(plan);
     }
@@ -58,13 +54,9 @@ public class PlanService {
     public PlanResponse updatePlan(Member member, Long id, UpdatePlanRequest request) {
         Plan plan = planRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-
-        boolean isMemberInPlan = plan.getMemberPlans().stream()
-                .map(MemberPlan::getMember)
-                .anyMatch(planMember -> planMember.equals(member));
-
+        boolean isMemberInPlan = plan.hasMember(member);
         if (!isMemberInPlan) {
-            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED); // 예시 ErrorCode
+            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
         }
         plan.update(
                 request.title(),

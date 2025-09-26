@@ -1,5 +1,6 @@
 package com.kakaotechcampus.journey_planner.domain.plan;
 
+import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlan;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -52,5 +53,11 @@ public class Plan {
 
     public void addMemberPlan(MemberPlan memberPlan) {
         memberPlans.add(memberPlan);
+    }
+
+    public boolean hasMember(Member member) {
+        return this.memberPlans.stream()
+                .map(MemberPlan::getMember)
+                .anyMatch(planMember -> planMember.equals(member));
     }
 }
