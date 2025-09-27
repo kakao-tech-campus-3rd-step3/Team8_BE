@@ -38,7 +38,7 @@ public class PlanService {
         MemberPlan savedMemberPlan = memberPlanService.createMemberPlan(member, savedPlan);
         member.addMemberPlan(savedMemberPlan);
         plan.addMemberPlan(savedMemberPlan);
-        return PlanMapper.toResponse(savedPlan);
+        return PlanResponse.of(savedPlan);
     }
 
     @Transactional(readOnly = true)
@@ -49,7 +49,7 @@ public class PlanService {
         if (!isMemberInPlan) {
             throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
         }
-        return PlanMapper.toResponse(plan);
+        return PlanResponse.of(plan);
     }
 
     @Transactional(readOnly = true)
@@ -72,7 +72,7 @@ public class PlanService {
                 request.endDate()
         );
 
-        return PlanMapper.toResponse(plan);
+        return PlanResponse.of(plan);
     }
 
     @Transactional
