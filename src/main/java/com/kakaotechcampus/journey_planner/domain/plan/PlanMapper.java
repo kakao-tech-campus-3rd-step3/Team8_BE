@@ -18,18 +18,9 @@ public class PlanMapper {
                 organizer);
     }
 
-    public static PlanResponse toResponse(Plan plan) {
-        return new PlanResponse(
-                plan.getId(),
-                plan.getTitle(),
-                plan.getDescription(),
-                plan.getStartDate(),
-                plan.getEndDate());
-    }
-
     public static List<PlanResponse> toResponseList(List<Plan> plans) {
         return plans.stream()
-                .map(PlanMapper::toResponse)
+                .map(PlanResponse::of)
                 .collect(Collectors.toList());
     }
 }

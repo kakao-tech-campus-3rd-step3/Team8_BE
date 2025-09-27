@@ -13,14 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/plans")
 public class PlanController {
-
     private final PlanService planService;
 
     // Plan 생성
