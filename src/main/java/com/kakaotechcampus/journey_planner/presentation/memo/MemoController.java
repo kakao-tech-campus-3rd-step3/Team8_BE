@@ -20,20 +20,20 @@ public class MemoController {
 
     private final MemoService memoService;
     private final MessagingUtil messagingUtil;
-    static final String destination = "memos";
+    private static final String DESTINATION = "memos";
 
     // 클라이언트가 구독 후 초기 상태 요청 시 전체 memo 전송
     @MessageMapping("/init")
     public void initMemos(@DestinationVariable Long planId) {
         List<MemoResponse> memoResponses = memoService.getMemos(planId);
-        messagingUtil.sendResponse(planId, destination, "MEMO_INIT", "memos", memoResponses);
+        messagingUtil.sendResponse(planId, DESTINATION, "MEMO_INIT", "memos", memoResponses);
     }
 
     // 새 memo 생성 후 단건 전송
     @MessageMapping("/create")
     public void createMemo(@DestinationVariable Long planId, @Valid @Payload MemoRequest request) {
         MemoResponse response = memoService.createMemo(planId, request);
-        messagingUtil.sendResponse(planId, destination, "MEMO_CREATE", "memo", response);
+        messagingUtil.sendResponse(planId, DESTINATION, "MEMO_CREATE", "memo", response);
     }
 
     // memo 수정 후 단건 전송
@@ -44,7 +44,7 @@ public class MemoController {
             @Valid @Payload MemoRequest request) {
 
         MemoResponse response = memoService.updateMemo(planId, memoId, request);
-        messagingUtil.sendResponse(planId, destination, "MEMO_UPDATE", "memo", response);
+        messagingUtil.sendResponse(planId, DESTINATION, "MEMO_UPDATE", "memo", response);
     }
 
     // memo 삭제 후 해당 Id 전송
@@ -54,6 +54,6 @@ public class MemoController {
             @DestinationVariable Long memoId
     ) {
         memoService.deleteMemo(planId, memoId);
-        messagingUtil.sendResponse(planId, destination, "MEMO_DELETE", "memoId", memoId);
+        messagingUtil.sendResponse(planId, DESTINATION, "MEMO_DELETE", "memoId", memoId);
     }
 }

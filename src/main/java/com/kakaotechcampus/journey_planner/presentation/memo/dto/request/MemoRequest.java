@@ -15,5 +15,9 @@ public record MemoRequest(
     Float xPosition,
 
     @NotNull(message = "y좌표는 필수 입력값입니다.")
-    Float yPosition
+    Float yPosition,
+
+    Long waypointId,
+
+    Long routeId
 ) {}

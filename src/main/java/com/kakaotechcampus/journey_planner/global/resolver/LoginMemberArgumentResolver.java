@@ -7,6 +7,7 @@ import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -34,7 +35,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String token = extractToken(authorizationHeader);
         String email = jwtProvider.extractEmailFromAccessToken(token);
         return memberService.findByEmail(email)

@@ -219,4 +219,7 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij+all,visualstudiocode,gradle,macos,windows
 
+# ENVIRONMENT
 dev.env
+.env.db
+.env.server

@@ -1,9 +1,11 @@
 package com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request;
 
 import com.kakaotechcampus.journey_planner.domain.waypoint.LocationCategory;
+import com.kakaotechcampus.journey_planner.domain.waypoint.LocationSubCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 public record WaypointRequest(
@@ -24,6 +26,9 @@ public record WaypointRequest(
 
         @NotNull(message = "위치 카테고리는 필수 입력값입니다.")
         LocationCategory locationCategory,
+
+        @NotNull(message = "위치 소분류는 필수 입력값입니다.")
+        LocationSubCategory locationSubCategory,
 
         @NotNull(message = "x좌표는 필수 입력값입니다.")
         Float xPosition,
