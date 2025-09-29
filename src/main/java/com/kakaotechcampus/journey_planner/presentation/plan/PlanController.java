@@ -2,6 +2,8 @@ package com.kakaotechcampus.journey_planner.presentation.plan;
 
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
+import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
+import com.kakaotechcampus.journey_planner.domain.traveler.TravelerMapper;
 import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
@@ -88,7 +90,8 @@ public class PlanController {
             @LoginMember Member member,
             @PathVariable Long invitationId
     ) {
-        planService.acceptInvitation(member, invitationId);
+        Traveler traveler = planService.acceptInvitation(member, invitationId);
+        messagingUtil.sendResponse(traveler.getPlan().getId(), "travelers", "TRAVELER_ACCEPTED", "traveler", TravelerMapper.toResponse(traveler));
         return ResponseEntity.ok().build();
     }
 

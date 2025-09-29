@@ -115,7 +115,7 @@ public class PlanService {
     }
 
     @Transactional
-    public void acceptInvitation(Member accepter, Long invitationId) {
+    public Traveler acceptInvitation(Member accepter, Long invitationId) {
         Traveler invitation = travelerRepository.findById(invitationId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVITATION_NOT_FOUND));
         if (!invitation.getMember().equals(accepter)) {
@@ -127,6 +127,7 @@ public class PlanService {
         }
 
         invitation.accept();
+        return invitation;
     }
 
     @Transactional(readOnly = true)
