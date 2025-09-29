@@ -1,13 +1,14 @@
 package com.kakaotechcampus.journey_planner.presentation.traveler.dto.response;
 
 import com.kakaotechcampus.journey_planner.domain.member.MbtiType;
+import com.kakaotechcampus.journey_planner.domain.traveler.InvitationStatus;
 
 public record TravelerResponse(
         Long id,
         Long memberId,
         String name,
         String contact,
-        MbtiType mbtiType
-
+        MbtiType mbtiType,
+        InvitationStatus status
 ) {
 }

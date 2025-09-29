@@ -25,7 +25,8 @@ public class TravelerMapper {
                 traveler.getMember().getId(),
                 traveler.getMember().getName(),
                 traveler.getMember().getContact(),
-                traveler.getMember().getMbtiType()
+                traveler.getMember().getMbtiType(),
+                traveler.getStatus()
         );
     }
 
