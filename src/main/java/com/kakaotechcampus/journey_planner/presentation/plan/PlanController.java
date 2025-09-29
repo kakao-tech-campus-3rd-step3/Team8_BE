@@ -7,6 +7,8 @@ import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreateP
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
+import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.TravelerResponse;
+import com.kakaotechcampus.journey_planner.presentation.utils.MessagingUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequestMapping("/v1/plans")
 public class PlanController {
     private final PlanService planService;
+    private final MessagingUtil messagingUtil;
 
     // Plan 생성
     @PostMapping
@@ -75,7 +78,8 @@ public class PlanController {
             @PathVariable Long planId,
             @RequestParam("email") String inviteeEmail
     ){
-        planService.inviteMember(member, planId, inviteeEmail);
+        TravelerResponse response = planService.inviteMember(member, planId, inviteeEmail);
+        messagingUtil.sendResponse(planId, "travelers", "TRAVELER_INVITE", "traveler", response);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

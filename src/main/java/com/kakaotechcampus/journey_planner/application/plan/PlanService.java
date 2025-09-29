@@ -94,7 +94,7 @@ public class PlanService {
     }
 
     @Transactional
-    public void inviteMember(Member inviter, Long planId, String inviteeEmail) {
+    public TravelerResponse inviteMember(Member inviter, Long planId, String inviteeEmail) {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
         boolean isMemberOrganized = plan.isOrganizer(inviter);
@@ -110,8 +110,8 @@ public class PlanService {
             throw new BusinessException(ErrorCode.MEMBER_ALREADY_IN_PLAN);
         }
 
-        Traveler invitation = Traveler.createInvitation(invitee, plan);
-        travelerRepository.save(invitation);
+        Traveler savedTraveler =  travelerRepository.save(Traveler.createInvitation(invitee, plan));
+        return TravelerMapper.toResponse(savedTraveler);
     }
 
     @Transactional
