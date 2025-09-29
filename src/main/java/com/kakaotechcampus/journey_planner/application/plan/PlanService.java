@@ -16,6 +16,7 @@ import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreateP
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
+import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.TravelerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,5 +133,13 @@ public class PlanService {
     public List<InvitationResponse> getInvitations(Member member) {
         List<Traveler> invitations = travelerRepository.findByMemberAndStatus(member, InvitationStatus.INVITED);
         return TravelerMapper.toInvitationResponse(invitations);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TravelerResponse> getAcceptedTravelers(Long planId) {
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+
+        return travelerService.getTravelers(plan);
     }
 }
