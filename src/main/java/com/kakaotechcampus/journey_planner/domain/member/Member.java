@@ -1,6 +1,6 @@
 package com.kakaotechcampus.journey_planner.domain.member;
 
-import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlan;
+import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class Member {
     private MbtiType mbtiType;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<MemberPlan> memberPlans = new ArrayList<>();
+    private final List<Traveler> travelers = new ArrayList<>();
 
     public Member(String name, String contact, String email, String password, String mbti) {
         this.name = name;
@@ -52,8 +52,8 @@ public class Member {
         this.password = passwordEncoder.encode(this.password);
     }
 
-    public void addMemberPlan(MemberPlan memberPlan) {
-        memberPlans.add(memberPlan);
+    public void addTraveler(Traveler traveler) {
+        travelers.add(traveler);
     }
 }
 

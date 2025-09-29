@@ -1,4 +1,4 @@
-package com.kakaotechcampus.journey_planner.domain.memberplan;
+package com.kakaotechcampus.journey_planner.domain.traveler;
 
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
@@ -8,12 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "member_plan")
+@Table(name = "traveler")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberPlan {
+public class Traveler {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_plan_id")
+    @Column(name = "traveler_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,20 +27,20 @@ public class MemberPlan {
     @Enumerated(EnumType.STRING)
     private InvitationStatus status;
 
-    public static MemberPlan createPlan(Member member, Plan plan) {
-        MemberPlan memberPlan = new MemberPlan();
-        memberPlan.member = member;
-        memberPlan.plan = plan;
-        memberPlan.status = InvitationStatus.ACCEPTED;
-        return memberPlan;
+    public static Traveler createPlan(Member member, Plan plan) {
+        Traveler traveler = new Traveler();
+        traveler.member = member;
+        traveler.plan = plan;
+        traveler.status = InvitationStatus.ACCEPTED;
+        return traveler;
     }
 
-    public static MemberPlan createInvitation(Member member, Plan plan) {
-        MemberPlan memberPlan = new MemberPlan();
-        memberPlan.member = member;
-        memberPlan.plan = plan;
-        memberPlan.status = InvitationStatus.INVITED;
-        return memberPlan;
+    public static Traveler createInvitation(Member member, Plan plan) {
+        Traveler traveler = new Traveler();
+        traveler.member = member;
+        traveler.plan = plan;
+        traveler.status = InvitationStatus.INVITED;
+        return traveler;
     }
 
     public void accept() {

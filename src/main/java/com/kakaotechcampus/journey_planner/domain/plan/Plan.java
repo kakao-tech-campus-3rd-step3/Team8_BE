@@ -1,7 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.plan;
 
 import com.kakaotechcampus.journey_planner.domain.member.Member;
-import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlan;
+import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,7 +40,7 @@ public class Plan {
     private Member organizer;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<MemberPlan> memberPlans = new ArrayList<>();
+    private final List<Traveler> travelers = new ArrayList<>();
 
     public Plan(String title, String description, LocalDate startDate, LocalDate endDate, Member organizer) {
         this.title = title;
@@ -57,13 +57,13 @@ public class Plan {
         this.endDate = endDate;
     }
 
-    public void addMemberPlan(MemberPlan memberPlan) {
-        memberPlans.add(memberPlan);
+    public void addTraveler(Traveler traveler) {
+        travelers.add(traveler);
     }
 
     public boolean hasMember(Member member) {
-        return this.memberPlans.stream()
-                .map(MemberPlan::getMember)
+        return this.travelers.stream()
+                .map(Traveler::getMember)
                 .anyMatch(planMember -> planMember.equals(member));
     }
 

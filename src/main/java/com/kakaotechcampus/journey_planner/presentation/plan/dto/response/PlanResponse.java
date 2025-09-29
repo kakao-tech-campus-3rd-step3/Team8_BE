@@ -1,8 +1,9 @@
 package com.kakaotechcampus.journey_planner.presentation.plan.dto.response;
 
 import com.kakaotechcampus.journey_planner.domain.member.Member;
-import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlan;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
+import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public record PlanResponse(
         String title,
         String description,
         Member organizer,
-        List<MemberPlan> memberPlans,
+        List<Traveler> travelers,
         LocalDate startDate,
         LocalDate endDate
 ) {
@@ -21,7 +22,7 @@ public record PlanResponse(
                 plan.getTitle(),
                 plan.getDescription(),
                 plan.getOrganizer(),
-                plan.getMemberPlans(),
+                plan.getTravelers(),
                 plan.getStartDate(),
                 plan.getEndDate()
         );
