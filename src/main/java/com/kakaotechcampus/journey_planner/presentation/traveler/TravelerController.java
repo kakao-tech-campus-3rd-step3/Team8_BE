@@ -23,7 +23,7 @@ public class TravelerController {
 
     @MessageMapping("/init")
     public void initTravelers(@DestinationVariable Long planId) {
-        List<TravelerResponse> travelerResponses = planService.getAcceptedTravelers(planId);
+        List<TravelerResponse> travelerResponses = planService.getInvitedTravelers(planId);
 
         messagingUtil.sendResponse(planId, DESTINATION, "TRAVELER_INIT", "travelers", travelerResponses);
     }

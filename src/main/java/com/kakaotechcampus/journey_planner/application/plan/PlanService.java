@@ -136,7 +136,7 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
-    public List<TravelerResponse> getAcceptedTravelers(Long planId) {
+    public List<TravelerResponse> getInvitedTravelers(Long planId) {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
 

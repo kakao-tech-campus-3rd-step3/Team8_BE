@@ -9,5 +9,7 @@ import java.util.List;
 public interface TravelerRepository extends JpaRepository<Traveler, Long> {
     List<Traveler> findByMemberAndStatus(Member member, InvitationStatus status);
 
-    List<Traveler> findByPlanAndStatus(Plan plan, InvitationStatus status);
+    List<Traveler> findByPlanAndStatusOrStatus(Plan plan,
+                                               InvitationStatus status1,
+                                               InvitationStatus status2);
 }

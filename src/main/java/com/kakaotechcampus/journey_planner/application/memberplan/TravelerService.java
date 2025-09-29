@@ -28,7 +28,7 @@ public class TravelerService {
 
     @Transactional(readOnly = true)
     public List<TravelerResponse> getTravelers(Plan plan) {
-        List<Traveler> travelers = travelerRepository.findByPlanAndStatus(plan, InvitationStatus.ACCEPTED);
+        List<Traveler> travelers = travelerRepository.findByPlanAndStatusOrStatus(plan, InvitationStatus.ACCEPTED, InvitationStatus.INVITED);
         return TravelerMapper.toResponseList(travelers);
     }
 
