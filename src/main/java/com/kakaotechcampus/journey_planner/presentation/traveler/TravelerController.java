@@ -1,6 +1,6 @@
 package com.kakaotechcampus.journey_planner.presentation.traveler;
 
-import com.kakaotechcampus.journey_planner.application.memberplan.TravelerService;
+import com.kakaotechcampus.journey_planner.application.traveler.TravelerService;
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
 import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.TravelerResponse;
 import com.kakaotechcampus.journey_planner.presentation.utils.MessagingUtil;

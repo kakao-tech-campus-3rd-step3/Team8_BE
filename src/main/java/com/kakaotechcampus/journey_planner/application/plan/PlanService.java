@@ -1,6 +1,6 @@
 package com.kakaotechcampus.journey_planner.application.plan;
 
-import com.kakaotechcampus.journey_planner.application.memberplan.TravelerService;
+import com.kakaotechcampus.journey_planner.application.traveler.TravelerService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.member.MemberRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;

@@ -1,4 +1,4 @@
-package com.kakaotechcampus.journey_planner.application.memberplan;
+package com.kakaotechcampus.journey_planner.application.traveler;
 
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
