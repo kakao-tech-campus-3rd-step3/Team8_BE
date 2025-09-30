@@ -34,7 +34,7 @@ public class PlanService {
 
     @Transactional
     public PlanResponse createPlan(Member member, CreatePlanRequest request) {
-        Plan plan = PlanMapper.toEntity(request, member);
+        Plan plan = PlanMapper.toEntity(request);
         Plan savedPlan = planRepository.save(plan);
         Traveler savedTraveler = travelerService.createTraveler(member, savedPlan);
         member.addTraveler(savedTraveler);
@@ -54,8 +54,8 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
-    public List<PlanResponse> getAllPlans(Long userId) {
-        return PlanMapper.toResponseList(planRepository.getAllPlanByUserId(userId));
+    public List<PlanResponse> getAllPlans(Long memberId) {
+        return PlanMapper.toResponseList(planRepository.findAllByMemberId(memberId));
     }
 
     @Transactional
@@ -98,7 +98,7 @@ public class PlanService {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
 
-        if (travelerService.isOwner(plan, inviter)) {
+        if (!travelerService.isOwner(plan, inviter)) {
             throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
         }
 
