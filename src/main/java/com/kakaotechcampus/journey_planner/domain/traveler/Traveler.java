@@ -35,7 +35,7 @@ public class Traveler {
         traveler.member = member;
         traveler.plan = plan;
         traveler.status = InvitationStatus.ACCEPTED;
-        traveler.role = Role.DEFAULT;
+        traveler.role = Role.OWNER;
         return traveler;
     }
 
