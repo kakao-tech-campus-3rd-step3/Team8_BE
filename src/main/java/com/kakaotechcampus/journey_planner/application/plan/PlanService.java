@@ -97,8 +97,8 @@ public class PlanService {
     public TravelerResponse inviteMember(Member inviter, Long planId, String inviteeEmail) {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-        boolean isMemberOrganized = plan.isOrganizer(inviter);
-        if (!isMemberOrganized) {
+
+        if (travelerService.isOwner(plan, inviter)) {
             throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
         }
 
