@@ -27,11 +27,15 @@ public class Traveler {
     @Enumerated(EnumType.STRING)
     private InvitationStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public static Traveler createPlan(Member member, Plan plan) {
         Traveler traveler = new Traveler();
         traveler.member = member;
         traveler.plan = plan;
         traveler.status = InvitationStatus.ACCEPTED;
+        traveler.role = Role.DEFAULT;
         return traveler;
     }
 
@@ -40,10 +44,12 @@ public class Traveler {
         traveler.member = member;
         traveler.plan = plan;
         traveler.status = InvitationStatus.INVITED;
+        traveler.role = Role.DEFAULT;
         return traveler;
     }
 
     public void accept() {
         status = InvitationStatus.ACCEPTED;
+        role = Role.PARTICIPANT;
     }
 }
