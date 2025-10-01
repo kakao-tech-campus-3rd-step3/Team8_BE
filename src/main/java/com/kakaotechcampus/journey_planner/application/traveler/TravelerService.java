@@ -18,8 +18,13 @@ public class TravelerService {
     private final TravelerRepository travelerRepository;
 
     @Transactional
-    public Traveler createTraveler(Member member, Plan plan) {
+    public Traveler createOwnerTraveler(Member member, Plan plan) {
         Traveler traveler = Traveler.createPlan(member, plan);
+        return travelerRepository.save(traveler);
+    }
+
+    @Transactional
+    public Traveler addTraveler(Traveler traveler) {
         return travelerRepository.save(traveler);
     }
 
@@ -43,5 +48,16 @@ public class TravelerService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.TRAVELER_NOT_FOUND));
 
         return traveler.getRole().equals(Role.OWNER);
+    }
+
+    @Transactional(readOnly = true)
+    public Traveler getTraveler(Long invitationId) {
+        return travelerRepository.findById(invitationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TRAVELER_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Traveler> getInvitations(Member member) {
+        return travelerRepository.findByMemberAndStatus(member, InvitationStatus.INVITED);
     }
 }
