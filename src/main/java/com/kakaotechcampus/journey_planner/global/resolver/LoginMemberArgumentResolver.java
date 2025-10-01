@@ -1,10 +1,8 @@
 package com.kakaotechcampus.journey_planner.global.resolver;
 
-import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
 import com.kakaotechcampus.journey_planner.application.auth.jwt.JwtProvider;
 import com.kakaotechcampus.journey_planner.application.member.MemberService;
-import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
-import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
+import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
@@ -38,8 +36,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String token = extractToken(authorizationHeader);
         String email = jwtProvider.extractEmailFromAccessToken(token);
-        return memberService.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        return memberService.findByEmail(email);
     }
 
     private String extractToken(String authorizationHeader) {
