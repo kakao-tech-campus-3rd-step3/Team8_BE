@@ -1,21 +1,21 @@
 package com.kakaotechcampus.journey_planner.application.plan;
 
-import com.kakaotechcampus.journey_planner.application.memberplan.MemberPlanService;
+import com.kakaotechcampus.journey_planner.application.member.MemberService;
+import com.kakaotechcampus.journey_planner.application.traveler.TravelerService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
-import com.kakaotechcampus.journey_planner.domain.member.MemberRepository;
-import com.kakaotechcampus.journey_planner.domain.memberplan.InvitationStatus;
-import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlan;
-import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlanMapper;
-import com.kakaotechcampus.journey_planner.domain.memberplan.MemberPlanRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanMapper;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
+import com.kakaotechcampus.journey_planner.domain.traveler.InvitationStatus;
+import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
+import com.kakaotechcampus.journey_planner.domain.traveler.TravelerMapper;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
+import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
-import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
+import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.TravelerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,17 +27,16 @@ import java.util.List;
 public class PlanService {
 
     private final PlanRepository planRepository;
-    private final MemberPlanService memberPlanService;
-    private final MemberRepository memberRepository;
-    private final MemberPlanRepository memberPlanRepository;
+    private final TravelerService travelerService;
+    private final MemberService memberService;
 
     @Transactional
     public PlanResponse createPlan(Member member, CreatePlanRequest request) {
-        Plan plan = PlanMapper.toEntity(request, member);
+        Plan plan = PlanMapper.toEntity(request);
         Plan savedPlan = planRepository.save(plan);
-        MemberPlan savedMemberPlan = memberPlanService.createMemberPlan(member, savedPlan);
-        member.addMemberPlan(savedMemberPlan);
-        plan.addMemberPlan(savedMemberPlan);
+        Traveler savedTraveler = travelerService.createOwnerTraveler(member, savedPlan);
+        member.addTraveler(savedTraveler);
+        plan.addTraveler(savedTraveler);
         return PlanResponse.of(savedPlan);
     }
 
@@ -53,8 +52,8 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
-    public List<PlanResponse> getAllPlans(Long userId) {
-        return PlanMapper.toResponseList(planRepository.getAllPlanByUserId(userId));
+    public List<PlanResponse> getAllPlans(Long memberId) {
+        return PlanMapper.toResponseList(planRepository.findAllByMemberId(memberId));
     }
 
     @Transactional
@@ -93,30 +92,28 @@ public class PlanService {
     }
 
     @Transactional
-    public void inviteMember(Member inviter, Long planId, String inviteeEmail) {
+    public TravelerResponse inviteMember(Member inviter, Long planId, String inviteeEmail) {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-        boolean isMemberOrganized = plan.isOrganizer(inviter);
-        if (!isMemberOrganized) {
+
+        if (!travelerService.isOwner(plan, inviter)) {
             throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
         }
 
-        Member invitee = memberRepository.findByEmail(inviteeEmail)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        Member invitee = memberService.findByEmail(inviteeEmail);
 
         boolean alreadyExists = plan.hasMember(invitee);
         if (alreadyExists) {
             throw new BusinessException(ErrorCode.MEMBER_ALREADY_IN_PLAN);
         }
 
-        MemberPlan invitation = MemberPlan.createInvitation(invitee, plan);
-        memberPlanRepository.save(invitation);
+        Traveler savedTraveler =  travelerService.addTraveler(Traveler.createInvitation(invitee, plan));
+        return TravelerMapper.toResponse(savedTraveler);
     }
 
     @Transactional
-    public void acceptInvitation(Member accepter, Long invitationId) {
-        MemberPlan invitation = memberPlanRepository.findById(invitationId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.INVITATION_NOT_FOUND));
+    public Traveler acceptInvitation(Member accepter, Long invitationId) {
+        Traveler invitation = travelerService.getTraveler(invitationId);
         if (!invitation.getMember().equals(accepter)) {
             throw new BusinessException(ErrorCode.INVITATION_ACCESS_DENIED);
         }
@@ -126,11 +123,20 @@ public class PlanService {
         }
 
         invitation.accept();
+        return invitation;
     }
 
     @Transactional(readOnly = true)
     public List<InvitationResponse> getInvitations(Member member) {
-        List<MemberPlan> invitations = memberPlanRepository.findByMemberAndStatus(member, InvitationStatus.INVITED);
-        return MemberPlanMapper.toInvitationResponse(invitations);
+
+        return TravelerMapper.toInvitationResponse(travelerService.getInvitations(member));
+    }
+
+    @Transactional(readOnly = true)
+    public List<TravelerResponse> getInvitedTravelers(Long planId) {
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+
+        return travelerService.getTravelers(plan);
     }
 }

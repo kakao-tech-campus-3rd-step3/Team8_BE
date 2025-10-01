@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PlanRepository extends JpaRepository<Plan, Long> {
-    @Query("SELECT p FROM Plan p WHERE p.organizer.id=:userId")
-    List<Plan> getAllPlanByUserId(@Param("userId") Long userId);
+    @Query("SELECT t.plan FROM Traveler t WHERE t.member.id = :memberId AND t.status = 'ACCEPTED'")
+    List<Plan> findAllByMemberId(@Param("memberId") Long memberId);
 }

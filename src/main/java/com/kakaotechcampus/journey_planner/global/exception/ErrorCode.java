@@ -36,6 +36,9 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_NOT_FOUND", "해당 멤버를 찾을 수 없습니다."),
     ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "ALREADY_REGISTERED", "이미 존재하는 멤버입니다."),
 
+    // Traveler
+    TRAVELER_NOT_FOUND(HttpStatus.NOT_FOUND, "TRAVELER_NOT_FOUND", "해당 여행자를 찾을 수 없습니다."),
+
     // Auth
     LOGIN_FAILED(HttpStatus.BAD_REQUEST, "LOGIN_FAILED", "로그인에 실패하였습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "INVALID_TOKEN", "잘못된 토큰입니다."),
