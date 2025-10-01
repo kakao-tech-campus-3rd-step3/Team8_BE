@@ -2,6 +2,7 @@ package com.kakaotechcampus.journey_planner.domain.plan;
 
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
+import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,6 +39,10 @@ public class Plan {
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Traveler> travelers = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Waypoint> waypoints = new ArrayList<>();
+
     public Plan(String title, String description, LocalDate startDate, LocalDate endDate) {
         this.title = title;
         this.description = description;
@@ -60,5 +65,15 @@ public class Plan {
         return this.travelers.stream()
                 .map(Traveler::getMember)
                 .anyMatch(planMember -> planMember.equals(member));
+    }
+
+    public void addWaypoint(Waypoint waypoint) {
+        waypoints.add(waypoint);
+        waypoint.assignToPlan(this);
+    }
+
+    public void removeWaypoint(Waypoint waypoint) {
+        waypoints.remove(waypoint);
+        waypoint.assignToPlan(null);
     }
 }
