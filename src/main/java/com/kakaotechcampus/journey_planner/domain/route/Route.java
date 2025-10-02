@@ -72,4 +72,7 @@ public class Route {
         this.durationMin = duration;
         this.vehicleCategory = vehicleCategory;
     }
+    public void assignToPlan(Plan plan) {
+        this.plan = plan;
+    }
 }
