@@ -36,7 +36,7 @@ public class RouteService {
 
         Route route = RouteMapper.toEntity(plan, fromWaypoint, toWaypoint, request);
 
-        // ✅ Plan이 Route 생명주기 관리
+        // Plan이 Route 생명주기 관리
         plan.addRoute(route);
 
         Route savedRoute = routeRepository.save(route);

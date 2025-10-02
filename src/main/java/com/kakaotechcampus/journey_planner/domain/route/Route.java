@@ -75,4 +75,12 @@ public class Route {
     public void assignToPlan(Plan plan) {
         this.plan = plan;
     }
+    // ✅ 연관관계 편의 메서드
+    public void setFromWayPoint(Waypoint fromWayPoint) {
+        this.fromWayPoint = fromWayPoint;
+    }
+
+    public void setToWayPoint(Waypoint toWayPoint) {
+        this.toWayPoint = toWayPoint;
+    }
 }
