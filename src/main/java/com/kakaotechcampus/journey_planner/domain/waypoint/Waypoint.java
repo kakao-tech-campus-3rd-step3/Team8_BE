@@ -1,6 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.waypoint;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
+import com.kakaotechcampus.journey_planner.domain.route.Route;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import jakarta.persistence.*;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -42,6 +45,14 @@ public class Waypoint {
 
     private Float xPosition;
     private Float yPosition;
+
+    // fromWayPoint로 연결된 Route들
+    @OneToMany(mappedBy = "fromWayPoint", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Route> routesFrom = new ArrayList<>();
+
+    // toWayPoint로 연결된 Route들
+    @OneToMany(mappedBy = "toWayPoint", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Route> routesTo = new ArrayList<>();
 
 
     public Waypoint(String name, String description, String address, LocalDateTime startTime, LocalDateTime endTime, LocationCategory locationCategory, LocationSubCategory locationSubCategory,Float xPosition, Float yPosition) {
