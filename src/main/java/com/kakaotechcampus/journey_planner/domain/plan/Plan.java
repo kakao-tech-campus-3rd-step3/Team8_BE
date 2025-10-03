@@ -1,5 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.plan;
 
+import com.kakaotechcampus.journey_planner.domain.member.Member;
+import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +11,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,6 +22,7 @@ public class Plan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "plan_id")
     private Long id;
 
     @NotBlank(message = "제목은 비어 있을 수 없습니다.")
@@ -29,6 +34,9 @@ public class Plan {
 
     @NotNull(message = "종료일은 필수 값입니다.")
     private LocalDate endDate;
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Traveler> travelers = new ArrayList<>();
 
     public Plan(String title, String description, LocalDate startDate, LocalDate endDate) {
         this.title = title;
@@ -42,5 +50,15 @@ public class Plan {
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public void addTraveler(Traveler traveler) {
+        travelers.add(traveler);
+    }
+
+    public boolean hasMember(Member member) {
+        return this.travelers.stream()
+                .map(Traveler::getMember)
+                .anyMatch(planMember -> planMember.equals(member));
     }
 }

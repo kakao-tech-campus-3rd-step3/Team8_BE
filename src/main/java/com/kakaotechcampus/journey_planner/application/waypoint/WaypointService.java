@@ -1,7 +1,7 @@
 package com.kakaotechcampus.journey_planner.application.waypoint;
 
+import com.kakaotechcampus.journey_planner.application.plan.PlanService;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
-import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointMapper;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointRepository;
@@ -19,16 +19,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WaypointService {
 
-    private final PlanRepository planRepository;
+    private final PlanService planService;
     private final WaypointRepository waypointRepository;
 
     // planId에 해당하는 plan에 waypoint 추가
     @Transactional
     public WaypointResponse createWaypoint(Long planId, WaypointRequest request) {
         Waypoint waypoint = WaypointMapper.toEntity(request);
+        waypoint.validateCategory(waypoint.getLocationCategory(),waypoint.getLocationSubCategory());
 
-        Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+        Plan plan = planService.getPlanEntity(planId);
 
         // 단방향: Waypoint 쪽에 Plan을 세팅
         waypoint.assignToPlan(plan);
@@ -41,6 +41,7 @@ public class WaypointService {
     public WaypointResponse updateWaypoint(Long planId, Long waypointId, WaypointRequest request) {
         Waypoint waypoint = waypointRepository.findByIdAndPlanId(waypointId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
+        waypoint.validateCategory(waypoint.getLocationCategory(),waypoint.getLocationSubCategory());
 
         waypoint.update(
                 request.name(),
@@ -49,6 +50,7 @@ public class WaypointService {
                 request.startTime(),
                 request.endTime(),
                 request.locationCategory(),
+                request.locationSubCategory(),
                 request.xPosition(),
                 request.yPosition()
         );
@@ -67,10 +69,15 @@ public class WaypointService {
 
     // planId에 속한 모든 waypoint 조회
     public List<WaypointResponse> getWaypoints(Long planId) {
-        if (planRepository.existsById(planId)) {
-            List<Waypoint> waypoints = waypointRepository.findAllByPlanId(planId);
-            return WaypointMapper.toResponseList(waypoints);
-        }
-        throw new BusinessException(ErrorCode.PLAN_NOT_FOUND);
+        Plan plan = planService.getPlanEntity(planId);
+
+        List<Waypoint> waypoints = waypointRepository.findAllByPlanId(plan.getId());
+        return WaypointMapper.toResponseList(waypoints);
+    }
+
+    @Transactional(readOnly = true)
+    public Waypoint getWaypointEntity(Long id) {
+        return waypointRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
     }
 }

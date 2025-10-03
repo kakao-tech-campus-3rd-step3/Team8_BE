@@ -1,19 +1,19 @@
 package com.kakaotechcampus.journey_planner.application.route;
 
+import com.kakaotechcampus.journey_planner.application.plan.PlanService;
+import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
-import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.domain.route.Route;
 import com.kakaotechcampus.journey_planner.domain.route.RouteMapper;
 import com.kakaotechcampus.journey_planner.domain.route.RouteRepository;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
-import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.request.RouteRequest;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.response.RouteResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,22 +21,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RouteService {
 
-    private final PlanRepository planRepository;
-    private final WaypointRepository waypointRepository;
     private final RouteRepository routeRepository;
+    private final PlanService planService;
+    private final WaypointService waypointService;
 
     @Transactional
     public RouteResponse createRoute(Long planId, RouteRequest request) {
 
-        Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-
-        Waypoint fromWaypoint = waypointRepository.findById(request.fromWaypointId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
-
-        Waypoint toWaypoint = waypointRepository.findById(request.toWaypointId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
-
+        Plan plan = planService.getPlanEntity(planId);
+        Waypoint fromWaypoint = waypointService.getWaypointEntity(request.fromWaypointId());
+        Waypoint toWaypoint = waypointService.getWaypointEntity(request.toWaypointId());
 
         validateWaypointsBelongToPlan(planId, fromWaypoint, toWaypoint);
 
@@ -51,14 +45,12 @@ public class RouteService {
         Route route = routeRepository.findByIdAndPlanId(routeId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
-        Waypoint from = waypointRepository.findById(request.fromWaypointId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
-        Waypoint to = waypointRepository.findById(request.toWaypointId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
+        Waypoint fromWaypoint = waypointService.getWaypointEntity(request.fromWaypointId());
+        Waypoint toWaypoint = waypointService.getWaypointEntity(request.toWaypointId());
 
         route.update(
-                from,
-                to,
+                fromWaypoint,
+                toWaypoint,
                 request.title(),
                 request.description(),
                 request.duration(),
@@ -78,11 +70,10 @@ public class RouteService {
 
     // planId에 속한 모든 route 조회
     public List<RouteResponse> getRoutes(Long planId) {
-        if (planRepository.existsById(planId)) {
-            List<Route> routes = routeRepository.findAllByPlanId(planId);
-            return RouteMapper.toResponseList(routes);
-        }
-        throw new BusinessException(ErrorCode.PLAN_NOT_FOUND);
+        Plan plan = planService.getPlanEntity(planId);
+
+        List<Route> routes = routeRepository.findAllByPlanId(plan.getId());
+        return RouteMapper.toResponseList(routes);
     }
 
 
@@ -94,5 +85,11 @@ public class RouteService {
                     "웨이포인트가 해당 플랜에 속해있지 않습니다."
             );
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Route getRouteEntity(Long id) {
+        return routeRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
     }
 }

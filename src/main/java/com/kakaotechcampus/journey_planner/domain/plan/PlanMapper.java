@@ -13,21 +13,13 @@ public class PlanMapper {
                 request.title(),
                 request.description(),
                 request.startDate(),
-                request.endDate());
-    }
-
-    public static PlanResponse toResponse(Plan plan) {
-        return new PlanResponse(
-                plan.getId(),
-                plan.getTitle(),
-                plan.getDescription(),
-                plan.getStartDate(),
-                plan.getEndDate());
+                request.endDate()
+        );
     }
 
     public static List<PlanResponse> toResponseList(List<Plan> plans) {
         return plans.stream()
-                .map(PlanMapper::toResponse)
+                .map(PlanResponse::of)
                 .collect(Collectors.toList());
     }
 }

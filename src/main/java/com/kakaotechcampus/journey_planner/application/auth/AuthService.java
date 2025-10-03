@@ -40,9 +40,11 @@ public class AuthService {
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
-        if (!member.verifyPassword(password)) {
+
+        if (!member.verifyPassword(password, bCryptPasswordEncoder)) {
             throw new BusinessException(ErrorCode.LOGIN_FAILED);
         }
+
         String accessToken = jwtProvider.generateAccessToken(member);
         String refreshToken = jwtProvider.generateRefreshToken(member);
         return new TokenResponseDto(accessToken, refreshToken);

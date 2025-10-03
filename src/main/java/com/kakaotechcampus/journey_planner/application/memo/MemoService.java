@@ -1,10 +1,12 @@
 package com.kakaotechcampus.journey_planner.application.memo;
 
+import com.kakaotechcampus.journey_planner.application.plan.PlanService;
+import com.kakaotechcampus.journey_planner.application.route.RouteService;
+import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
-import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
@@ -19,17 +21,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemoService {
 
-    private final PlanRepository planRepository;
     private final MemoRepository memoRepository;
+    private final PlanService planService;
+    private final WaypointService waypointService;
+    private final RouteService routeService;
 
     @Transactional
     public MemoResponse createMemo(Long planId, MemoRequest request) {
         Memo memo = MemoMapper.toEntity(request);
 
-        Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-
+        Plan plan = planService.getPlanEntity(planId);
         memo.assignToPlan(plan);
+        assignTarget(memo, request);
         Memo savedMemo = memoRepository.save(memo);
 
         return MemoMapper.toResponse(savedMemo);
@@ -47,6 +50,8 @@ public class MemoService {
                 request.yPosition()
         );
 
+        assignTarget(memo, request);
+
         return MemoMapper.toResponse(memo);
     }
 
@@ -59,11 +64,26 @@ public class MemoService {
     }
 
     public List<MemoResponse> getMemos(Long planId) {
-        if (planRepository.existsById(planId)) {
-            List<Memo> memos = memoRepository.findByPlanId(planId);
-            return MemoMapper.toResponseList(memos);
+        Plan plan = planService.getPlanEntity(planId);
+
+        List<Memo> memos = memoRepository.findByPlanId(plan.getId());
+        return MemoMapper.toResponseList(memos);
+    }
+
+    private void assignTarget(Memo memo, MemoRequest request) {
+        if (request.waypointId() != null) {
+            memo.assignToWayPoint(
+                    waypointService.getWaypointEntity(request.waypointId())
+            );
+        } else if (request.routeId() != null) {
+            memo.assignToRoute(
+                    routeService.getRouteEntity(request.routeId())
+            );
+        } else {
+            // 둘 다 null이면 Plan에만 속하는 Memo
+            memo.assignToWayPoint(null);
+            memo.assignToRoute(null);
         }
-        throw new BusinessException(ErrorCode.PLAN_NOT_FOUND);
     }
 
 }
