@@ -1,11 +1,11 @@
 package com.kakaotechcampus.journey_planner.infra.token;
 
 import com.kakaotechcampus.journey_planner.application.token.TokenService;
-import com.kakaotechcampus.journey_planner.domain.token.Token;
 import com.kakaotechcampus.journey_planner.domain.token.TokenType;
 import com.kakaotechcampus.journey_planner.global.common.utils.DateUtils;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
+import com.kakaotechcampus.journey_planner.domain.token.Token;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
