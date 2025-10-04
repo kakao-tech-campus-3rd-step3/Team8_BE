@@ -3,6 +3,7 @@ package com.kakaotechcampus.journey_planner.application.plan;
 import com.kakaotechcampus.journey_planner.application.member.MemberService;
 import com.kakaotechcampus.journey_planner.application.traveler.TravelerService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
+import com.kakaotechcampus.journey_planner.domain.member.MemberRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanMapper;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
@@ -22,16 +23,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.kakaotechcampus.journey_planner.global.exception.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 public class PlanService {
-
+    private final MemberRepository memberRepository;
     private final PlanRepository planRepository;
     private final TravelerService travelerService;
-    private final MemberService memberService;
+
 
     @Transactional
-    public PlanResponse createPlan(Member member, CreatePlanRequest request) {
+    public PlanResponse createPlan(Long memberId, CreatePlanRequest request) {
+        Member member = getMember(memberId);
         Plan plan = PlanMapper.toEntity(request);
         Plan savedPlan = planRepository.save(plan);
         Traveler savedTraveler = travelerService.createOwnerTraveler(member, savedPlan);
@@ -41,12 +45,13 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
-    public PlanResponse getPlan(Member member, Long planId) {
+    public PlanResponse getPlan(Long memberId, Long planId) {
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-        boolean isMemberInPlan = plan.hasMember(member);
+                .orElseThrow(() -> new BusinessException(PLAN_NOT_FOUND));
+        boolean isMemberInPlan = plan.hasMember(getMember(memberId));
+
         if (!isMemberInPlan) {
-            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
+            throw new BusinessException(PLAN_ACCESS_DENIED);
         }
         return PlanResponse.of(plan);
     }
@@ -57,12 +62,12 @@ public class PlanService {
     }
 
     @Transactional
-    public PlanResponse updatePlan(Member member, Long id, UpdatePlanRequest request) {
+    public PlanResponse updatePlan(Long memberId, Long id, UpdatePlanRequest request) {
         Plan plan = planRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-        boolean isMemberInPlan = plan.hasMember(member);
+                .orElseThrow(() -> new BusinessException(PLAN_NOT_FOUND));
+        boolean isMemberInPlan = plan.hasMember(getMember(memberId));
         if (!isMemberInPlan) {
-            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
+            throw new BusinessException(PLAN_ACCESS_DENIED);
         }
         plan.update(
                 request.title(),
@@ -75,12 +80,12 @@ public class PlanService {
     }
 
     @Transactional
-    public void deletePlan(Member member, Long id) {
+    public void deletePlan(Long memberId, Long id) {
         Plan plan = planRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-        boolean isMemberInPlan = plan.hasMember(member);
+                .orElseThrow(() -> new BusinessException(PLAN_NOT_FOUND));
+        boolean isMemberInPlan = plan.hasMember(getMember(memberId));
         if (!isMemberInPlan) {
-            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
+            throw new BusinessException(PLAN_ACCESS_DENIED);
         }
         planRepository.delete(plan);
     }
@@ -88,23 +93,24 @@ public class PlanService {
     @Transactional(readOnly = true)
     public Plan getPlanEntity(Long id) {
         return planRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(PLAN_NOT_FOUND));
     }
 
     @Transactional
-    public TravelerResponse inviteMember(Member inviter, Long planId, String inviteeEmail) {
+    public TravelerResponse inviteMember(Long memberId, Long planId, String inviteeEmail) {
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
-
+                .orElseThrow(() -> new BusinessException(PLAN_NOT_FOUND));
+        Member inviter = getMember(memberId);
         if (!travelerService.isOwner(plan, inviter)) {
-            throw new BusinessException(ErrorCode.PLAN_ACCESS_DENIED);
+            throw new BusinessException(PLAN_ACCESS_DENIED);
         }
 
-        Member invitee = memberService.findByEmail(inviteeEmail);
+        Member invitee = memberRepository.findByEmail(inviteeEmail)
+                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
         boolean alreadyExists = plan.hasMember(invitee);
         if (alreadyExists) {
-            throw new BusinessException(ErrorCode.MEMBER_ALREADY_IN_PLAN);
+            throw new BusinessException(MEMBER_ALREADY_IN_PLAN);
         }
 
         Traveler savedTraveler =  travelerService.addTraveler(Traveler.createInvitation(invitee, plan));
@@ -112,14 +118,14 @@ public class PlanService {
     }
 
     @Transactional
-    public Traveler acceptInvitation(Member accepter, Long invitationId) {
+    public Traveler acceptInvitation(Long memberId, Long invitationId) {
         Traveler invitation = travelerService.getTraveler(invitationId);
-        if (!invitation.getMember().equals(accepter)) {
-            throw new BusinessException(ErrorCode.INVITATION_ACCESS_DENIED);
+        if (!invitation.getMember().equals(getMember(memberId))) {
+            throw new BusinessException(INVITATION_ACCESS_DENIED);
         }
 
         if (invitation.getStatus() != InvitationStatus.INVITED) {
-            throw new BusinessException(ErrorCode.INVITATION_ALREADY_PROCESSED);
+            throw new BusinessException(INVITATION_ALREADY_PROCESSED);
         }
 
         invitation.accept();
@@ -127,16 +133,22 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
-    public List<InvitationResponse> getInvitations(Member member) {
-
-        return TravelerMapper.toInvitationResponse(travelerService.getInvitations(member));
+    public List<InvitationResponse> getInvitations(Long memberId) {
+        return TravelerMapper.toInvitationResponse(
+                travelerService.getInvitations(getMember(memberId))
+        );
     }
 
     @Transactional(readOnly = true)
     public List<TravelerResponse> getInvitedTravelers(Long planId) {
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAN_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(PLAN_NOT_FOUND));
 
         return travelerService.getTravelers(plan);
+    }
+
+    private Member getMember(Long memberId){
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
     }
 }

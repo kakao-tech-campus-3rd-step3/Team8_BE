@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final String REFRESH_TOKEN = "Refresh-Token";
 
     @PostMapping("/signup")
     private ResponseEntity<TokenResponseDto> signInAndLogin(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
@@ -28,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    private ResponseEntity<TokenResponseDto> refresh(@RequestHeader(REFRESH_TOKEN) String refreshToken) {
+    private ResponseEntity<TokenResponseDto> refresh(@RequestBody String refreshToken) {
         TokenResponseDto tokenResponseDto = authService.refresh(refreshToken);
         return ResponseEntity.status(HttpStatus.OK).body(tokenResponseDto);
     }
