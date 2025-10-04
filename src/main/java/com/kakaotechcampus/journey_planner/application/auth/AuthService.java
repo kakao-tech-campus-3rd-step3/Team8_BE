@@ -1,8 +1,9 @@
 package com.kakaotechcampus.journey_planner.application.auth;
 
-import com.kakaotechcampus.journey_planner.application.auth.jwt.JwtProvider;
+import com.kakaotechcampus.journey_planner.application.token.TokenService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.member.MemberRepository;
+import com.kakaotechcampus.journey_planner.domain.token.TokenType;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.auth.dto.request.LoginRequestDto;
@@ -16,11 +17,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
     private final MemberRepository memberRepository;
-    private final JwtProvider jwtProvider;
+    private final TokenService tokenService;
     private final PasswordEncoder bCryptPasswordEncoder;
 
-    public TokenResponseDto signIn(SignUpRequestDto signUpRequestDto) {
+    public TokenResponseDto signUp(SignUpRequestDto signUpRequestDto) {
         String email = signUpRequestDto.email();
+
         if (memberRepository.existsByEmail(email)) {
             throw new BusinessException(ErrorCode.ALREADY_REGISTERED);
         }
@@ -29,8 +31,8 @@ public class AuthService {
         member.encodePassword(bCryptPasswordEncoder);
         Member savedMember = memberRepository.save(member);
 
-        String accessToken = jwtProvider.generateAccessToken(savedMember);
-        String refreshToken = jwtProvider.generateRefreshToken(savedMember);
+        String accessToken = tokenService.generateToken(TokenType.ACCESS, savedMember.getId());
+        String refreshToken = tokenService.generateToken(TokenType.REFRESH, savedMember.getId());
         return new TokenResponseDto(accessToken, refreshToken);
     }
 
@@ -45,18 +47,18 @@ public class AuthService {
             throw new BusinessException(ErrorCode.LOGIN_FAILED);
         }
 
-        String accessToken = jwtProvider.generateAccessToken(member);
-        String refreshToken = jwtProvider.generateRefreshToken(member);
+        String accessToken = tokenService.generateToken(TokenType.ACCESS, member.getId());
+        String refreshToken = tokenService.generateToken(TokenType.REFRESH, member.getId());
         return new TokenResponseDto(accessToken, refreshToken);
     }
 
     public TokenResponseDto refresh(String refreshToken) {
-        String email = jwtProvider.extractEmailFromRefreshToken(refreshToken);
-        Member member = memberRepository.findByEmail(email)
+        Long id = tokenService.getId(TokenType.REFRESH, refreshToken);
+        Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
-        String newAccessToken = jwtProvider.generateAccessToken(member);
-        String newRefreshToken = jwtProvider.generateRefreshToken(member);
+        String newAccessToken = tokenService.generateToken(TokenType.ACCESS, member.getId());
+        String newRefreshToken = tokenService.generateToken(TokenType.ACCESS, member.getId());
         // TODO : Redis에 저장된 기존 리프레시 토큰을 새로운 토큰으로 업데이트
         return new TokenResponseDto(newAccessToken, newRefreshToken);
     }
