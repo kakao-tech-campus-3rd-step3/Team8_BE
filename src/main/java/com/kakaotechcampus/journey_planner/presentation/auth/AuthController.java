@@ -19,7 +19,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     private ResponseEntity<TokenResponseDto> signInAndLogin(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signIn(signUpRequestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(signUpRequestDto));
     }
 
     @PostMapping("/login")
