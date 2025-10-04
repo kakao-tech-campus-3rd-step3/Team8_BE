@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     // * GLOBAL
 
+
     // * PLAN
     PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "PLAN_NOT_FOUND", "해당 계획을 찾을 수 없습니다."),
     PLAN_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "PLAN_ACCESS_DENIED", "해당 계획에 접근할 권한이 없습니다."),
@@ -44,6 +45,7 @@ public enum ErrorCode {
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "INVALID_TOKEN", "잘못된 토큰입니다."),
     TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "TOKEN_EXPIRED", "만료된 토큰입니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "INVALID_INPUT", "입력 형식이 잘못되었습니다."),
+    NO_TOKEN(HttpStatus.UNAUTHORIZED, "NO_TOKEN", "토큰을 찾을 수 없습니다."),
 
     // * PDF
     CANNOT_CREATE(HttpStatus.INTERNAL_SERVER_ERROR, "CANNOT_CREATE_PDF", "PDF 를 생성할 수 없습니다.")
