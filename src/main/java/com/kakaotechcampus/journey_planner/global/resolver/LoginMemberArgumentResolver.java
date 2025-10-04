@@ -1,9 +1,11 @@
 package com.kakaotechcampus.journey_planner.global.resolver;
 
-import com.kakaotechcampus.journey_planner.application.auth.jwt.JwtProvider;
-import com.kakaotechcampus.journey_planner.application.member.MemberService;
+import com.kakaotechcampus.journey_planner.application.token.TokenService;
+import com.kakaotechcampus.journey_planner.domain.token.TokenType;
 import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
+import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -13,16 +15,13 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import static com.kakaotechcampus.journey_planner.global.exception.ErrorCode.*;
+
 @Component
+@RequiredArgsConstructor
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final JwtProvider jwtProvider;
-    private final MemberService memberService;
-
-    public LoginMemberArgumentResolver(JwtProvider jwtProvider, MemberService memberService) {
-        this.jwtProvider = jwtProvider;
-        this.memberService = memberService;
-    }
+    private final TokenService tokenService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -30,13 +29,15 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        String token = extractToken(authorizationHeader);
-        String email = jwtProvider.extractEmailFromAccessToken(token);
-        return memberService.findByEmail(email);
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        HttpServletRequest httpServletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+        try{
+            String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+            String token = authorizationHeader.replace("Bearer ", "");
+            return tokenService.getId(TokenType.ACCESS, token);
+        }catch(NullPointerException e){
+            throw new BusinessException(NO_TOKEN);
+        }
     }
 
     private String extractToken(String authorizationHeader) {
