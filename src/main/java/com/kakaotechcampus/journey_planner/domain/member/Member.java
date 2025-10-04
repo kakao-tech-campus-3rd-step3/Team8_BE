@@ -1,6 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.member;
 
 import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
+import com.kakaotechcampus.journey_planner.presentation.member.dto.request.ModifyMemberRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,6 +43,21 @@ public class Member {
         this.email = email;
         this.password = password;
         this.mbtiType = MbtiType.valueOf(mbti.toUpperCase());
+    }
+
+    public void modify(ModifyMemberRequest response){
+        if(response.username() != null && !response.username().isEmpty()){
+            this.name = response.username();
+        }
+        if(response.contact() != null && !response.contact().isEmpty()){
+            this.contact = response.contact();
+        }
+        if(response.email() != null && !response.email().isEmpty()){
+            this.email = response.email();
+        }
+        if(response.mbti() != null){
+            this.mbtiType = response.mbti();
+        }
     }
 
     public boolean verifyPassword(String rawPassword, PasswordEncoder passwordEncoder) {
