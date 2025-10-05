@@ -1,5 +1,6 @@
-package com.kakaotechcampus.journey_planner.domain.memo;
+package com.kakaotechcampus.journey_planner.domain.memo.repository;
 
+import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

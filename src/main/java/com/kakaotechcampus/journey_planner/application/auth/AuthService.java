@@ -2,7 +2,7 @@ package com.kakaotechcampus.journey_planner.application.auth;
 
 import com.kakaotechcampus.journey_planner.application.token.TokenService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
-import com.kakaotechcampus.journey_planner.domain.member.MemberRepository;
+import com.kakaotechcampus.journey_planner.domain.member.repository.MemberRepository;
 import com.kakaotechcampus.journey_planner.domain.token.TokenType;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;

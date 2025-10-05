@@ -1,5 +1,6 @@
-package com.kakaotechcampus.journey_planner.domain.waypoint;
+package com.kakaotechcampus.journey_planner.domain.waypoint.repository;
 
+import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,5 +1,6 @@
-package com.kakaotechcampus.journey_planner.domain.route;
+package com.kakaotechcampus.journey_planner.domain.route.repository;
 
+import com.kakaotechcampus.journey_planner.domain.route.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
