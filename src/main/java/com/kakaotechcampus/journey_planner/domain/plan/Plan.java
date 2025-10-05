@@ -1,7 +1,10 @@
 package com.kakaotechcampus.journey_planner.domain.plan;
 
 import com.kakaotechcampus.journey_planner.domain.member.Member;
+import com.kakaotechcampus.journey_planner.domain.memo.Memo;
+import com.kakaotechcampus.journey_planner.domain.route.Route;
 import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
+import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,6 +41,16 @@ public class Plan {
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Traveler> travelers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Waypoint> waypoints = new ArrayList<>();
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Route> routes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Memo> memos = new ArrayList<>();
+
+
     public Plan(String title, String description, LocalDate startDate, LocalDate endDate) {
         this.title = title;
         this.description = description;
@@ -61,4 +74,35 @@ public class Plan {
                 .map(Traveler::getMember)
                 .anyMatch(planMember -> planMember.equals(member));
     }
+
+    public void addWaypoint(Waypoint waypoint) {
+        waypoints.add(waypoint);
+        waypoint.assignToPlan(this);
+    }
+
+    public void removeWaypoint(Waypoint waypoint) {
+        waypoints.remove(waypoint);
+        waypoint.assignToPlan(null);
+    }
+
+    public void addRoute(Route route) {
+        routes.add(route);
+        route.assignToPlan(this);
+    }
+
+    public void removeRoute(Route route) {
+        routes.remove(route);
+        route.assignToPlan(null);
+    }
+
+    public void addMemo(Memo memo) {
+        memos.add(memo);
+        memo.assignToPlan(this);
+    }
+
+    public void removeMemo(Memo memo) {
+        memos.remove(memo);
+        memo.assignToPlan(null);
+    }
+
 }
