@@ -21,6 +21,8 @@ import static com.kakaotechcampus.journey_planner.global.exception.ErrorCode.*;
 public class TokenProvider implements TokenService{
     private final Map<TokenType, Token> tokens;
 
+    // * identify -> 자기 자신을 가져온다는 거임
+    // * Token getType 이 Key 가 됨.
     public TokenProvider(List<Token> tokens) {
         this.tokens = tokens.stream()
                 .collect(Collectors.toMap(Token::getType, Function.identity()));
@@ -32,7 +34,7 @@ public class TokenProvider implements TokenService{
         return Jwts.builder()
                 .subject(id.toString())
                 .claim("tokenType", token.getType().toString())
-                .issuedAt(token.getNowDate())
+                .issuedAt(token.getGeneratedDate())
                 .expiration(token.getExpirationDate())
                 .signWith(token.getSecretKey())
                 .compact();
@@ -42,7 +44,7 @@ public class TokenProvider implements TokenService{
     public Long getId(TokenType type, String token) {
         Claims claims = getClaims(type, token);
         validateToken(claims, tokens.get(type).getType().toString());
-        return 0L;
+        return Long.parseLong(claims.getSubject());
     }
 
     private void validateToken(Claims claims, String expectedType) throws BusinessException {
