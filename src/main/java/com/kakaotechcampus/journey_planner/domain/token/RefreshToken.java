@@ -33,7 +33,7 @@ public final class RefreshToken implements Token {
     }
 
     @Override
-    public Date getNowDate() {
+    public Date getGeneratedDate() {
         return DateUtils.now();
     }
 

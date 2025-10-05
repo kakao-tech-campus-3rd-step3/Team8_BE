@@ -8,7 +8,8 @@ public sealed interface Token permits AccessToken, RefreshToken {
 
     SecretKey getSecretKey();
 
-    Date getNowDate();
+    // 생성시간으로 네이밍 설정
+    Date getGeneratedDate();
 
     Date getExpirationDate();
 }
