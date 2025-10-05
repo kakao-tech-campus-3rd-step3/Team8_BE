@@ -30,8 +30,8 @@ public class WaypointService {
 
         Plan plan = planService.getPlanEntity(planId);
 
-        // 단방향: Waypoint 쪽에 Plan을 세팅
-        waypoint.assignToPlan(plan);
+        // 양방향 편의 메서드 사용
+        plan.addWaypoint(waypoint);
         Waypoint savedWaypoint = waypointRepository.save(waypoint);
 
         return WaypointMapper.toResponse(savedWaypoint);
@@ -61,10 +61,13 @@ public class WaypointService {
     // planId 및 waypointId에 해당하는 waypoint 삭제
     @Transactional
     public void deleteWaypoint(Long planId, Long waypointId) {
+        Plan plan = planService.getPlanEntity(planId);
+
         Waypoint waypoint = waypointRepository.findByIdAndPlanId(waypointId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
 
-        waypointRepository.delete(waypoint);
+        //orphanRemoval=true → 컬렉션에서만 제거하면 DB에서도 삭제됨
+        plan.removeWaypoint(waypoint);
     }
 
     // planId에 속한 모든 waypoint 조회
