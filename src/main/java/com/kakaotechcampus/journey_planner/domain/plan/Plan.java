@@ -2,6 +2,7 @@ package com.kakaotechcampus.journey_planner.domain.plan;
 
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
+import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,21 +36,34 @@ public class Plan {
     @NotNull(message = "종료일은 필수 값입니다.")
     private LocalDate endDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Traveler> travelers = new ArrayList<>();
 
-    public Plan(String title, String description, LocalDate startDate, LocalDate endDate) {
+    public Plan(String title, String description, LocalDate startDate, LocalDate endDate, Member member) {
         this.title = title;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.member = member;
     }
 
-    public void update(String title, String description, LocalDate startDate, LocalDate endDate) {
-        this.title = title;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
+    public void update(UpdatePlanRequest request) {
+        if(request.title() != null){
+            this.title = request.title();
+        }
+        if(request.description() != null){
+            this.description = request.description();
+        }
+        if(request.startDate() != null){
+            this.startDate = request.startDate();
+        }
+        if(request.endDate() != null){
+            this.endDate = request.endDate();
+        }
     }
 
     public void addTraveler(Traveler traveler) {
