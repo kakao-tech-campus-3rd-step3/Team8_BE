@@ -13,6 +13,8 @@ import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.Tr
 import com.kakaotechcampus.journey_planner.presentation.utils.MessagingUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,14 +45,14 @@ public class PlanController {
             @PathVariable Long id
     ) {
         PlanResponse response = planService.getPlan(memberId, id);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().body(response);
     }
 
     // Plan 전체 조회
     @GetMapping
-    public ResponseEntity<List<PlanResponse>> getAllPlans(@LoginMember Member member) {
-        List<PlanResponse> response = planService.getAllPlans(member.getId());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Slice<PlanResponse>> getAllPlans(@LoginMember Long memberId, Pageable pageable) {
+        Slice<PlanResponse> response = planService.getAllPlans(memberId, pageable);
+        return ResponseEntity.ok().body(response);
     }
 
     // Plan 수정

@@ -1,23 +1,24 @@
 package com.kakaotechcampus.journey_planner.application.plan;
 
-import com.kakaotechcampus.journey_planner.application.member.MemberService;
 import com.kakaotechcampus.journey_planner.application.traveler.TravelerService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
-import com.kakaotechcampus.journey_planner.domain.member.MemberRepository;
+import com.kakaotechcampus.journey_planner.domain.member.repository.MemberRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.plan.PlanMapper;
-import com.kakaotechcampus.journey_planner.domain.plan.PlanRepository;
+import com.kakaotechcampus.journey_planner.domain.plan.repository.JpaPlanRepository;
+import com.kakaotechcampus.journey_planner.domain.plan.repository.PlanRepository;
 import com.kakaotechcampus.journey_planner.domain.traveler.InvitationStatus;
 import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
 import com.kakaotechcampus.journey_planner.domain.traveler.TravelerMapper;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
-import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.TravelerResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,18 +30,20 @@ import static com.kakaotechcampus.journey_planner.global.exception.ErrorCode.*;
 @RequiredArgsConstructor
 public class PlanService {
     private final MemberRepository memberRepository;
+    private final JpaPlanRepository jpaPlanRepository;
     private final PlanRepository planRepository;
     private final TravelerService travelerService;
-
 
     @Transactional
     public PlanResponse createPlan(Long memberId, CreatePlanRequest request) {
         Member member = getMember(memberId);
-        Plan plan = PlanMapper.toEntity(request);
+        Plan plan = PlanMapper.toEntity(request, member);
         Plan savedPlan = planRepository.save(plan);
+
         Traveler savedTraveler = travelerService.createOwnerTraveler(member, savedPlan);
         member.addTraveler(savedTraveler);
         plan.addTraveler(savedTraveler);
+
         return PlanResponse.of(savedPlan);
     }
 
@@ -57,8 +60,8 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
-    public List<PlanResponse> getAllPlans(Long memberId) {
-        return PlanMapper.toResponseList(planRepository.findAllByMemberId(memberId));
+    public Slice<PlanResponse> getAllPlans(Long memberId, Pageable pageable) {
+        return PlanResponse.toPagination(jpaPlanRepository.findAllByMemberId(memberId, pageable));
     }
 
     @Transactional
@@ -69,13 +72,7 @@ public class PlanService {
         if (!isMemberInPlan) {
             throw new BusinessException(PLAN_ACCESS_DENIED);
         }
-        plan.update(
-                request.title(),
-                request.description(),
-                request.startDate(),
-                request.endDate()
-        );
-
+        plan.update(request);
         return PlanResponse.of(plan);
     }
 
