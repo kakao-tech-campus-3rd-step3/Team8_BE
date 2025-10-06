@@ -1,6 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.member;
 
 import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
+import com.kakaotechcampus.journey_planner.global.common.auditing.BaseEntity;
 import com.kakaotechcampus.journey_planner.presentation.member.dto.request.ModifyMemberRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,7 +17,7 @@ import java.util.List;
 @Table(name = "members")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")

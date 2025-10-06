@@ -1,6 +1,5 @@
 package com.kakaotechcampus.journey_planner.infra.flyingsaucer;
 
-import com.itextpdf.text.DocumentException;
 import com.kakaotechcampus.journey_planner.domain.pdf.PdfGenerator;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.infra.flyingsaucer.properties.FontProperties;
@@ -28,7 +27,7 @@ public class ITextPdfGenerator implements PdfGenerator {
             renderer.layout();
             renderer.createPDF(outputStream);
             outputStream.flush();
-        }catch(DocumentException | IOException e){
+        }catch(IOException e){
             throw new BusinessException(CANNOT_CREATE);
         }
     }
@@ -43,7 +42,7 @@ public class ITextPdfGenerator implements PdfGenerator {
                     font.getFontPath(),
                     font.getEmbedded()
             );
-        }catch(IOException | DocumentException e){
+        }catch(IOException e){
             throw new BusinessException(FONT_NOT_FOUND);
         }
     }
