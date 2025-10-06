@@ -1,16 +1,13 @@
 package com.kakaotechcampus.journey_planner.presentation.plan;
 
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
-import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
-import com.kakaotechcampus.journey_planner.domain.traveler.TravelerMapper;
 import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.TravelerResponse;
-import com.kakaotechcampus.journey_planner.presentation.utils.MessagingUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +23,6 @@ import java.util.List;
 @RequestMapping("/v1/plans")
 public class PlanController {
     private final PlanService planService;
-    private final MessagingUtil messagingUtil;
 
     // Plan 생성
     @PostMapping
@@ -83,7 +79,6 @@ public class PlanController {
             @RequestParam("email") String inviteeEmail
     ){
         TravelerResponse response = planService.inviteMember(memberId, planId, inviteeEmail);
-        messagingUtil.sendResponse(planId, "travelers", "TRAVELER_INVITE", "traveler", response);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -93,7 +88,6 @@ public class PlanController {
             @PathVariable Long invitationId
     ) {
         Traveler traveler = planService.acceptInvitation(memberId, invitationId);
-        messagingUtil.sendResponse(traveler.getPlan().getId(), "travelers", "TRAVELER_ACCEPTED", "traveler", TravelerMapper.toResponse(traveler));
         return ResponseEntity.ok().build();
     }
 
