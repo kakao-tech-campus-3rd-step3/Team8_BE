@@ -56,7 +56,7 @@ public class Plan {
     private final List<Memo> memos = new ArrayList<>();
 
 
-    public Plan(String title, String description, LocalDate startDate, LocalDate endDate) {
+    public Plan(String title, String description, LocalDate startDate, LocalDate endDate, Member member) {
         this.title = title;
         this.description = description;
         this.startDate = startDate;
