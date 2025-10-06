@@ -4,9 +4,13 @@ FROM bellsoft/liberica-openjdk-alpine:17 AS builder
 
 WORKDIR /app
 
-COPY . .
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
 
-RUN ./gradlew clean compileJava
+RUN ./gradlew dependencies --no-daemon || true
+
+COPY src src
 
 RUN ./gradlew clean build -x test
 
