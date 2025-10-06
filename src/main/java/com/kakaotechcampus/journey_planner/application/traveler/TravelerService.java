@@ -3,6 +3,7 @@ package com.kakaotechcampus.journey_planner.application.traveler;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.traveler.*;
+import com.kakaotechcampus.journey_planner.domain.traveler.repository.TravelerRepository;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.TravelerResponse;

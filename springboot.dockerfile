@@ -6,6 +6,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN ./gradlew clean compileJava
+
 RUN ./gradlew clean build -x test
 
 VOLUME /tmp

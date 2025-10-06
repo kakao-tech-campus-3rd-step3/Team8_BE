@@ -1,7 +1,9 @@
-package com.kakaotechcampus.journey_planner.domain.traveler;
+package com.kakaotechcampus.journey_planner.domain.traveler.repository;
 
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
+import com.kakaotechcampus.journey_planner.domain.traveler.InvitationStatus;
+import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -36,8 +36,6 @@ public class Memo {
     @JoinColumn(name = "route_id")
     private Route route;
 
-
-
     public Memo(String title, String content, float xPosition, float yPosition) {
         this.title = title;
         this.content = content;

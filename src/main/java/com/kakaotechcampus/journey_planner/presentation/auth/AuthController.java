@@ -5,30 +5,29 @@ import com.kakaotechcampus.journey_planner.presentation.auth.dto.request.LoginRe
 import com.kakaotechcampus.journey_planner.presentation.auth.dto.request.SignUpRequestDto;
 import com.kakaotechcampus.journey_planner.presentation.auth.dto.response.TokenResponseDto;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/v1/auth")
+@RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
-    @PostMapping("/v1/members/signup")
+    @PostMapping("/signup")
     private ResponseEntity<TokenResponseDto> signInAndLogin(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signIn(signUpRequestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(signUpRequestDto));
     }
 
-    @PostMapping("/v1/members/login")
+    @PostMapping("/login")
     private ResponseEntity<TokenResponseDto> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.login(loginRequestDto));
     }
 
-    @PostMapping("/v1/members/refresh")
-    private ResponseEntity<TokenResponseDto> refresh(@RequestHeader("Refresh-Token") String refreshToken) {
+    @PostMapping("/refresh")
+    private ResponseEntity<TokenResponseDto> refresh(@RequestBody String refreshToken) {
         TokenResponseDto tokenResponseDto = authService.refresh(refreshToken);
         return ResponseEntity.status(HttpStatus.OK).body(tokenResponseDto);
     }

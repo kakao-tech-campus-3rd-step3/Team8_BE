@@ -13,6 +13,8 @@ import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.Tr
 import com.kakaotechcampus.journey_planner.presentation.utils.MessagingUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,77 +31,75 @@ public class PlanController {
     // Plan 생성
     @PostMapping
     public ResponseEntity<PlanResponse> createPlan(
-            @LoginMember Member member,
+            @LoginMember Long memberId,
             @Valid @RequestBody CreatePlanRequest request
     ) {
-        PlanResponse response = planService.createPlan(member, request);
+        PlanResponse response = planService.createPlan(memberId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Plan 단건 조회
     @GetMapping("/{id}")
     public ResponseEntity<PlanResponse> getPlan(
-            @LoginMember Member member,
+            @LoginMember Long memberId,
             @PathVariable Long id
     ) {
-        PlanResponse response = planService.getPlan(member, id);
-        return ResponseEntity.ok(response);
+        PlanResponse response = planService.getPlan(memberId, id);
+        return ResponseEntity.ok().body(response);
     }
 
     // Plan 전체 조회
     @GetMapping
-    public ResponseEntity<List<PlanResponse>> getAllPlans(@LoginMember Member member) {
-        List<PlanResponse> response = planService.getAllPlans(member.getId());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Slice<PlanResponse>> getAllPlans(@LoginMember Long memberId, Pageable pageable) {
+        Slice<PlanResponse> response = planService.getAllPlans(memberId, pageable);
+        return ResponseEntity.ok().body(response);
     }
 
     // Plan 수정
     @PatchMapping("/{id}")
     public ResponseEntity<PlanResponse> updatePlan(
-            @LoginMember Member member,
+            @LoginMember Long memberId,
             @PathVariable Long id,
             @Valid @RequestBody UpdatePlanRequest request
     ) {
-        PlanResponse response = planService.updatePlan(member, id, request);
+        PlanResponse response = planService.updatePlan(memberId, id, request);
         return ResponseEntity.ok(response);
     }
 
     // Plan 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlan(
-            @LoginMember Member member,
+            @LoginMember Long memberId,
             @PathVariable Long id
     ) {
-        planService.deletePlan(member, id);
+        planService.deletePlan(memberId, id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/invitations/{planId}")
     public ResponseEntity<Void> inviteMember(
-            @LoginMember Member member,
+            @LoginMember Long memberId,
             @PathVariable Long planId,
             @RequestParam("email") String inviteeEmail
     ){
-        TravelerResponse response = planService.inviteMember(member, planId, inviteeEmail);
+        TravelerResponse response = planService.inviteMember(memberId, planId, inviteeEmail);
         messagingUtil.sendResponse(planId, "travelers", "TRAVELER_INVITE", "traveler", response);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/invitations/{invitationId}/accept")
     public ResponseEntity<Void> acceptInvitation(
-            @LoginMember Member member,
+            @LoginMember Long memberId,
             @PathVariable Long invitationId
     ) {
-        Traveler traveler = planService.acceptInvitation(member, invitationId);
+        Traveler traveler = planService.acceptInvitation(memberId, invitationId);
         messagingUtil.sendResponse(traveler.getPlan().getId(), "travelers", "TRAVELER_ACCEPTED", "traveler", TravelerMapper.toResponse(traveler));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/invitations")
-    public ResponseEntity<List<InvitationResponse>> getInvitations(
-            @LoginMember Member member
-    ) {
-        List<InvitationResponse> invitations = planService.getInvitations(member);
+    public ResponseEntity<List<InvitationResponse>> getInvitations(@LoginMember Long memberId) {
+        List<InvitationResponse> invitations = planService.getInvitations(memberId);
         return ResponseEntity.status(HttpStatus.OK).body(invitations);
     }
 }

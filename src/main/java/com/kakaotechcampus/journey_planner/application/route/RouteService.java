@@ -5,7 +5,7 @@ import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.route.Route;
 import com.kakaotechcampus.journey_planner.domain.route.RouteMapper;
-import com.kakaotechcampus.journey_planner.domain.route.RouteRepository;
+import com.kakaotechcampus.journey_planner.domain.route.repository.RouteRepository;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;

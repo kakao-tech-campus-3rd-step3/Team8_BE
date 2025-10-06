@@ -5,7 +5,7 @@ import com.kakaotechcampus.journey_planner.application.route.RouteService;
 import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
-import com.kakaotechcampus.journey_planner.domain.memo.MemoRepository;
+import com.kakaotechcampus.journey_planner.domain.memo.repository.MemoRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
