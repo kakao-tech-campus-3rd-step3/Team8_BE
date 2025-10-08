@@ -48,13 +48,13 @@ public class MessageProvider implements MessageService {
     }
 
     private String getDestination(Long planId, String destination) {
-        return MESSAGE_PREFIX + planId + "/" + destination;
+        return MESSAGE_PREFIX + "/" + planId + "/" + destination;
     }
 
     private Map<String, Object> getPayload(MessageType type, MessageBehaviorType behaviorType, Object payload){
         return Map.of(
-                "types", type.name(),
-                behaviorType.name(), payload
+                "type", behaviorType.name(),
+                type.name(), payload
         );
     }
 }

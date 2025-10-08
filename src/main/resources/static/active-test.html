@@ -96,7 +96,7 @@
     if(client && client.connected){ log("이미 연결되어 있습니다.", "info"); return; }
     client = new StompJs.Client({
       // 같은 서버를 쓰는 경우 "/ws"로 가능, 만약 프론트와 백의 서버가 다르다면 "localhost:8080/ws" 와 같이 전체를 입력
-      webSocketFactory: ()=> new SockJS("/ws"), reconnectDelay: 5000
+      webSocketFactory: ()=> new SockJS("http://localhost:8080/ws"), reconnectDelay: 5000
     });
     client.onConnect = ()=>{
       log(`✅ Connected to WebSocket for Plan ID: ${planId}`, "success");
@@ -107,18 +107,18 @@
         log("📩 [Waypoints] "+msg.body,"info");
 
         switch (payload.type) {
-          case "WAYPOINT_INIT":
+          case "INIT":
             waypoints = payload.waypoints;
             break;
-          case "WAYPOINT_CREATE":
+          case "CREATE":
             waypoints.push(payload.waypoint);
             break;
-          case "WAYPOINT_UPDATE":
+          case "UPDATE":
             const idxUpdate = waypoints.findIndex(item => item.id === payload.waypoint.id);
             if (idxUpdate > -1) waypoints[idxUpdate] = payload.waypoint;
             else waypoints.push(payload.waypoint); // 없으면 추가(엣지 케이스)
             break;
-          case "WAYPOINT_DELETE":
+          case "DELETE":
             waypoints = waypoints.filter(item => item.id !== payload.waypointId);
             break;
           default:
