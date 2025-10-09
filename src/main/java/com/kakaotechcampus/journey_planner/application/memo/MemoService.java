@@ -64,6 +64,7 @@ public class MemoService {
         plan.removeMemo(memo); // Plan 컬렉션에서 제거 → orphanRemoval 덕분에 DB에서도 삭제
     }
 
+    @Transactional(readOnly = true)
     public List<MemoResponse> getMemos(Long planId) {
         Plan plan = planService.getPlanEntity(planId);
 
