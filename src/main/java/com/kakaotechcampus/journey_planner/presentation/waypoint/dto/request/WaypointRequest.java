@@ -15,12 +15,16 @@ public record WaypointRequest(
 
         String address,
 
+        @NotNull
         LocalDateTime startTime,
 
+        @NotNull
         LocalDateTime endTime,
 
+        @NotNull
         LocationCategory locationCategory,
 
+        @NotNull
         LocationSubCategory locationSubCategory,
 
         @NotNull(message = "x좌표는 필수 입력값입니다.")
