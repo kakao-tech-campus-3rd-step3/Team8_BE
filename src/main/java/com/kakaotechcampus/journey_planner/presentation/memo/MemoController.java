@@ -6,49 +6,57 @@ import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoReq
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.response.MemoResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
-import static com.kakaotechcampus.journey_planner.domain.message.MessageType.*;
+import static com.kakaotechcampus.journey_planner.domain.message.MessageType.MEMO;
 
+@Slf4j
 @Controller
-@MessageMapping("/plans/{planId}/memos")
 @RequiredArgsConstructor
+@MessageMapping("/plans/{planId}/memos")
 public class MemoController {
+
     private final MemoService memoService;
     private final MessageService messageService;
     private static final String DESTINATION = "memos";
 
-    // 클라이언트가 구독 후 초기 상태 요청 시 전체 memo 전송
+    // 초기화: 전체 메모 목록 전송
     @MessageMapping("/init")
     public void initMemos(@DestinationVariable Long planId) {
         List<MemoResponse> memoResponses = memoService.getMemos(planId);
-        messageService.sendInitMessage(MEMO,planId, DESTINATION, memoResponses);
+        messageService.sendInitMessage(MEMO, planId, DESTINATION, memoResponses);
     }
 
-    // 새 memo 생성 후 단건 전송
+
     @MessageMapping("/create")
-    public void createMemo(@DestinationVariable Long planId, @Valid @Payload MemoRequest request) {
+    public void createMemo(
+            @DestinationVariable Long planId,
+            @Valid @Payload MemoRequest request,
+            @Header("simpSessionId") String sessionId
+    ) {
         MemoResponse response = memoService.createMemo(planId, request);
-        messageService.sendCreateMessage(MEMO,planId, DESTINATION, response);
+        messageService.sendCreateMessage(MEMO, planId, DESTINATION, response);
     }
 
-    // memo 수정 후 단건 전송
+    // (자기 세션 제외 브로드캐스트)
     @MessageMapping("/{memoId}/update")
     public void updateMemo(
             @DestinationVariable Long planId,
             @DestinationVariable Long memoId,
-            @Valid @Payload MemoRequest request) {
-
+            @Valid @Payload MemoRequest request,
+            @Header("simpSessionId") String sessionId
+    ) {
         MemoResponse response = memoService.updateMemo(planId, memoId, request);
-        messageService.sendUpdateMessage(MEMO,planId, DESTINATION, response);
+        messageService.sendUpdateMessage(MEMO, planId, DESTINATION, response, sessionId);
     }
 
-    // memo 삭제 후 해당 Id 전송
     @MessageMapping("/{memoId}/delete")
     public void deleteMemo(
             @DestinationVariable Long planId,
