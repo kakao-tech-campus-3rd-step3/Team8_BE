@@ -2,20 +2,22 @@ package com.kakaotechcampus.journey_planner.presentation.route;
 
 import com.kakaotechcampus.journey_planner.application.message.MessageService;
 import com.kakaotechcampus.journey_planner.application.route.RouteService;
-import com.kakaotechcampus.journey_planner.domain.message.MessageType;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.request.RouteRequest;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.response.RouteResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
+
 import java.util.List;
 
-import static com.kakaotechcampus.journey_planner.domain.message.MessageType.*;
-import static com.kakaotechcampus.journey_planner.domain.message.MessageType.MEMO;
+import static com.kakaotechcampus.journey_planner.domain.message.MessageType.ROUTE;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @MessageMapping("/plans/{planId}/routes")
@@ -25,34 +27,43 @@ public class RouteController {
     private final MessageService messageService;
     private static final String DESTINATION = "routes";
 
-    // 클라이언트가 구독 후 초기 상태 요청 시 전체 Route 전송
+
     @MessageMapping("/init")
     public void initRoutes(@DestinationVariable Long planId) {
         List<RouteResponse> routeResponses = routeService.getRoutes(planId);
         messageService.sendInitMessage(ROUTE, planId, DESTINATION, routeResponses);
     }
 
-    // 새 route 생성 후 단건 전송
+
     @MessageMapping("/create")
-    public void createRoute(@DestinationVariable Long planId, @Valid @Payload RouteRequest request) {
+    public void createRoute(
+            @DestinationVariable Long planId,
+            @Valid @Payload RouteRequest request,
+            @Header("simpSessionId") String sessionId
+    ) {
+        log.info("🟢 [CREATE ROUTE] sessionId={}", sessionId);
         RouteResponse response = routeService.createRoute(planId, request);
         messageService.sendCreateMessage(ROUTE, planId, DESTINATION, response);
     }
 
-    // route 수정 후 단건 전송
+    // 수정 (자기 세션 제외 브로드캐스트)
     @MessageMapping("/{routeId}/update")
     public void updateRoute(
             @DestinationVariable Long planId,
             @DestinationVariable Long routeId,
-            @Valid @Payload RouteRequest request
+            @Valid @Payload RouteRequest request,
+            @Header("simpSessionId") String sessionId
     ) {
         RouteResponse response = routeService.updateRoute(planId, routeId, request);
-        messageService.sendUpdateMessage(ROUTE, planId, DESTINATION, response);
+        messageService.sendUpdateMessage(ROUTE, planId, DESTINATION, response, sessionId);
     }
 
-    // route 삭제 후 해당 Id 전송
+
     @MessageMapping("/{routeId}/delete")
-    public void deleteRoute(@DestinationVariable Long planId, @DestinationVariable Long routeId) {
+    public void deleteRoute(
+            @DestinationVariable Long planId,
+            @DestinationVariable Long routeId
+    ) {
         routeService.deleteRoute(planId, routeId);
         messageService.sendDeleteMessage(ROUTE, planId, DESTINATION, routeId);
     }
