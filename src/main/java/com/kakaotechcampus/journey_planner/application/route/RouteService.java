@@ -74,6 +74,7 @@ public class RouteService {
     }
 
     // planId에 속한 모든 route 조회
+    @Transactional(readOnly = true)
     public List<RouteResponse> getRoutes(Long planId) {
         Plan plan = planService.getPlanEntity(planId);
 
