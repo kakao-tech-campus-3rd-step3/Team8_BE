@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
 import static org.mockito.Mockito.mock;
 
 public class MemoTestBuilder {
-    // 기본값 설정
     private Long id = 1L;
     private String title = "테스트 메모 제목";
     private String content = "테스트 메모 내용입니다.";
@@ -65,17 +64,13 @@ public class MemoTestBuilder {
         return this;
     }
 
-    // 최종적으로 Memo 객체를 생성하는 build 메서드
     public Memo build() {
-        // 1. Memo 엔티티의 public 생성자를 사용하여 기본 객체 생성
         Memo memo = new Memo(this.title, this.content, this.xPosition, this.yPosition);
 
-        // 2. 연관관계 설정을 위해 public 메서드 사용
         memo.assignToPlan(this.plan);
         memo.assignToWayPoint(this.waypoint);
         memo.assignToRoute(this.route);
 
-        // 3. 리플렉션을 사용하여 private인 id 필드에 값 주입
         try {
             Field idField = Memo.class.getDeclaredField("id");
             idField.setAccessible(true);
