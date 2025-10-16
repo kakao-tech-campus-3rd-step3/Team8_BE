@@ -18,7 +18,7 @@ public class SwaggerConfig {
                 .components(new Components())
                 .info(apiInfo())
                 .servers(List.of(
-                        new Server().url("http://18.118.161.98:8080").description("Production HTTPS 서버"),
+                        new Server().url("http://3.133.89.210:8080").description("Production HTTP 서버"),
                         new Server().url("http://localhost:8080").description("로컬 개발 서버")
                 ));
     }
