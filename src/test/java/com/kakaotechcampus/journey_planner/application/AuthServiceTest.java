@@ -6,7 +6,6 @@ import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.member.repository.MemberRepository;
 import com.kakaotechcampus.journey_planner.domain.token.TokenType;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
-import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.presentation.auth.dto.request.LoginRequestDto;
 import com.kakaotechcampus.journey_planner.presentation.auth.dto.request.SignUpRequestDto;
 import com.kakaotechcampus.journey_planner.presentation.auth.dto.response.TokenResponseDto;
