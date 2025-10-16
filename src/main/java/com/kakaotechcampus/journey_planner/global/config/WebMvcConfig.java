@@ -24,6 +24,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("https://journey-planner-deployment.vercel.app/")
                 .allowedOrigins("http://localhost:5173")
+                .allowedOrigins("http://121.182.116.155:5137")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);

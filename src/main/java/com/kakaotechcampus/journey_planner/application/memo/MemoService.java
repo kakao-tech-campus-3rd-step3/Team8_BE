@@ -5,7 +5,7 @@ import com.kakaotechcampus.journey_planner.application.route.RouteService;
 import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
-import com.kakaotechcampus.journey_planner.domain.memo.MemoRepository;
+import com.kakaotechcampus.journey_planner.domain.memo.repository.MemoRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
@@ -29,9 +29,9 @@ public class MemoService {
     @Transactional
     public MemoResponse createMemo(Long planId, MemoRequest request) {
         Memo memo = MemoMapper.toEntity(request);
-
         Plan plan = planService.getPlanEntity(planId);
-        memo.assignToPlan(plan);
+
+        plan.addMemo(memo);
         assignTarget(memo, request);
         Memo savedMemo = memoRepository.save(memo);
 
@@ -60,7 +60,8 @@ public class MemoService {
         Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 
-        memoRepository.delete(memo);
+        Plan plan = memo.getPlan();
+        plan.removeMemo(memo); // Plan 컬렉션에서 제거 → orphanRemoval 덕분에 DB에서도 삭제
     }
 
     public List<MemoResponse> getMemos(Long planId) {

@@ -5,7 +5,7 @@ import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.route.Route;
 import com.kakaotechcampus.journey_planner.domain.route.RouteMapper;
-import com.kakaotechcampus.journey_planner.domain.route.RouteRepository;
+import com.kakaotechcampus.journey_planner.domain.route.repository.RouteRepository;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
@@ -36,6 +36,9 @@ public class RouteService {
 
         Route route = RouteMapper.toEntity(plan, fromWaypoint, toWaypoint, request);
 
+        // Plan이 Route 생명주기 관리
+        plan.addRoute(route);
+
         Route savedRoute = routeRepository.save(route);
         return RouteMapper.toResponse(savedRoute);
     }
@@ -62,10 +65,12 @@ public class RouteService {
 
     @Transactional
     public void deleteRoute(Long planId, Long routeId) {
+        Plan plan = planService.getPlanEntity(planId);
         Route route = routeRepository.findByIdAndPlanId(routeId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
-        routeRepository.delete(route);
+        // Plan이 Route 삭제 관리 (orphanRemoval 전파됨)
+        plan.removeRoute(route);
     }
 
     // planId에 속한 모든 route 조회
