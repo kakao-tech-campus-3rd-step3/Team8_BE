@@ -144,4 +144,28 @@ public class AuthServiceTest {
             assertThat(exception.getMessage()).isEqualTo("로그인에 실패하였습니다.");
         }
     }
+
+    @Nested
+    @DisplayName("토큰 재발급(refresh) 테스트")
+    class RefreshTest {
+        @Test
+        @DisplayName("성공")
+        void refreshSuccess() {
+            // given
+            String refreshToken = "validRefreshToken";
+            Member member = MemberTestBuilder.aMember().withId(1L).withEmail("test@example.com").withPassword("encodedPassword").build();
+
+            when(tokenService.getId(eq(TokenType.REFRESH), anyString())).thenReturn(1L);
+            when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
+            when(tokenService.generateToken(eq(TokenType.ACCESS), anyLong())).thenReturn("newAccessToken");
+            when(tokenService.generateToken(eq(TokenType.REFRESH), anyLong())).thenReturn("newRefreshToken");
+
+            // when
+            TokenResponseDto responseDto = authService.refresh(refreshToken);
+
+            // then
+            assertThat(responseDto.accessToken()).isEqualTo("newAccessToken");
+            assertThat(responseDto.refreshToken()).isEqualTo("newRefreshToken");
+        }
+    }
 }
