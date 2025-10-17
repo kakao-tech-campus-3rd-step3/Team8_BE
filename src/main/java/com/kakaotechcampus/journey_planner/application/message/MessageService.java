@@ -9,7 +9,7 @@ public interface MessageService {
 
     void sendCreateMessage(MessageType type, Long planId, String destination, Object message);
 
-    void sendUpdateMessage(MessageType type, Long planId, String destination, Object message);
-
     void sendDeleteMessage(MessageType type, Long planId, String destination, Object message);
+    // ✅ senderSessionId 기반 메시지 (자기 자신 제외용)
+    void sendUpdateMessage(MessageType type, Long planId, String destination, Object message, String senderSessionId);
 }
