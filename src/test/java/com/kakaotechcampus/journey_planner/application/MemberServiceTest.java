@@ -149,7 +149,7 @@ public class MemberServiceTest {
             );
             assertThat(exception.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
             assertThat(exception.getCode()).isEqualTo("AE_005");
-            assertThat(exception.getMessage()).isEqualTo("AE_005");
+            assertThat(exception.getMessage()).isEqualTo("비밀번호가 잘못되었습니다.");
         }
     }
 }
