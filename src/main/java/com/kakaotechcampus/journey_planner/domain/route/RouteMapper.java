@@ -25,7 +25,6 @@ public class RouteMapper {
     public static RouteResponse toResponse(Route route) {
         return new RouteResponse(
                 route.getId(),
-                route.getPlan().getId(),
                 route.getFromWayPoint().getId(),
                 route.getToWayPoint().getId(),
                 route.getTitle(),
