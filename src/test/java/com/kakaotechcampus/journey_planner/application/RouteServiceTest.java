@@ -13,7 +13,6 @@ import com.kakaotechcampus.journey_planner.presentation.route.dto.request.RouteR
 import com.kakaotechcampus.journey_planner.presentation.route.dto.response.RouteResponse;
 import com.kakaotechcampus.journey_planner.support.PlanTestBuilder;
 import com.kakaotechcampus.journey_planner.support.RouteTestBuilder;
-import com.kakaotechcampus.journey_planner.support.WaypointTestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -114,8 +113,6 @@ public class RouteServiceTest {
             given(waypointService.getWaypointEntity(request.toWaypointId())).willReturn(mockToWaypoint);
 
             given(mockRoute.getId()).willReturn(routeId);
-            given(mockRoute.getPlan()).willReturn(mockPlan);
-            given(mockPlan.getId()).willReturn(planId);
             given(mockRoute.getFromWayPoint()).willReturn(mockFromWaypoint);
             given(mockRoute.getToWayPoint()).willReturn(mockToWaypoint);
             given(mockFromWaypoint.getId()).willReturn(request.fromWaypointId());
