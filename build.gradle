@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
+	id "org.springdoc.openapi-gradle-plugin" version "1.9.0"
 }
 
 group = 'com.kakaotechcampus'
@@ -38,9 +39,14 @@ dependencies {
 	// * Thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-	// * Kafka
-	implementation 'org.springframework.kafka:spring-kafka'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	// * Redis
+	implementation 'org.springframework.session:spring-session-data-redis'
+	implementation "org.redisson:redisson-spring-data-27:3.52.0"
+	compileOnly 'org.redisson:redisson-spring-boot-starter:3.52.0'
+	implementation 'io.lettuce:lettuce-core'
+
+	// * Actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	// * SpringBoot Websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
@@ -58,12 +64,6 @@ dependencies {
     // * SpringBoot Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	// Flying Saucer Core (equivalent to core-renderer.jar)
-	implementation 'org.xhtmlrenderer:flying-saucer-pdf:9.13.3'
-
-	// * iText 2.0.8
-	implementation 'ognl:ognl:3.1.26'
 
 	// * Password Encoder ( in spring security )
 	implementation 'org.springframework.security:spring-security-crypto:6.4.4'
