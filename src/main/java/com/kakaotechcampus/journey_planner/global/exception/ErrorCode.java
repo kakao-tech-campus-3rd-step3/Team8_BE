@@ -46,9 +46,12 @@ public enum ErrorCode {
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "AE_005", "비밀번호가 잘못되었습니다."),
     NO_TOKEN(HttpStatus.UNAUTHORIZED, "AE_006", "토큰을 찾을 수 없습니다."),
 
-    // * PDF
-    CANNOT_CREATE(HttpStatus.INTERNAL_SERVER_ERROR, "PDE_001", "PDF 를 생성할 수 없습니다."),
-    NO_FILE(HttpStatus.NOT_FOUND, "PDE_002","파일 경로를 찾을 수 없습니다.")
+    // * REDIS
+    CANNOT_CONSUME(HttpStatus.INTERNAL_SERVER_ERROR, "RE_001", "메세지를 소비하지 못하였습니다."),
+    CANNOT_PRODUCE(HttpStatus.INTERNAL_SERVER_ERROR, "RE_002", "메세지를 만들지 못하였습니다."),
+    LOW_VERSION(HttpStatus.INTERNAL_SERVER_ERROR, "RE_003", "낮은 버젼의 Node 를 생성하였습니다"),
+    LOCK_TIMEOUT(HttpStatus.INTERNAL_SERVER_ERROR, "RE_004", "요청 시간을 초과하였습니다."),
+    DESERIALIZATION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "RE_005", "역직렬화에 실패하였습니다.")
     ;
     
     private final HttpStatus status;
