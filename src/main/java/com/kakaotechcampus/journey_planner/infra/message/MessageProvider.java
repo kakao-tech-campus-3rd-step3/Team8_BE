@@ -1,60 +1,28 @@
 package com.kakaotechcampus.journey_planner.infra.message;
 
-import com.kakaotechcampus.journey_planner.application.message.MessageService;
-import com.kakaotechcampus.journey_planner.domain.message.MessageBehaviorType;
-import com.kakaotechcampus.journey_planner.domain.message.MessageType;
+import com.kakaotechcampus.journey_planner.domain.node.Node;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class MessageProvider implements MessageService {
-    private final String MESSAGE_PREFIX = "/topic/plans";
-    private final SimpMessagingTemplate simpMessagingTemplate;
+public class MessageProvider<T extends Node> {
+    @Resource(name = "redisTemplate")
+    private HashOperations<String, String, T> hashOperations;
 
-    @Override
-    public void sendInitMessage(MessageType type, Long planId, String destination, Object message) {
-        simpMessagingTemplate.convertAndSend(
-                getDestination(planId, destination),
-                getPayload(type, MessageBehaviorType.INIT, message)
-        );
+    private final String NODE_HASH_KEY = "node:";
+
+    public void sync(T node){
+        String key =  NODE_HASH_KEY + node.getPlanId();
+        String field = node.getUuid();
+        hashOperations.put(key, field, node);
     }
 
-    @Override
-    public void sendCreateMessage(MessageType type, Long planId, String destination, Object message) {
-        simpMessagingTemplate.convertAndSend(
-                getDestination(planId, destination),
-                getPayload(type, MessageBehaviorType.CREATE, message)
-        );
-    }
-
-    @Override
-    public void sendUpdateMessage(MessageType type, Long planId, String destination, Object message) {
-        simpMessagingTemplate.convertAndSend(
-                getDestination(planId, destination),
-                getPayload(type, MessageBehaviorType.UPDATE, message)
-        );
-    }
-
-    @Override
-    public void sendDeleteMessage(MessageType type, Long planId, String destination, Object message) {
-        simpMessagingTemplate.convertAndSend(
-                getDestination(planId, destination),
-                getPayload(type, MessageBehaviorType.DELETE, message)
-        );
-    }
-
-    private String getDestination(Long planId, String destination) {
-        return MESSAGE_PREFIX + "/" + planId + "/" + destination;
-    }
-
-    private Map<String, Object> getPayload(MessageType type, MessageBehaviorType behaviorType, Object payload){
-        return Map.of(
-                "type", behaviorType.name(),
-                type.name(), payload
-        );
+    public T getNode(T node){
+        String key =  NODE_HASH_KEY + node.getPlanId();
+        String field = node.getUuid();
+        return hashOperations.get(key, field);
     }
 }

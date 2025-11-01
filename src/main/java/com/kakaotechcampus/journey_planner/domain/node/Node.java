@@ -1,9 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.node;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
@@ -34,7 +32,7 @@ public class Node {
 
     public Node() {
         this.uuid = UUID.randomUUID().toString();
-        this.status = NodeStatus.UNLOCK;
+        this.status = NodeStatus.CREATE;
         this.destination = NodeSort.MEMO;
     }
 
