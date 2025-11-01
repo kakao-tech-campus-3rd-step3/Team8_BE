@@ -7,6 +7,7 @@ import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.domain.token.Token;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
@@ -58,10 +59,14 @@ public class TokenProvider implements TokenService{
     }
 
     private Claims getClaims(TokenType type, String token){
-        return Jwts.parser()
-                .verifyWith(tokens.get(type).getSecretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try{
+            return Jwts.parser()
+                    .verifyWith(tokens.get(type).getSecretKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        }catch(ExpiredJwtException e){
+            throw new BusinessException(TOKEN_EXPIRED);
+        }
     }
 }
