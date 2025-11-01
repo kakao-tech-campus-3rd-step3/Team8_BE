@@ -1,23 +1,23 @@
 services:
-  server:
+  server_container:
     container_name: JP-Server
     env_file:
-      - .env.server
+      - .env
+    ports:
+      - "8080:8080"
     build:
       context: ./
       dockerfile: springboot.dockerfile
-    ports:
-      - "8080:8080"
     environment:
       TZ: Asia/Seoul
     depends_on:
-      - db
-  db:
+      - db_container
+  db_container:
     container_name: JP-DB
     image: mysql:8.0
     restart: always
     env_file:
-      - .env.db
+      - .env
     ports:
       - "3306:3306"
     volumes:
@@ -25,6 +25,20 @@ services:
       - ./db/mysql/init:/docker-entrypoint-initdb.d
     environment:
       TZ: Asia/Seoul
-
-volumes:
-  db-data:
+  redis_container:
+    container_name: JP-Redis
+    image: redis:8.2.2-alpine
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/conf/redis.conf
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    environment:
+      TZ: Asia/Seoul
+    command: redis-server /usr/local/conf/redis.conf
