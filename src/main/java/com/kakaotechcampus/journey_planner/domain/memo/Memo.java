@@ -1,5 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.memo;
 
+import com.kakaotechcampus.journey_planner.domain.node.Node;
+import com.kakaotechcampus.journey_planner.domain.node.NodeSort;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.route.Route;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
@@ -8,15 +10,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.kakaotechcampus.journey_planner.domain.node.NodeSort.*;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Memo {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Memo extends Node {
     private String title;
 
     private String content;
@@ -37,6 +36,7 @@ public class Memo {
     private Route route;
 
     public Memo(String title, String content, float xPosition, float yPosition) {
+        super.setDestination(MEMO);
         this.title = title;
         this.content = content;
         this.xPosition = xPosition;
@@ -44,6 +44,7 @@ public class Memo {
     }
 
     public void assignToPlan(Plan plan) {
+        super.setPlanId(plan.getId());
         this.plan = plan;
     }
 

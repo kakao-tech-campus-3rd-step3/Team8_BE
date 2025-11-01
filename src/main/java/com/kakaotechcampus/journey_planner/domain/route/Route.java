@@ -1,11 +1,13 @@
 package com.kakaotechcampus.journey_planner.domain.route;
 
+import com.kakaotechcampus.journey_planner.domain.node.Node;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
@@ -13,20 +15,17 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Route {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Route extends Node {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_waypoint_id", nullable = false)
     private Waypoint fromWayPoint;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_waypoint_id", nullable = false)
     private Waypoint toWayPoint;
@@ -44,13 +43,15 @@ public class Route {
     private Float durationMin;
 
 
-    public Route(Plan plan,
-                 Waypoint fromWayPoint,
-                 Waypoint toWayPoint,
-                 String title,
-                 String description,
-                 Float duration,
-                 VehicleCategory vehicleCategory) {
+    public Route(
+            Plan plan,
+            Waypoint fromWayPoint,
+            Waypoint toWayPoint,
+            String title,
+            String description,
+            Float duration,
+            VehicleCategory vehicleCategory
+    ) {
         this.plan = plan;
         this.fromWayPoint = fromWayPoint;
         this.toWayPoint = toWayPoint;
@@ -64,7 +65,8 @@ public class Route {
                        String title,
                        String description,
                        Float duration,
-                       VehicleCategory vehicleCategory) {
+                       VehicleCategory vehicleCategory
+    ) {
         this.fromWayPoint = from;
         this.toWayPoint = to;
         this.title = title;
@@ -72,15 +74,8 @@ public class Route {
         this.durationMin = duration;
         this.vehicleCategory = vehicleCategory;
     }
+
     public void assignToPlan(Plan plan) {
         this.plan = plan;
-    }
-    // ✅ 연관관계 편의 메서드
-    public void setFromWayPoint(Waypoint fromWayPoint) {
-        this.fromWayPoint = fromWayPoint;
-    }
-
-    public void setToWayPoint(Waypoint toWayPoint) {
-        this.toWayPoint = toWayPoint;
     }
 }
