@@ -61,19 +61,4 @@ public class WaypointService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
         plan.removeWaypoint(waypoint);
     }
-
-    // planId에 속한 모든 waypoint 조회
-    @Transactional(readOnly = true)
-    public List<WaypointResponse> getWaypoints(Long planId) {
-        Plan plan = planService.getPlanEntity(planId);
-
-        List<Waypoint> waypoints = waypointRepository.findAllByPlanId(plan.getId());
-        return WaypointMapper.toResponseList(waypoints);
-    }
-
-    @Transactional(readOnly = true)
-    public Waypoint getWaypointEntity(Long id) {
-        return waypointRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
-    }
 }
