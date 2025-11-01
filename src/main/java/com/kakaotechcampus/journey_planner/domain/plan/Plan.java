@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.Transient;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -43,18 +44,21 @@ public class Plan {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Transient
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Traveler> travelers = new ArrayList<>();
 
+    @Transient
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Waypoint> waypoints = new ArrayList<>();
 
+    @Transient
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Route> routes = new ArrayList<>();
 
+    @Transient
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Memo> memos = new ArrayList<>();
-
 
     public Plan(String title, String description, LocalDate startDate, LocalDate endDate, Member member) {
         this.title = title;
@@ -118,5 +122,4 @@ public class Plan {
         memos.remove(memo);
         memo.assignToPlan(null);
     }
-
 }
