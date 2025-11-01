@@ -108,7 +108,7 @@
 
         switch (payload.type) {
           case "INIT":
-            waypoints = payload.waypoints;
+            waypoints = payload.WAYPOINT || [];
             break;
           case "CREATE":
             waypoints.push(payload.waypoint);
@@ -131,22 +131,23 @@
       // Memos 구독 처리
       client.subscribe(`/topic/plans/${planId}/memos`, (msg)=>{
         const payload = JSON.parse(msg.body);
-        log("📩 [Memos] "+msg.body,"info");
+        log("📩 [Memos] " + msg.body, "info");
 
         switch (payload.type) {
-          case "MEMO_INIT":
-            memos = payload.memos;
+          case "INIT":
+            memos = payload.MEMO || [];
             break;
-          case "MEMO_CREATE":
-            memos.push(payload.memo);
+          case "CREATE":
+            if (payload.MEMO) memos.push(payload.MEMO);
             break;
-          case "MEMO_UPDATE":
-            const idxUpdate = memos.findIndex(item => item.id === payload.memo.id);
-            if (idxUpdate > -1) memos[idxUpdate] = payload.memo;
-            else memos.push(payload.memo);
+          case "UPDATE":
+            if (payload.MEMO) {
+              const idx = memos.findIndex(m => m.id === payload.MEMO.id);
+              if (idx !== -1) memos[idx] = payload.MEMO;
+            }
             break;
-          case "MEMO_DELETE":
-            memos = memos.filter(item => item.id !== payload.memoId);
+          case "DELETE":
+            memos = memos.filter(m => m.id !== payload.MEMO);
             break;
           default:
             log(`⚠️ Unknown memo message type: ${payload.type}`, "error");
@@ -155,25 +156,27 @@
         renderItems();
       });
 
+
       // Routes 구독 처리
       client.subscribe(`/topic/plans/${planId}/routes`, (msg)=>{
         const payload = JSON.parse(msg.body);
-        log("📩 [Routes] "+msg.body,"info");
+        log("📩 [Routes] " + msg.body, "info");
 
         switch (payload.type) {
-          case "ROUTE_INIT":
-            routes = payload.routes;
+          case "INIT":
+            routes = payload.ROUTE || [];
             break;
-          case "ROUTE_CREATE":
-            routes.push(payload.route);
+          case "CREATE":
+            if (payload.ROUTE) routes.push(payload.ROUTE);
             break;
-          case "ROUTE_UPDATE":
-            const idxUpdate = routes.findIndex(item => item.id === payload.route.id);
-            if (idxUpdate > -1) routes[idxUpdate] = payload.route;
-            else routes.push(payload.route);
+          case "UPDATE":
+            if (payload.ROUTE) {
+              const idx = routes.findIndex(r => r.id === payload.ROUTE.id);
+              if (idx !== -1) routes[idx] = payload.ROUTE;
+            }
             break;
-          case "ROUTE_DELETE":
-            routes = routes.filter(item => item.id !== payload.routeId);
+          case "DELETE":
+            routes = routes.filter(r => r.id !== payload.ROUTE);
             break;
           default:
             log(`⚠️ Unknown route message type: ${payload.type}`, "error");
@@ -181,6 +184,7 @@
         }
         renderItems();
       });
+
 
       client.subscribe(`/user/queue/errors`, (msg)=>{
         log("❌ Error: "+msg.body,"error");

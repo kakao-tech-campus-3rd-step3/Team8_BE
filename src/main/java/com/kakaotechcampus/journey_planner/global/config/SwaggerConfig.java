@@ -4,6 +4,8 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,11 +16,21 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
+        // JWT 인증 스키마 정의
+        SecurityScheme jwtAuthScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER)
+                .name("Authorization")
+                .description("JWT 토큰을 입력하세요. 예시: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...");
+
         return new OpenAPI()
-                .components(new Components())
+                .components(new Components().addSecuritySchemes("JWT", jwtAuthScheme))
+                .addSecurityItem(new SecurityRequirement().addList("JWT")) // 전역 적용
                 .info(apiInfo())
                 .servers(List.of(
-                        new Server().url("http://18.118.161.98:8080").description("Production HTTPS 서버"),
+                        new Server().url("http://3.133.89.210:8080").description("Production HTTP 서버"),
                         new Server().url("http://localhost:8080").description("로컬 개발 서버")
                 ));
     }

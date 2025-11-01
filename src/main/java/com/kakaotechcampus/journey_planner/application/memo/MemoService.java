@@ -66,6 +66,7 @@ public class MemoService {
         plan.removeMemo(memo);
     }
 
+    @Transactional(readOnly = true)
     public List<MemoResponse> getMemos(Long planId) {
         Plan plan = planService.getPlanEntity(planId);
 
