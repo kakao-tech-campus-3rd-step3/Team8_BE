@@ -35,6 +35,9 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MbtiType mbtiType;
 
+    @Enumerated(EnumType.STRING)
+    private MemberType memberType = MemberType.NORMAL;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Traveler> travelers = new ArrayList<>();
 

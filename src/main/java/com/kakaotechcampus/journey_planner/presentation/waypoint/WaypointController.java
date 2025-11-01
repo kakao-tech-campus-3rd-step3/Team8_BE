@@ -1,6 +1,5 @@
 package com.kakaotechcampus.journey_planner.presentation.waypoint;
 
-import com.kakaotechcampus.journey_planner.application.message.MessageService;
 import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request.WaypointRequest;
 import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.response.WaypointResponse;
@@ -12,6 +11,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -22,7 +22,6 @@ import static com.kakaotechcampus.journey_planner.domain.message.MessageType.WAY
 @RequiredArgsConstructor
 @MessageMapping("/plans/{planId}/waypoints")
 public class WaypointController {
-
     private final WaypointService waypointService;
     private final MessageService messageService;
     private static final String DESTINATION = "waypoints";

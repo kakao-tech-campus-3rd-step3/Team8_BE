@@ -24,34 +24,24 @@ import java.util.List;
 public class PlanController {
     private final PlanService planService;
 
-    // Plan 생성
     @PostMapping
-    public ResponseEntity<PlanResponse> createPlan(
-            @LoginMember Long memberId,
-            @Valid @RequestBody CreatePlanRequest request
-    ) {
+    public ResponseEntity<PlanResponse> createPlan(@LoginMember Long memberId, @Valid @RequestBody CreatePlanRequest request) {
         PlanResponse response = planService.createPlan(memberId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // Plan 단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<PlanResponse> getPlan(
-            @LoginMember Long memberId,
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<PlanResponse> getPlan(@LoginMember Long memberId, @PathVariable Long id) {
         PlanResponse response = planService.getPlan(memberId, id);
         return ResponseEntity.ok().body(response);
     }
 
-    // Plan 전체 조회
     @GetMapping
     public ResponseEntity<Slice<PlanResponse>> getAllPlans(@LoginMember Long memberId, Pageable pageable) {
         Slice<PlanResponse> response = planService.getAllPlans(memberId, pageable);
         return ResponseEntity.ok().body(response);
     }
 
-    // Plan 수정
     @PatchMapping("/{id}")
     public ResponseEntity<PlanResponse> updatePlan(
             @LoginMember Long memberId,
@@ -62,12 +52,8 @@ public class PlanController {
         return ResponseEntity.ok(response);
     }
 
-    // Plan 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlan(
-            @LoginMember Long memberId,
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<Void> deletePlan(@LoginMember Long memberId, @PathVariable Long id) {
         planService.deletePlan(memberId, id);
         return ResponseEntity.noContent().build();
     }

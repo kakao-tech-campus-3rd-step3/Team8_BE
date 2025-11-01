@@ -7,8 +7,10 @@ import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
 import com.kakaotechcampus.journey_planner.domain.memo.repository.MemoRepository;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
+import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
+import com.kakaotechcampus.journey_planner.infra.message.publisher.MessagePublisherManager;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.response.MemoResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemoService {
 
+    private final MessagePublisherManager<Memo> messagePublisherManager;
     private final MemoRepository memoRepository;
     private final PlanService planService;
     private final WaypointService waypointService;
@@ -33,9 +36,8 @@ public class MemoService {
 
         plan.addMemo(memo);
         assignTarget(memo, request);
-        Memo savedMemo = memoRepository.save(memo);
-
-        return MemoMapper.toResponse(savedMemo);
+        messagePublisherManager.controlNode(planId, memo, Memo.class);
+        return MemoMapper.toResponse(memo);
     }
 
     @Transactional
@@ -61,14 +63,14 @@ public class MemoService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 
         Plan plan = memo.getPlan();
-        plan.removeMemo(memo); // Plan 컬렉션에서 제거 → orphanRemoval 덕분에 DB에서도 삭제
+        plan.removeMemo(memo);
     }
 
     @Transactional(readOnly = true)
     public List<MemoResponse> getMemos(Long planId) {
         Plan plan = planService.getPlanEntity(planId);
 
-        List<Memo> memos = memoRepository.findByPlanId(plan.getId());
+        List<Memo> memos = memoRepository.findAllAndPlanId(plan.getId());
         return MemoMapper.toResponseList(memos);
     }
 
@@ -82,7 +84,6 @@ public class MemoService {
                     routeService.getRouteEntity(request.routeId())
             );
         } else {
-            // 둘 다 null이면 Plan에만 속하는 Memo
             memo.assignToWayPoint(null);
             memo.assignToRoute(null);
         }

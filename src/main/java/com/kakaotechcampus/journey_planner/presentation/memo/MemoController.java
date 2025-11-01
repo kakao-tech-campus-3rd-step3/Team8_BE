@@ -1,7 +1,6 @@
 package com.kakaotechcampus.journey_planner.presentation.memo;
 
 import com.kakaotechcampus.journey_planner.application.memo.MemoService;
-import com.kakaotechcampus.journey_planner.application.message.MessageService;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.response.MemoResponse;
 import jakarta.validation.Valid;
@@ -24,8 +23,6 @@ import static com.kakaotechcampus.journey_planner.domain.message.MessageType.MEM
 public class MemoController {
 
     private final MemoService memoService;
-    private final MessageService messageService;
-    private static final String DESTINATION = "memos";
 
     // 초기화: 전체 메모 목록 전송
     @MessageMapping("/init")
@@ -63,6 +60,5 @@ public class MemoController {
             @DestinationVariable Long memoId
     ) {
         memoService.deleteMemo(planId, memoId);
-        messageService.sendDeleteMessage(MEMO, planId, DESTINATION, memoId);
     }
 }

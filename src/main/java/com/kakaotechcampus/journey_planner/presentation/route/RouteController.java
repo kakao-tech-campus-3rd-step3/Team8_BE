@@ -1,6 +1,5 @@
 package com.kakaotechcampus.journey_planner.presentation.route;
 
-import com.kakaotechcampus.journey_planner.application.message.MessageService;
 import com.kakaotechcampus.journey_planner.application.route.RouteService;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.request.RouteRequest;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.response.RouteResponse;
@@ -17,21 +16,19 @@ import java.util.List;
 
 import static com.kakaotechcampus.journey_planner.domain.message.MessageType.ROUTE;
 
-@Slf4j
+@Slf4jvelop
 @Controller
 @RequiredArgsConstructor
 @MessageMapping("/plans/{planId}/routes")
 public class RouteController {
 
     private final RouteService routeService;
-    private final MessageService messageService;
     private static final String DESTINATION = "routes";
 
 
     @MessageMapping("/init")
     public void initRoutes(@DestinationVariable Long planId) {
         List<RouteResponse> routeResponses = routeService.getRoutes(planId);
-        messageService.sendInitMessage(ROUTE, planId, DESTINATION, routeResponses);
     }
 
 
@@ -43,7 +40,6 @@ public class RouteController {
     ) {
         log.info("🟢 [CREATE ROUTE] sessionId={}", sessionId);
         RouteResponse response = routeService.createRoute(planId, request);
-        messageService.sendCreateMessage(ROUTE, planId, DESTINATION, response);
     }
 
     // 수정 (자기 세션 제외 브로드캐스트)
@@ -65,6 +61,5 @@ public class RouteController {
             @DestinationVariable Long routeId
     ) {
         routeService.deleteRoute(planId, routeId);
-        messageService.sendDeleteMessage(ROUTE, planId, DESTINATION, routeId);
     }
 }
