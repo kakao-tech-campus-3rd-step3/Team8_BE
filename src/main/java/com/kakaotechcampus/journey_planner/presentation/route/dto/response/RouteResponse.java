@@ -5,7 +5,6 @@ import com.kakaotechcampus.journey_planner.domain.route.VehicleCategory;
 
 public record RouteResponse(
         Long id,
-        Long planId,
         Long fromWaypointId,
         Long toWaypointId,
         String title,
@@ -16,7 +15,6 @@ public record RouteResponse(
     public static RouteResponse from(Route r) {
         return new RouteResponse(
                 r.getId(),
-                r.getPlan().getId(),
                 r.getFromWayPoint().getId(),
                 r.getToWayPoint().getId(),
                 r.getTitle(),

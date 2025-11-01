@@ -6,15 +6,18 @@ import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request.Way
 import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.response.WaypointResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
-import static com.kakaotechcampus.journey_planner.domain.message.MessageType.*;
+import static com.kakaotechcampus.journey_planner.domain.message.MessageType.WAYPOINT;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @MessageMapping("/plans/{planId}/waypoints")
@@ -24,32 +27,36 @@ public class WaypointController {
     private final MessageService messageService;
     private static final String DESTINATION = "waypoints";
 
-    //클라이언트가 구독 후 초기 상태 요청 시 전체 waypoint 전송
     @MessageMapping("/init")
     public void initWaypoints(@DestinationVariable Long planId) {
         List<WaypointResponse> waypointResponses = waypointService.getWaypoints(planId);
         messageService.sendInitMessage(WAYPOINT, planId, DESTINATION, waypointResponses);
     }
 
-    // 새 waypoint 생성 후 단건 전송
     @MessageMapping("/create")
-    public void createWaypoint(@DestinationVariable Long planId, @Valid @Payload WaypointRequest request) {
+    public void createWaypoint(
+            @DestinationVariable Long planId,
+            @Valid @Payload WaypointRequest request,
+            @Header("simpSessionId") String sessionId
+    ) {
         WaypointResponse response = waypointService.createWaypoint(planId, request);
         messageService.sendCreateMessage(WAYPOINT, planId, DESTINATION, response);
     }
 
-    // waypoint 수정 후 단건 전송
     @MessageMapping("/{waypointId}/update")
     public void updateWaypoint(
             @DestinationVariable Long planId,
             @DestinationVariable Long waypointId,
-            @Valid @Payload WaypointRequest request
+            @Valid @Payload WaypointRequest request,
+            @Header("simpSessionId") String sessionId
     ) {
+
         WaypointResponse response = waypointService.updateWaypoint(planId, waypointId, request);
-        messageService.sendUpdateMessage(WAYPOINT, planId, DESTINATION, response);
+
+        // 자기 세션 제외 브로드캐스트
+        messageService.sendUpdateMessage(WAYPOINT, planId, DESTINATION, response, sessionId);
     }
 
-    // waypoint 삭제 후 해당 Id 전송
     @MessageMapping("/{waypointId}/delete")
     public void deleteWaypoint(
             @DestinationVariable Long planId,

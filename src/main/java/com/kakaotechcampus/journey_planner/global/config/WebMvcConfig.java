@@ -22,9 +22,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://journey-planner-deployment.vercel.app/")
-                .allowedOrigins("http://localhost:5173")
-                .allowedOrigins("http://121.182.116.155:5137")
+                .allowedOrigins("https://journey-planner-deployment.vercel.app/", "http://localhost:5173", "http://121.182.116.155:5137")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);

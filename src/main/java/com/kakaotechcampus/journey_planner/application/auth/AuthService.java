@@ -58,7 +58,7 @@ public class AuthService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
         String newAccessToken = tokenService.generateToken(TokenType.ACCESS, member.getId());
-        String newRefreshToken = tokenService.generateToken(TokenType.ACCESS, member.getId());
+        String newRefreshToken = tokenService.generateToken(TokenType.REFRESH, member.getId());
         // TODO : Redis에 저장된 기존 리프레시 토큰을 새로운 토큰으로 업데이트
         return new TokenResponseDto(newAccessToken, newRefreshToken);
     }
