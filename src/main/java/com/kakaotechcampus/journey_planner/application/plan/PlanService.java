@@ -157,6 +157,7 @@ public class PlanService {
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
     public CanvasResponse getCanvasData(Long memberId, Long planId) {
         checkPlanAccess(memberId, planId);
         return canvasQueryService.getCanvasData(planId);
