@@ -41,7 +41,7 @@ public enum ErrorCode {
     // Auth
     LOGIN_FAILED(HttpStatus.BAD_REQUEST, "AE_001", "로그인에 실패하였습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "AE_002", "잘못된 토큰입니다."),
-    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "AE_003", "만료된 토큰입니다."),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AE_003", "만료된 토큰입니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "AE_004", "입력 형식이 잘못되었습니다."),
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "AE_005", "비밀번호가 잘못되었습니다."),
     NO_TOKEN(HttpStatus.UNAUTHORIZED, "AE_006", "토큰을 찾을 수 없습니다."),
