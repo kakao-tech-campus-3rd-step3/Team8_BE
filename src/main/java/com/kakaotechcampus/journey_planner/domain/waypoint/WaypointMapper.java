@@ -16,7 +16,6 @@ public class WaypointMapper {
                 request.startTime(),
                 request.endTime(),
                 request.locationCategory(),
-                request.locationSubCategory(),
                 request.xPosition(),
                 request.yPosition()
         );
@@ -31,7 +30,6 @@ public class WaypointMapper {
                 waypoint.getStartTime(),
                 waypoint.getEndTime(),
                 waypoint.getLocationCategory(),
-                waypoint.getLocationSubCategory(),
                 waypoint.getXPosition(),
                 waypoint.getYPosition()
         );

@@ -68,7 +68,7 @@ public class MemoService {
     public List<MemoResponse> getMemos(Long planId) {
         Plan plan = planService.getPlanEntity(planId);
 
-        List<Memo> memos = memoRepository.findByPlanId(plan.getId());
+        List<Memo> memos = memoRepository.findAllByPlanId(plan.getId());
         return MemoMapper.toResponseList(memos);
     }
 

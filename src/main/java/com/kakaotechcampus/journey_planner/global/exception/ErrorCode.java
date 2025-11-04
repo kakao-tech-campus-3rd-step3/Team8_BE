@@ -34,6 +34,7 @@ public enum ErrorCode {
     // Member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "ME_001", "해당 멤버를 찾을 수 없습니다."),
     ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "ME_002", "이미 존재하는 멤버입니다."),
+    INVALID_MBTITYPE(HttpStatus.BAD_REQUEST, "ME_003", "MBTI 타입이 올바르지 않습니다."),
 
     // Traveler
     TRAVELER_NOT_FOUND(HttpStatus.NOT_FOUND, "TE_001", "해당 여행자를 찾을 수 없습니다."),
@@ -41,7 +42,7 @@ public enum ErrorCode {
     // Auth
     LOGIN_FAILED(HttpStatus.BAD_REQUEST, "AE_001", "로그인에 실패하였습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "AE_002", "잘못된 토큰입니다."),
-    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "AE_003", "만료된 토큰입니다."),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AE_003", "만료된 토큰입니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "AE_004", "입력 형식이 잘못되었습니다."),
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "AE_005", "비밀번호가 잘못되었습니다."),
     NO_TOKEN(HttpStatus.UNAUTHORIZED, "AE_006", "토큰을 찾을 수 없습니다."),

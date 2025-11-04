@@ -44,7 +44,7 @@ public class TravelerService {
     }
 
     @Transactional(readOnly = true)
-    public boolean isOwner(Plan plan, Member member){
+    public boolean isOwner(Plan plan, Member member) {
         Traveler traveler = travelerRepository.findByPlanAndMember(plan, member)
                 .orElseThrow(() -> new BusinessException(ErrorCode.TRAVELER_NOT_FOUND));
 

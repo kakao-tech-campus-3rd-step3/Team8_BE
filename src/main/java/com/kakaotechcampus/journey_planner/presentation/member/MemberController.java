@@ -36,7 +36,7 @@ public class MemberController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<GetMember200Response> getMemberInformation(@LoginMember Long memberId){
+    public ResponseEntity<GetMember200Response> getMemberInformation(@LoginMember Long memberId) {
         return ResponseEntity.ok().body(memberService.getMemberById(memberId));
     }
 
@@ -44,7 +44,7 @@ public class MemberController {
     public ResponseEntity<GetMember200Response> updateMemberInformation(
             @LoginMember Long memberId,
             @RequestBody ModifyMemberRequest request
-    ){
+    ) {
         return ResponseEntity.ok().body(memberService.modifyMember(memberId, request));
     }
 
@@ -52,7 +52,7 @@ public class MemberController {
     public ResponseEntity<String> withdrawMember(
             @LoginMember Long memberId,
             @RequestBody QuitMemberRequest quitMemberRequest
-    ){
+    ) {
         memberService.quitMember(memberId, quitMemberRequest);
         return ResponseEntity.noContent().build();
     }

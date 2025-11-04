@@ -20,12 +20,12 @@ public enum FontProperties {
     private final String encoding;
     private final Boolean embedded;
 
-    public String getFontResource(){
-        try{
+    public String getFontResource() {
+        try {
             return new ClassPathResource(this.fontPath)
                     .getURL()
                     .toString();
-        }catch(IOException e){
+        } catch (IOException e) {
             throw new BusinessException(RESOURCE_NOT_FOUND);
         }
     }

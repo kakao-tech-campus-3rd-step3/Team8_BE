@@ -12,7 +12,7 @@ public class HtmlTemplateStringConverter {
     private final TemplateEngine templateEngine;
     private final Context context;
 
-    public String convert(TemplateProperties template){
+    public String convert(TemplateProperties template) {
         return this.templateEngine.process(template.getHtmlPath(), context);
     }
 }

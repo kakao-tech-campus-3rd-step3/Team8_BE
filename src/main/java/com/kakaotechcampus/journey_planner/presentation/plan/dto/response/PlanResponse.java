@@ -20,7 +20,7 @@ public record PlanResponse(
                 plan.getId(),
                 plan.getTitle(),
                 plan.getDescription(),
-                plan.getTravelers().stream().map(TravelerResponse::to).toList(),
+                plan.getTravelers().stream().map(TravelerResponse::from).toList(),
                 plan.getStartDate(),
                 plan.getEndDate()
         );
