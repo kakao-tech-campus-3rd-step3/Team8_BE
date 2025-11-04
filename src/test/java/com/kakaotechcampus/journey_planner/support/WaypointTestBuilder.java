@@ -2,7 +2,6 @@ package com.kakaotechcampus.journey_planner.support;
 
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.waypoint.LocationCategory;
-import com.kakaotechcampus.journey_planner.domain.waypoint.LocationSubCategory;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 
 import java.lang.reflect.Field;
@@ -19,7 +18,6 @@ public class WaypointTestBuilder {
     private LocalDateTime startTime = LocalDateTime.of(2025, 10, 18, 10, 0, 0);
     private LocalDateTime endTime = LocalDateTime.of(2025, 10, 18, 12, 0, 0);
     private LocationCategory locationCategory = LocationCategory.DEFAULT;
-    private LocationSubCategory locationSubCategory = LocationSubCategory.DEFAULT;
     private Float xPosition = 127.0276f;
     private Float yPosition = 37.4979f;
 
@@ -67,11 +65,6 @@ public class WaypointTestBuilder {
         return this;
     }
 
-    public WaypointTestBuilder withLocationSubCategory(LocationSubCategory locationSubCategory) {
-        this.locationSubCategory = locationSubCategory;
-        return this;
-    }
-
     public WaypointTestBuilder withXPosition(Float xPosition) {
         this.xPosition = xPosition;
         return this;
@@ -84,10 +77,14 @@ public class WaypointTestBuilder {
 
     public Waypoint build() {
         Waypoint waypoint = new Waypoint(
-                this.name, this.description, this.address,
-                this.startTime, this.endTime,
-                this.locationCategory, this.locationSubCategory,
-                this.xPosition, this.yPosition
+                this.name,
+                this.description,
+                this.address,
+                this.startTime,
+                this.endTime,
+                this.locationCategory,
+                this.xPosition,
+                this.yPosition
         );
 
         waypoint.assignToPlan(this.plan);
@@ -103,4 +100,3 @@ public class WaypointTestBuilder {
         return waypoint;
     }
 }
-
