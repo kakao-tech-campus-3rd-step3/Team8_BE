@@ -22,27 +22,27 @@ public class ITextPdfGenerator implements PdfGenerator {
 
     @Override
     public void createPdf(OutputStream outputStream) {
-        try{
+        try {
             renderer.setDocumentFromString(htmlConverter.convert(DEFAULT_TEMPLATE));
             renderer.layout();
             renderer.createPDF(outputStream);
             outputStream.flush();
-        }catch(IOException e){
+        } catch (IOException e) {
             throw new BusinessException(CANNOT_CREATE);
         }
     }
 
     @Override
     public void addFont(FontProperties font) {
-        try{
+        try {
             renderer
-                .getFontResolver()
-                .addFont(
-                    font.getFontResource(),
-                    font.getFontPath(),
-                    font.getEmbedded()
-            );
-        }catch(IOException e){
+                    .getFontResolver()
+                    .addFont(
+                            font.getFontResource(),
+                            font.getFontPath(),
+                            font.getEmbedded()
+                    );
+        } catch (IOException e) {
             throw new BusinessException(FONT_NOT_FOUND);
         }
     }

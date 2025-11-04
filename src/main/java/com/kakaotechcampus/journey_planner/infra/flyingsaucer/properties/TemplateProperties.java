@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * For Thymeleaf Template ENUM
- * */
+ */
 
 @Getter
 @RequiredArgsConstructor

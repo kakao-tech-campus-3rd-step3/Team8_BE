@@ -29,7 +29,7 @@ public class MemberService {
                 .toList();
     }
 
-    public void deleteById(Long memberId){
+    public void deleteById(Long memberId) {
         memberRepository.deleteById(memberId);
     }
 
@@ -41,16 +41,16 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public GetMember200Response getMemberById(Long memberId){
+    public GetMember200Response getMemberById(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
         return GetMember200Response.to(member);
     }
 
     public void quitMember(Long memberId, QuitMemberRequest request) throws BusinessException {
-        Member member =  memberRepository.findById(memberId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
-        if(!member.verifyPassword(request.password(), passwordEncoder)){
+        if (!member.verifyPassword(request.password(), passwordEncoder)) {
             throw new BusinessException(WRONG_PASSWORD);
         }
         deleteById(memberId);

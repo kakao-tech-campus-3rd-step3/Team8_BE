@@ -14,6 +14,5 @@ public enum LocationCategory {
     ACTIVITY,
     AIRPORT,
     TERMINAL,
-    STATION
-    ;
+    STATION;
 }

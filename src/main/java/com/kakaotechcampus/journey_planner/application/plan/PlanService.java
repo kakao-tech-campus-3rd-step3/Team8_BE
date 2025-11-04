@@ -110,7 +110,7 @@ public class PlanService {
             throw new BusinessException(MEMBER_ALREADY_IN_PLAN);
         }
 
-        Traveler savedTraveler =  travelerService.addTraveler(Traveler.createInvitation(invitee, plan));
+        Traveler savedTraveler = travelerService.addTraveler(Traveler.createInvitation(invitee, plan));
         return TravelerMapper.toResponse(savedTraveler);
     }
 
@@ -144,7 +144,7 @@ public class PlanService {
         return travelerService.getTravelers(plan);
     }
 
-    private Member getMember(Long memberId){
+    private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
     }

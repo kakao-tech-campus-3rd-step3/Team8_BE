@@ -9,12 +9,12 @@ public record GetMember200Response(
         String username,
         MbtiType mbti
 ) {
-    public static GetMember200Response to(Member member){
+    public static GetMember200Response to(Member member) {
         return new GetMember200Response(
-            member.getEmail(),
-            member.getContact(),
-            member.getName(),
-            member.getMbtiType()
+                member.getEmail(),
+                member.getContact(),
+                member.getName(),
+                member.getMbtiType()
         );
     }
 }

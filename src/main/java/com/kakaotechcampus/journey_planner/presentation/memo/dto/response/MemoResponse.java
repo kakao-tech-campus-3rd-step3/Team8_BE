@@ -6,4 +6,5 @@ public record MemoResponse(
         String content,
         Float xPosition,
         Float yPosition
-) {}
+) {
+}

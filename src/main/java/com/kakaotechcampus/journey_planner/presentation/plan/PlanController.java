@@ -77,7 +77,7 @@ public class PlanController {
             @LoginMember Long memberId,
             @PathVariable Long planId,
             @RequestParam("email") String inviteeEmail
-    ){
+    ) {
         TravelerResponse response = planService.inviteMember(memberId, planId, inviteeEmail);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
