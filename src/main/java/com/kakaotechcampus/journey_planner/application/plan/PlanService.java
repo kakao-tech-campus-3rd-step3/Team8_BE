@@ -1,5 +1,6 @@
 package com.kakaotechcampus.journey_planner.application.plan;
 
+import com.kakaotechcampus.journey_planner.application.canvas.CanvasQueryService;
 import com.kakaotechcampus.journey_planner.application.traveler.TravelerService;
 import com.kakaotechcampus.journey_planner.domain.member.Member;
 import com.kakaotechcampus.journey_planner.domain.member.repository.MemberRepository;
@@ -13,6 +14,7 @@ import com.kakaotechcampus.journey_planner.domain.traveler.TravelerMapper;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
+import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.CanvasResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.TravelerResponse;
@@ -33,6 +35,7 @@ public class PlanService {
     private final JpaPlanRepository jpaPlanRepository;
     private final PlanRepository planRepository;
     private final TravelerService travelerService;
+    private final CanvasQueryService canvasQueryService;
 
     @Transactional
     public PlanResponse createPlan(Long memberId, CreatePlanRequest request) {
@@ -49,6 +52,11 @@ public class PlanService {
 
     @Transactional(readOnly = true)
     public PlanResponse getPlan(Long memberId, Long planId) {
+        Plan plan = checkPlanAccess(memberId, planId);
+        return PlanResponse.of(plan);
+    }
+
+    private Plan checkPlanAccess(Long memberId, Long planId) {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new BusinessException(PLAN_NOT_FOUND));
         boolean isMemberInPlan = plan.hasMember(getMember(memberId));
@@ -56,7 +64,7 @@ public class PlanService {
         if (!isMemberInPlan) {
             throw new BusinessException(PLAN_ACCESS_DENIED);
         }
-        return PlanResponse.of(plan);
+        return plan;
     }
 
     @Transactional(readOnly = true)
@@ -147,5 +155,10 @@ public class PlanService {
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+    }
+
+    public CanvasResponse getCanvasData(Long memberId, Long planId) {
+        checkPlanAccess(memberId, planId);
+        return canvasQueryService.getCanvasData(planId);
     }
 }

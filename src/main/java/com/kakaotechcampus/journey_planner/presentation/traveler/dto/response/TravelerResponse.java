@@ -14,7 +14,7 @@ public record TravelerResponse(
         InvitationStatus status,
         Role role
 ) {
-    public static TravelerResponse to(Traveler traveler) {
+    public static TravelerResponse from(Traveler traveler) {
         return new TravelerResponse(
                 traveler.getId(),
                 traveler.getMember().getId(),

@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface MemoRepository extends JpaRepository<Memo, Long> {
     Optional<Memo> findByIdAndPlanId(Long memoId, Long planId);
 
-    List<Memo> findByPlanId(Long planId);
+    List<Memo> findAllByPlanId(Long planId);
 }

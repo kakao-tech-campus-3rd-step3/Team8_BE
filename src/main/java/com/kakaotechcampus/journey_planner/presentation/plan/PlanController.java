@@ -4,6 +4,7 @@ import com.kakaotechcampus.journey_planner.application.plan.PlanService;
 import com.kakaotechcampus.journey_planner.domain.traveler.Traveler;
 import com.kakaotechcampus.journey_planner.global.annotation.LoginMember;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.CreatePlanRequest;
+import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.CanvasResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.InvitationResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.response.PlanResponse;
 import com.kakaotechcampus.journey_planner.presentation.plan.dto.request.UpdatePlanRequest;
@@ -95,5 +96,11 @@ public class PlanController {
     public ResponseEntity<List<InvitationResponse>> getInvitations(@LoginMember Long memberId) {
         List<InvitationResponse> invitations = planService.getInvitations(memberId);
         return ResponseEntity.status(HttpStatus.OK).body(invitations);
+    }
+
+    @GetMapping("/{planId}/canvas")
+    public ResponseEntity<CanvasResponse> getCanvasData(@LoginMember Long memberId, @PathVariable Long planId) {
+        CanvasResponse canvasResponse = planService.getCanvasData(memberId, planId);
+        return ResponseEntity.status(HttpStatus.OK).body(canvasResponse);
     }
 }
