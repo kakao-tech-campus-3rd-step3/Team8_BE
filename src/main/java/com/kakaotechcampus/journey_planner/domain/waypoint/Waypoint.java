@@ -39,10 +39,6 @@ public class Waypoint {
     @Column(nullable = false)
     private LocationCategory locationCategory;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private LocationSubCategory locationSubCategory;
-
     private Float xPosition;
     private Float yPosition;
 
@@ -55,14 +51,13 @@ public class Waypoint {
     private List<Route> routesTo = new ArrayList<>();
 
 
-    public Waypoint(String name, String description, String address, LocalDateTime startTime, LocalDateTime endTime, LocationCategory locationCategory, LocationSubCategory locationSubCategory,Float xPosition, Float yPosition) {
+    public Waypoint(String name, String description, String address, LocalDateTime startTime, LocalDateTime endTime, LocationCategory locationCategory, Float xPosition, Float yPosition) {
         this.name = name;
         this.description = description;
         this.address = address;
         this.startTime = startTime;
         this.endTime = endTime;
         this.locationCategory = locationCategory;
-        this.locationSubCategory = locationSubCategory;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
     }
@@ -71,22 +66,14 @@ public class Waypoint {
         this.plan = plan;
     }
 
-    public void update(String name, String description, String address, LocalDateTime startTime, LocalDateTime endTime, LocationCategory locationCategory, LocationSubCategory locationSubCategory, Float xPosition, Float yPosition) {
+    public void update(String name, String description, String address, LocalDateTime startTime, LocalDateTime endTime, LocationCategory locationCategory, Float xPosition, Float yPosition) {
         this.name = name;
         this.description = description;
         this.address = address;
         this.startTime = startTime;
         this.endTime = endTime;
         this.locationCategory = locationCategory;
-        this.locationSubCategory = locationSubCategory;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
     }
-
-    public void validateCategory(LocationCategory category, LocationSubCategory subCategory) {
-        if (subCategory.getParentCategory() != category) {
-            throw new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND);
-        }
-    }
-
 }

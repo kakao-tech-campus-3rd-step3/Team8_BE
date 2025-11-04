@@ -1,7 +1,6 @@
 package com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request;
 
 import com.kakaotechcampus.journey_planner.domain.waypoint.LocationCategory;
-import com.kakaotechcampus.journey_planner.domain.waypoint.LocationSubCategory;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -23,9 +22,6 @@ public record WaypointRequest(
 
         @NotNull
         LocationCategory locationCategory,
-
-        @NotNull
-        LocationSubCategory locationSubCategory,
 
         @NotNull(message = "x좌표는 필수 입력값입니다.")
         Float xPosition,
