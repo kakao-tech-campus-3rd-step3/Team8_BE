@@ -8,10 +8,8 @@ public record MemoRequest(
 
         String content,
 
-        @NotNull(message = "x좌표는 필수 입력값입니다.")
         Float xPosition,
 
-        @NotNull(message = "y좌표는 필수 입력값입니다.")
         Float yPosition,
 
         Long waypointId,
