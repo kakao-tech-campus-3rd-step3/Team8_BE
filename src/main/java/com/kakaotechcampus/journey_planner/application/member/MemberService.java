@@ -29,10 +29,12 @@ public class MemberService {
                 .toList();
     }
 
+    @Transactional
     public void deleteById(Long memberId) {
         memberRepository.deleteById(memberId);
     }
 
+    @Transactional
     public GetMember200Response modifyMember(Long memberId, ModifyMemberRequest request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
@@ -47,6 +49,7 @@ public class MemberService {
         return GetMember200Response.to(member);
     }
 
+    @Transactional
     public void quitMember(Long memberId, QuitMemberRequest request) throws BusinessException {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
