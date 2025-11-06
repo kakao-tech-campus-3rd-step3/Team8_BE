@@ -40,6 +40,11 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.getMemberById(memberId));
     }
 
+    @GetMapping("/me/id")
+    public ResponseEntity<Long> getMyId(@LoginMember Long memberId) {
+        return ResponseEntity.ok(memberId);
+    }
+
     @PatchMapping("/me")
     public ResponseEntity<GetMember200Response> updateMemberInformation(
             @LoginMember Long memberId,
