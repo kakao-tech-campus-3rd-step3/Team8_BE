@@ -1,9 +1,8 @@
 package com.kakaotechcampus.journey_planner.presentation.traveler;
 
 import com.kakaotechcampus.journey_planner.application.message.MessageService;
-import com.kakaotechcampus.journey_planner.application.traveler.TravelerService;
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
-import com.kakaotechcampus.journey_planner.domain.message.MessageType;
+import com.kakaotechcampus.journey_planner.application.traveler.TravelerService;
 import com.kakaotechcampus.journey_planner.presentation.traveler.dto.response.TravelerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -12,11 +11,11 @@ import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
-import static com.kakaotechcampus.journey_planner.domain.message.MessageType.*;
+import static com.kakaotechcampus.journey_planner.domain.message.MessageType.TRAVELER;
 
 @Controller
 @RequiredArgsConstructor
-@MessageMapping("/plan/{planId}/travelers")
+@MessageMapping("/plans/{planId}/travelers")
 public class TravelerController {
 
     private final PlanService planService;
