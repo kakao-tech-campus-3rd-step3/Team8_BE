@@ -6,5 +6,6 @@ import java.io.OutputStream;
 
 public interface PdfGenerator {
     void createPdf(OutputStream outputStream);
+
     void addFont(FontProperties font);
 }

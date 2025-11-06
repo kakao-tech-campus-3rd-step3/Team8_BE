@@ -4,17 +4,16 @@ import jakarta.validation.constraints.NotNull;
 
 public record MemoRequest(
 
-    String title,
+        String title,
 
-    String content,
+        String content,
 
-    @NotNull(message = "x좌표는 필수 입력값입니다.")
-    Float xPosition,
+        Float xPosition,
 
-    @NotNull(message = "y좌표는 필수 입력값입니다.")
-    Float yPosition,
+        Float yPosition,
 
-    Long waypointId,
+        Long waypointId,
 
-    Long routeId
-) {}
+        Long routeId
+) {
+}

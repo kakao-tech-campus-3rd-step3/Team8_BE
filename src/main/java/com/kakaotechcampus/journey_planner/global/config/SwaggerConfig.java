@@ -30,7 +30,7 @@ public class SwaggerConfig {
                 .addSecurityItem(new SecurityRequirement().addList("JWT")) // 전역 적용
                 .info(apiInfo())
                 .servers(List.of(
-                        new Server().url("http://3.133.89.210:8080").description("Production HTTP 서버"),
+                        new Server().url("https://api.journey-planner.org:8080").description("Production HTTPS 서버"),
                         new Server().url("http://localhost:8080").description("로컬 개발 서버")
                 ));
     }

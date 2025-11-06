@@ -7,6 +7,8 @@ import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import com.kakaotechcampus.journey_planner.domain.token.Token;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 import static com.kakaotechcampus.journey_planner.global.exception.ErrorCode.*;
 
 @Component
-public class TokenProvider implements TokenService{
+public class TokenProvider implements TokenService {
     private final Map<TokenType, Token> tokens;
 
     // * identify -> 자기 자신을 가져온다는 거임
@@ -49,19 +51,27 @@ public class TokenProvider implements TokenService{
 
     private void validateToken(Claims claims, String expectedType) throws BusinessException {
         String actualType = claims.get("tokenType").toString();
-        if(!actualType.equals(expectedType)){
+        if (!actualType.equals(expectedType)) {
             throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
-        if(claims.getExpiration().before(DateUtils.now())){
+        if (claims.getExpiration().before(DateUtils.now())) {
             throw new BusinessException(TOKEN_EXPIRED);
         }
     }
 
-    private Claims getClaims(TokenType type, String token){
-        return Jwts.parser()
-                .verifyWith(tokens.get(type).getSecretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+    private Claims getClaims(TokenType type, String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(tokens.get(type).getSecretKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+        } catch (ExpiredJwtException e) {
+            throw new BusinessException(TOKEN_EXPIRED);
+
+        } catch (JwtException e) {
+            throw new BusinessException(INVALID_TOKEN);
+        }
     }
 }

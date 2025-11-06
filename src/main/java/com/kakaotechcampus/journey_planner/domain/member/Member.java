@@ -46,17 +46,17 @@ public class Member extends BaseEntity {
         this.mbtiType = MbtiType.valueOf(mbti.toUpperCase());
     }
 
-    public void modify(ModifyMemberRequest response){
-        if(response.username() != null && !response.username().isEmpty()){
+    public void modify(ModifyMemberRequest response) {
+        if (response.username() != null && !response.username().isEmpty()) {
             this.name = response.username();
         }
-        if(response.contact() != null && !response.contact().isEmpty()){
+        if (response.contact() != null && !response.contact().isEmpty()) {
             this.contact = response.contact();
         }
-        if(response.email() != null && !response.email().isEmpty()){
+        if (response.email() != null && !response.email().isEmpty()) {
             this.email = response.email();
         }
-        if(response.mbti() != null){
+        if (response.mbti() != null) {
             this.mbtiType = response.mbti();
         }
     }

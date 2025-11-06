@@ -37,3 +37,12 @@ springdoc:
     tags-sorter: alpha
     tryItOutEnabled: true
   default-produces-media-type: application/json
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health"
+  endpoint:
+    health:
+      show-details: always

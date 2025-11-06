@@ -65,16 +65,16 @@ public class Plan {
     }
 
     public void update(UpdatePlanRequest request) {
-        if(request.title() != null){
+        if (request.title() != null) {
             this.title = request.title();
         }
-        if(request.description() != null){
+        if (request.description() != null) {
             this.description = request.description();
         }
-        if(request.startDate() != null){
+        if (request.startDate() != null) {
             this.startDate = request.startDate();
         }
-        if(request.endDate() != null){
+        if (request.endDate() != null) {
             this.endDate = request.endDate();
         }
     }

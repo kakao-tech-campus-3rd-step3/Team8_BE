@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface WaypointRepository extends JpaRepository<Waypoint, Long> {
 
     List<Waypoint> findAllByPlanId(Long planId);
+
     Optional<Waypoint> findByIdAndPlanId(Long waypointId, Long planId);
 }

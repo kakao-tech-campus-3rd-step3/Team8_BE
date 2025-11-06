@@ -6,7 +6,6 @@ import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.domain.waypoint.repository.WaypointRepository;
 import com.kakaotechcampus.journey_planner.domain.waypoint.LocationCategory;
-import com.kakaotechcampus.journey_planner.domain.waypoint.LocationSubCategory;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request.WaypointRequest;
 import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.response.WaypointResponse;
@@ -53,7 +52,7 @@ public class WaypointServiceTest {
             Long planId = 1L;
             WaypointRequest request = new WaypointRequest("경유지", "설명", "주소",
                     LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-                    LocationCategory.ACCOMMODATION, LocationSubCategory.HOTEL, 1.0f, 2.0f);
+                    LocationCategory.HOTEL, 1.0f, 2.0f);
 
             Plan mockPlan = mock(Plan.class);
             Waypoint savedWaypoint = WaypointTestBuilder.aWaypoint().withId(1L).build();
@@ -81,7 +80,7 @@ public class WaypointServiceTest {
             Long planId = 1L;
             Long waypointId = 1L;
             WaypointRequest request = new WaypointRequest("수정된 이름", "수정된 설명", "수정된 주소",
-                    null, null, LocationCategory.ACCOMMODATION, LocationSubCategory.HOTEL, 3.0f, 4.0f);
+                    null, null, LocationCategory.HOTEL, 3.0f, 4.0f);
 
             Waypoint mockWaypoint = mock(Waypoint.class);
             given(waypointRepository.findByIdAndPlanId(waypointId, planId)).willReturn(Optional.of(mockWaypoint));
@@ -93,7 +92,7 @@ public class WaypointServiceTest {
             then(mockWaypoint).should(times(1)).update(
                     request.name(), request.description(), request.address(),
                     request.startTime(), request.endTime(), request.locationCategory(),
-                    request.locationSubCategory(), request.xPosition(), request.yPosition()
+                    request.xPosition(), request.yPosition()
             );
         }
 
@@ -103,7 +102,7 @@ public class WaypointServiceTest {
             // given
             Long planId = 1L;
             Long waypointId = 999L;
-            WaypointRequest request = new WaypointRequest("이름", null, null, null, null, null, null, null, null);
+            WaypointRequest request = new WaypointRequest("이름", null, null, null, null, null, null, null);
             given(waypointRepository.findByIdAndPlanId(waypointId, planId)).willReturn(Optional.empty());
 
             // when & then

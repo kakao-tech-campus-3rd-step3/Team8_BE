@@ -31,13 +31,12 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest httpServletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
-        try{
-            String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-            String token = authorizationHeader.replace("Bearer ", "");
-            return tokenService.getId(TokenType.ACCESS, token);
-        }catch(NullPointerException e){
+        String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authorizationHeader == null) {
             throw new BusinessException(NO_TOKEN);
         }
+        String token = extractToken(authorizationHeader);
+        return tokenService.getId(TokenType.ACCESS, token);
     }
 
     private String extractToken(String authorizationHeader) {
