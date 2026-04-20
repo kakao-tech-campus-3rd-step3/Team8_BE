@@ -49,7 +49,10 @@ public enum ErrorCode {
 
     // * PDF
     CANNOT_CREATE(HttpStatus.INTERNAL_SERVER_ERROR, "PDE_001", "PDF 를 생성할 수 없습니다."),
-    NO_FILE(HttpStatus.NOT_FOUND, "PDE_002","파일 경로를 찾을 수 없습니다.")
+    NO_FILE(HttpStatus.NOT_FOUND, "PDE_002","파일 경로를 찾을 수 없습니다."),
+
+    // * Lock
+    NODE_LOCK_FAILED(HttpStatus.CONFLICT, "LE_001", "현재 다른 사용자가 편집 중입니다.")
     ;
     
     private final HttpStatus status;
