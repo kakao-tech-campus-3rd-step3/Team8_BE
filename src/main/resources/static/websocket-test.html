@@ -35,11 +35,19 @@
                     <select id="wpCategory" class="border rounded p-2">
                         <option value="" selected disabled>카테고리 선택</option>
                         <option value="DEFAULT">DEFAULT</option>
-                        <option value="FOOD">FOOD</option>
-                        <option value="CULTURE">CULTURE</option>
-                        <option value="ACCOMMODATION">ACCOMMODATION</option>
-                        <option value="TOUR">TOUR</option>
-                        <option value="TRANSPORTATION">TRANSPORTATION</option>
+                        <option value="RESTAURANT">RESTAURANT</option>
+                        <option value="CAFE">CAFE</option>
+                        <option value="BAR">BAR</option>
+                        <option value="MUSEUM">MUSEUM</option>
+                        <option value="LIBRARY">LIBRARY</option>
+                        <option value="CENTER">CENTER</option>
+                        <option value="HOTEL">HOTEL</option>
+                        <option value="STORE">STORE</option>
+                        <option value="LANDMARK">LANDMARK</option>
+                        <option value="ACTIVITY">ACTIVITY</option>
+                        <option value="AIRPORT">AIRPORT</option>
+                        <option value="TERMINAL">TERMINAL</option>
+                        <option value="STATION">STATION</option>
                     </select>
                 </label>
                 <label class="flex flex-col col-span-2">설명<input type="text" id="wpDescription" class="border rounded p-2" /></label>
@@ -82,11 +90,17 @@
                 </label>
                 <label class="flex flex-col">이동수단
                     <select id="routeVehicle" class="border rounded p-2">
-                        <option value="CAR">CAR</option>
+                        <option value="DEFAULT">DEFAULT</option>
                         <option value="WALK">WALK</option>
                         <option value="BUS">BUS</option>
+                        <option value="TAXI">TAXI</option>
+                        <option value="CAR">CAR</option>
+                        <option value="BICYCLE">BICYCLE</option>
+                        <option value="AIRPLANE">AIRPLANE</option>
                         <option value="TRAIN">TRAIN</option>
-                        <option value="PLANE">PLANE</option>
+                        <option value="SHIP">SHIP</option>
+                        <option value="MOTORCYCLE">MOTORCYCLE</option>
+                        <option value="SCOOTER">SCOOTER</option>
                     </select>
                 </label>
             </div>
@@ -165,29 +179,48 @@
             client.subscribe(`/topic/plans/${planId}/waypoints`, (msg) => {
                 log("📩 [Waypoints] " + msg.body, "info");
                 const payload = JSON.parse(msg.body);
-                if (payload.type === "FULL_UPDATE" && payload.waypoints) {
-                    waypoints = payload.waypoints;
-                    renderItems();
+                if (payload.type === "INIT") {
+                    waypoints = payload.WAYPOINT ?? [];
+                } else if (payload.type === "CREATE") {
+                    waypoints.push(payload.WAYPOINT);
+                } else if (payload.type === "UPDATE") {
+                    waypoints = waypoints.map(w => w.id === payload.WAYPOINT.id ? payload.WAYPOINT : w);
+                } else if (payload.type === "DELETE") {
+                    waypoints = waypoints.filter(w => w.id !== payload.WAYPOINT);
                 }
+                renderItems();
             });
 
             // Memos 구독
             client.subscribe(`/topic/plans/${planId}/memos`, (msg) => {
                 log("📩 [Memos] " + msg.body, "info");
                 const payload = JSON.parse(msg.body);
-                if (payload.type === "FULL_UPDATE" && payload.memos) {
-                    memos = payload.memos;
-                    renderItems();
+                if (payload.type === "INIT") {
+                    memos = payload.MEMO ?? [];
+                } else if (payload.type === "CREATE") {
+                    memos.push(payload.MEMO);
+                } else if (payload.type === "UPDATE") {
+                    memos = memos.map(m => m.id === payload.MEMO.id ? payload.MEMO : m);
+                } else if (payload.type === "DELETE") {
+                    memos = memos.filter(m => m.id !== payload.MEMO);
                 }
+                renderItems();
             });
 
             // Routes 구독
             client.subscribe(`/topic/plans/${planId}/routes`, (msg) => {
+                log("📩 [Routes] " + msg.body, "info");
                 const payload = JSON.parse(msg.body);
-                if (payload.type === "FULL_UPDATE" && payload.routes) {
-                    routes = payload.routes;
-                    renderItems();
+                if (payload.type === "INIT") {
+                    routes = payload.ROUTE ?? [];
+                } else if (payload.type === "CREATE") {
+                    routes.push(payload.ROUTE);
+                } else if (payload.type === "UPDATE") {
+                    routes = routes.map(r => r.id === payload.ROUTE.id ? payload.ROUTE : r);
+                } else if (payload.type === "DELETE") {
+                    routes = routes.filter(r => r.id !== payload.ROUTE);
                 }
+                renderItems();
             });
 
             // 에러 구독
@@ -350,11 +383,19 @@
                 <label class="flex flex-col">카테고리
                     <select class="wp-category border rounded p-2">
                         <option value="DEFAULT" ${wp.locationCategory === 'DEFAULT' ? 'selected' : ''}>DEFAULT</option>
-                        <option value="FOOD" ${wp.locationCategory === 'FOOD' ? 'selected' : ''}>FOOD</option>
-                        <option value="CULTURE" ${wp.locationCategory === 'CULTURE' ? 'selected' : ''}>CULTURE</option>
-                        <option value="ACCOMMODATION" ${wp.locationCategory === 'ACCOMMODATION' ? 'selected' : ''}>ACCOMMODATION</option>
-                        <option value="TOUR" ${wp.locationCategory === 'TOUR' ? 'selected' : ''}>TOUR</option>
-                        <option value="TRANSPORTATION" ${wp.locationCategory === 'TRANSPORTATION' ? 'selected' : ''}>TRANSPORTATION</option>
+                        <option value="RESTAURANT" ${wp.locationCategory === 'RESTAURANT' ? 'selected' : ''}>RESTAURANT</option>
+                        <option value="CAFE" ${wp.locationCategory === 'CAFE' ? 'selected' : ''}>CAFE</option>
+                        <option value="BAR" ${wp.locationCategory === 'BAR' ? 'selected' : ''}>BAR</option>
+                        <option value="MUSEUM" ${wp.locationCategory === 'MUSEUM' ? 'selected' : ''}>MUSEUM</option>
+                        <option value="LIBRARY" ${wp.locationCategory === 'LIBRARY' ? 'selected' : ''}>LIBRARY</option>
+                        <option value="CENTER" ${wp.locationCategory === 'CENTER' ? 'selected' : ''}>CENTER</option>
+                        <option value="HOTEL" ${wp.locationCategory === 'HOTEL' ? 'selected' : ''}>HOTEL</option>
+                        <option value="STORE" ${wp.locationCategory === 'STORE' ? 'selected' : ''}>STORE</option>
+                        <option value="LANDMARK" ${wp.locationCategory === 'LANDMARK' ? 'selected' : ''}>LANDMARK</option>
+                        <option value="ACTIVITY" ${wp.locationCategory === 'ACTIVITY' ? 'selected' : ''}>ACTIVITY</option>
+                        <option value="AIRPORT" ${wp.locationCategory === 'AIRPORT' ? 'selected' : ''}>AIRPORT</option>
+                        <option value="TERMINAL" ${wp.locationCategory === 'TERMINAL' ? 'selected' : ''}>TERMINAL</option>
+                        <option value="STATION" ${wp.locationCategory === 'STATION' ? 'selected' : ''}>STATION</option>
                     </select>
                 </label>
                 <label class="flex flex-col">X 좌표
@@ -400,11 +441,17 @@
                 </label>
                 <label class="flex flex-col">이동수단
                     <select class="route-vehicle border rounded p-2">
-                        <option value="CAR" ${r.vehicleCategory === 'CAR' ? 'selected' : ''}>CAR</option>
+                        <option value="DEFAULT" ${r.vehicleCategory === 'DEFAULT' ? 'selected' : ''}>DEFAULT</option>
                         <option value="WALK" ${r.vehicleCategory === 'WALK' ? 'selected' : ''}>WALK</option>
                         <option value="BUS" ${r.vehicleCategory === 'BUS' ? 'selected' : ''}>BUS</option>
+                        <option value="TAXI" ${r.vehicleCategory === 'TAXI' ? 'selected' : ''}>TAXI</option>
+                        <option value="CAR" ${r.vehicleCategory === 'CAR' ? 'selected' : ''}>CAR</option>
+                        <option value="BICYCLE" ${r.vehicleCategory === 'BICYCLE' ? 'selected' : ''}>BICYCLE</option>
+                        <option value="AIRPLANE" ${r.vehicleCategory === 'AIRPLANE' ? 'selected' : ''}>AIRPLANE</option>
                         <option value="TRAIN" ${r.vehicleCategory === 'TRAIN' ? 'selected' : ''}>TRAIN</option>
-                        <option value="PLANE" ${r.vehicleCategory === 'PLANE' ? 'selected' : ''}>PLANE</option>
+                        <option value="SHIP" ${r.vehicleCategory === 'SHIP' ? 'selected' : ''}>SHIP</option>
+                        <option value="MOTORCYCLE" ${r.vehicleCategory === 'MOTORCYCLE' ? 'selected' : ''}>MOTORCYCLE</option>
+                        <option value="SCOOTER" ${r.vehicleCategory === 'SCOOTER' ? 'selected' : ''}>SCOOTER</option>
                     </select>
                 </label>
             </div>
