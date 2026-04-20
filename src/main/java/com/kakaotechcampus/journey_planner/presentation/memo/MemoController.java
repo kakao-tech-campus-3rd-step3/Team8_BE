@@ -53,8 +53,10 @@ public class MemoController {
             @Valid @Payload MemoRequest request,
             @Header("simpSessionId") String sessionId
     ) {
+        long start = System.currentTimeMillis();
         MemoResponse response = memoService.updateMemo(planId, memoId, request);
         messageService.sendUpdateMessage(MEMO, planId, DESTINATION, response, sessionId);
+        log.info("[MEMO UPDATE] planId={}, memoId={}, 처리시간={}ms", planId, memoId, System.currentTimeMillis() - start);
     }
 
     @MessageMapping("/{memoId}/delete")

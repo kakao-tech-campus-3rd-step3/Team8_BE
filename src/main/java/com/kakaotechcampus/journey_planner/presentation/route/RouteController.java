@@ -54,8 +54,10 @@ public class RouteController {
             @Valid @Payload RouteRequest request,
             @Header("simpSessionId") String sessionId
     ) {
+        long start = System.currentTimeMillis();
         RouteResponse response = routeService.updateRoute(planId, routeId, request);
         messageService.sendUpdateMessage(ROUTE, planId, DESTINATION, response, sessionId);
+        log.info("[ROUTE UPDATE] planId={}, routeId={}, 처리시간={}ms", planId, routeId, System.currentTimeMillis() - start);
     }
 
 

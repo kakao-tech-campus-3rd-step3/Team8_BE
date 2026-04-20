@@ -50,11 +50,10 @@ public class WaypointController {
             @Valid @Payload WaypointRequest request,
             @Header("simpSessionId") String sessionId
     ) {
-
+        long start = System.currentTimeMillis();
         WaypointResponse response = waypointService.updateWaypoint(planId, waypointId, request);
-
-        // 자기 세션 제외 브로드캐스트
         messageService.sendUpdateMessage(WAYPOINT, planId, DESTINATION, response, sessionId);
+        log.info("[WAYPOINT UPDATE] planId={}, waypointId={}, 처리시간={}ms", planId, waypointId, System.currentTimeMillis() - start);
     }
 
     @MessageMapping("/{waypointId}/delete")
