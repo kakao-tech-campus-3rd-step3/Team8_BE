@@ -2,6 +2,7 @@ package com.kakaotechcampus.journey_planner.presentation.memo;
 
 import com.kakaotechcampus.journey_planner.application.memo.MemoService;
 import com.kakaotechcampus.journey_planner.application.message.MessageService;
+import com.kakaotechcampus.journey_planner.global.lock.DistributedLockService;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.response.MemoResponse;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ public class MemoController {
 
     private final MemoService memoService;
     private final MessageService messageService;
+    private final DistributedLockService lockService;
     private static final String DESTINATION = "memos";
 
     // 초기화: 전체 메모 목록 전송
@@ -54,7 +56,9 @@ public class MemoController {
             @Header("simpSessionId") String sessionId
     ) {
         long start = System.currentTimeMillis();
-        MemoResponse response = memoService.updateMemo(planId, memoId, request);
+        String lockKey = "lock:MEMO:" + memoId;
+        MemoResponse response = lockService.executeWithLock(lockKey,
+                () -> memoService.updateMemo(planId, memoId, request));
         messageService.sendUpdateMessage(MEMO, planId, DESTINATION, response, sessionId);
         log.info("[MEMO UPDATE] planId={}, memoId={}, 처리시간={}ms", planId, memoId, System.currentTimeMillis() - start);
     }

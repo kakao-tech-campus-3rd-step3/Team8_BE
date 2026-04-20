@@ -2,6 +2,7 @@ package com.kakaotechcampus.journey_planner.presentation.route;
 
 import com.kakaotechcampus.journey_planner.application.message.MessageService;
 import com.kakaotechcampus.journey_planner.application.route.RouteService;
+import com.kakaotechcampus.journey_planner.global.lock.DistributedLockService;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.request.RouteRequest;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.response.RouteResponse;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ public class RouteController {
 
     private final RouteService routeService;
     private final MessageService messageService;
+    private final DistributedLockService lockService;
     private static final String DESTINATION = "routes";
 
 
@@ -55,7 +57,9 @@ public class RouteController {
             @Header("simpSessionId") String sessionId
     ) {
         long start = System.currentTimeMillis();
-        RouteResponse response = routeService.updateRoute(planId, routeId, request);
+        String lockKey = "lock:ROUTE:" + routeId;
+        RouteResponse response = lockService.executeWithLock(lockKey,
+                () -> routeService.updateRoute(planId, routeId, request));
         messageService.sendUpdateMessage(ROUTE, planId, DESTINATION, response, sessionId);
         log.info("[ROUTE UPDATE] planId={}, routeId={}, 처리시간={}ms", planId, routeId, System.currentTimeMillis() - start);
     }

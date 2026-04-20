@@ -2,6 +2,7 @@ package com.kakaotechcampus.journey_planner.presentation.waypoint;
 
 import com.kakaotechcampus.journey_planner.application.message.MessageService;
 import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
+import com.kakaotechcampus.journey_planner.global.lock.DistributedLockService;
 import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.request.WaypointRequest;
 import com.kakaotechcampus.journey_planner.presentation.waypoint.dto.response.WaypointResponse;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ public class WaypointController {
 
     private final WaypointService waypointService;
     private final MessageService messageService;
+    private final DistributedLockService lockService;
     private static final String DESTINATION = "waypoints";
 
     @MessageMapping("/init")
@@ -51,9 +53,11 @@ public class WaypointController {
             @Header("simpSessionId") String sessionId
     ) {
         long start = System.currentTimeMillis();
-        WaypointResponse response = waypointService.updateWaypoint(planId, waypointId, request);
+        String lockKey = "lock:WAYPOINT:" + waypointId;
+        WaypointResponse response = lockService.executeWithLock(lockKey,
+                () -> waypointService.updateWaypoint(planId, waypointId, request));
         messageService.sendUpdateMessage(WAYPOINT, planId, DESTINATION, response, sessionId);
-        log.info("[WAYPOINT UPDATE] planId={}, waypointId={}, 처리시간={}ms", planId, waypointId, System.currentTimeMillis() - start);
+        log.info("[WAYPOINT UPDATE] planId={}, waypointId={}, 처리시간={}ms, 제목={}", planId, waypointId, System.currentTimeMillis() - start, response.name());
     }
 
     @MessageMapping("/{waypointId}/delete")
