@@ -1,5 +1,7 @@
 package com.kakaotechcampus.journey_planner.domain.route;
 
+import com.kakaotechcampus.journey_planner.domain.node.Node;
+import com.kakaotechcampus.journey_planner.domain.node.NodeSort;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import jakarta.persistence.*;
@@ -13,11 +15,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Route {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Route extends Node {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id", nullable = false)
@@ -51,6 +49,7 @@ public class Route {
                  String description,
                  Float duration,
                  VehicleCategory vehicleCategory) {
+        super(NodeSort.ROUTE);
         this.plan = plan;
         this.fromWayPoint = fromWayPoint;
         this.toWayPoint = toWayPoint;

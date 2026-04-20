@@ -1,9 +1,9 @@
 package com.kakaotechcampus.journey_planner.domain.waypoint;
 
+import com.kakaotechcampus.journey_planner.domain.node.Node;
+import com.kakaotechcampus.journey_planner.domain.node.NodeSort;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.route.Route;
-import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
-import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,11 +16,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Waypoint {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Waypoint extends Node {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "plan_id", nullable = false)
@@ -52,6 +48,7 @@ public class Waypoint {
 
 
     public Waypoint(String name, String description, String address, LocalDateTime startTime, LocalDateTime endTime, LocationCategory locationCategory, Float xPosition, Float yPosition) {
+        super(NodeSort.WAYPOINT);
         this.name = name;
         this.description = description;
         this.address = address;
