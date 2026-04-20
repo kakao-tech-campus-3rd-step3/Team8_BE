@@ -84,6 +84,9 @@ dependencies {
 
 	// * Spring Boot Actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// * Redisson
+	implementation 'org.redisson:redisson-spring-boot-starter:3.27.2'
 }
 
 ext {
