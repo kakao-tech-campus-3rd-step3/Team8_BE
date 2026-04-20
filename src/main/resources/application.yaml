@@ -23,6 +23,11 @@ spring:
     prefix: classpath:/META-INF/templates
     suffix: .html
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
 jwt:
   secret: ${JWT_SECRET_KEY}
   access-token-expiration-in-ms: ${JWT_ACCESS_TOKEN_EXPIRATION_IN} # 60000 : 1분
