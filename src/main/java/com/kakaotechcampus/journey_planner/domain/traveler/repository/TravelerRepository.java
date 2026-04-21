@@ -19,4 +19,6 @@ public interface TravelerRepository extends JpaRepository<Traveler, Long> {
     Optional<Traveler> findByPlanAndMember(Plan plan, Member member);
 
     List<Traveler> findAllByPlanId(Long planId);
+
+    Optional<Traveler> findByPlanIdAndMemberIdAndStatus(Long planId, Long memberId, InvitationStatus status);
 }
