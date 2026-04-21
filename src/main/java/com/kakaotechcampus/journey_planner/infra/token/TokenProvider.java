@@ -49,6 +49,12 @@ public class TokenProvider implements TokenService {
         return Long.parseLong(claims.getSubject());
     }
 
+    @Override
+    public long getExpiresAt(TokenType type, String token) {
+        Claims claims = getClaims(type, token);
+        return claims.getExpiration().getTime();
+    }
+
     private void validateToken(Claims claims, String expectedType) throws BusinessException {
         String actualType = claims.get("tokenType").toString();
         if (!actualType.equals(expectedType)) {

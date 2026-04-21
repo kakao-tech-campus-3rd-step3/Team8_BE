@@ -6,4 +6,6 @@ public interface TokenService {
     String generateToken(TokenType type, Long id);
 
     Long getId(TokenType type, String token);
+
+    long getExpiresAt(TokenType type, String token);
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
     static final String MEMBER_ID_KEY = "memberId";
+    static final String TOKEN_EXPIRES_AT_KEY = "tokenExpiresAt";
     private final TokenService tokenService;
 
     @Override
@@ -45,11 +46,14 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
 
-        Long memberId = tokenService.getId(TokenType.ACCESS, authHeader.substring(7));
+        String token = authHeader.substring(7);
+        Long memberId = tokenService.getId(TokenType.ACCESS, token);
+        long expiresAt = tokenService.getExpiresAt(TokenType.ACCESS, token);
 
         Map<String, Object> attrs = accessor.getSessionAttributes();
         if (attrs != null) {
             attrs.put(MEMBER_ID_KEY, memberId);
+            attrs.put(TOKEN_EXPIRES_AT_KEY, expiresAt);
         }
         log.debug("[WS] Authenticated memberId={}", memberId);
         return message;

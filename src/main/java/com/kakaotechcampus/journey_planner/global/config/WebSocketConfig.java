@@ -1,6 +1,7 @@
 package com.kakaotechcampus.journey_planner.global.config;
 
 import com.kakaotechcampus.journey_planner.global.interceptor.WebSocketAuthInterceptor;
+import com.kakaotechcampus.journey_planner.global.resolver.WebSocketExpiresAtArgumentResolver;
 import com.kakaotechcampus.journey_planner.global.resolver.WebSocketMemberArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final WebSocketAuthInterceptor webSocketAuthInterceptor;
     private final WebSocketMemberArgumentResolver webSocketMemberArgumentResolver;
+    private final WebSocketExpiresAtArgumentResolver webSocketExpiresAtArgumentResolver;
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
@@ -29,6 +31,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(webSocketMemberArgumentResolver);
+        argumentResolvers.add(webSocketExpiresAtArgumentResolver);
     }
 
     @Override

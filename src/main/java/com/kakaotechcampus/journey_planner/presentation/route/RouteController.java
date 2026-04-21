@@ -2,6 +2,7 @@ package com.kakaotechcampus.journey_planner.presentation.route;
 
 import com.kakaotechcampus.journey_planner.application.message.MessageService;
 import com.kakaotechcampus.journey_planner.application.route.RouteService;
+import com.kakaotechcampus.journey_planner.global.annotation.WsExpiresAt;
 import com.kakaotechcampus.journey_planner.global.annotation.WsMember;
 import com.kakaotechcampus.journey_planner.global.auth.WebSocketAuthGuard;
 import com.kakaotechcampus.journey_planner.global.lock.DistributedLockService;
@@ -43,9 +44,10 @@ public class RouteController {
             @DestinationVariable Long planId,
             @Valid @Payload RouteRequest request,
             @Header("simpSessionId") String sessionId,
-            @WsMember Long memberId
+            @WsMember Long memberId,
+            @WsExpiresAt Long tokenExpiresAt
     ) {
-        authGuard.requirePlanMember(memberId, planId);
+        authGuard.requirePlanMember(memberId, planId, tokenExpiresAt);
         RouteResponse response = routeService.createRoute(planId, request, memberId);
         messageService.sendCreateMessage(ROUTE, planId, DESTINATION, response);
     }
@@ -57,9 +59,10 @@ public class RouteController {
             @DestinationVariable Long routeId,
             @Valid @Payload RouteRequest request,
             @Header("simpSessionId") String sessionId,
-            @WsMember Long memberId
+            @WsMember Long memberId,
+            @WsExpiresAt Long tokenExpiresAt
     ) {
-        authGuard.requirePlanMember(memberId, planId);
+        authGuard.requirePlanMember(memberId, planId, tokenExpiresAt);
         long start = System.currentTimeMillis();
         String lockKey = "lock:ROUTE:" + routeId;
         RouteResponse response = lockService.executeWithLock(lockKey,
@@ -72,9 +75,10 @@ public class RouteController {
     public void deleteRoute(
             @DestinationVariable Long planId,
             @DestinationVariable Long routeId,
-            @WsMember Long memberId
+            @WsMember Long memberId,
+            @WsExpiresAt Long tokenExpiresAt
     ) {
-        authGuard.requirePlanMember(memberId, planId);
+        authGuard.requirePlanMember(memberId, planId, tokenExpiresAt);
         routeService.deleteRoute(planId, routeId);
         messageService.sendDeleteMessage(ROUTE, planId, DESTINATION, routeId);
     }

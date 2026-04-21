@@ -2,6 +2,7 @@ package com.kakaotechcampus.journey_planner.presentation.waypoint;
 
 import com.kakaotechcampus.journey_planner.application.message.MessageService;
 import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
+import com.kakaotechcampus.journey_planner.global.annotation.WsExpiresAt;
 import com.kakaotechcampus.journey_planner.global.annotation.WsMember;
 import com.kakaotechcampus.journey_planner.global.auth.WebSocketAuthGuard;
 import com.kakaotechcampus.journey_planner.global.lock.DistributedLockService;
@@ -43,9 +44,10 @@ public class WaypointController {
             @DestinationVariable Long planId,
             @Valid @Payload WaypointRequest request,
             @Header("simpSessionId") String sessionId,
-            @WsMember Long memberId
+            @WsMember Long memberId,
+            @WsExpiresAt Long tokenExpiresAt
     ) {
-        authGuard.requirePlanMember(memberId, planId);
+        authGuard.requirePlanMember(memberId, planId, tokenExpiresAt);
         WaypointResponse response = waypointService.createWaypoint(planId, request, memberId);
         messageService.sendCreateMessage(WAYPOINT, planId, DESTINATION, response);
     }
@@ -56,9 +58,10 @@ public class WaypointController {
             @DestinationVariable Long waypointId,
             @Valid @Payload WaypointRequest request,
             @Header("simpSessionId") String sessionId,
-            @WsMember Long memberId
+            @WsMember Long memberId,
+            @WsExpiresAt Long tokenExpiresAt
     ) {
-        authGuard.requirePlanMember(memberId, planId);
+        authGuard.requirePlanMember(memberId, planId, tokenExpiresAt);
         long start = System.currentTimeMillis();
         String lockKey = "lock:WAYPOINT:" + waypointId;
         WaypointResponse response = lockService.executeWithLock(lockKey,
@@ -71,9 +74,10 @@ public class WaypointController {
     public void deleteWaypoint(
             @DestinationVariable Long planId,
             @DestinationVariable Long waypointId,
-            @WsMember Long memberId
+            @WsMember Long memberId,
+            @WsExpiresAt Long tokenExpiresAt
     ) {
-        authGuard.requirePlanMember(memberId, planId);
+        authGuard.requirePlanMember(memberId, planId, tokenExpiresAt);
         waypointService.deleteWaypoint(planId, waypointId);
         messageService.sendDeleteMessage(WAYPOINT, planId, DESTINATION, waypointId);
     }

@@ -13,9 +13,12 @@ public class WebSocketAuthGuard {
 
     private final TravelerRepository travelerRepository;
 
-    public void requirePlanMember(Long memberId, Long planId) {
+    public void requirePlanMember(Long memberId, Long planId, Long tokenExpiresAt) {
         if (memberId == null) {
             throw new BusinessException(ErrorCode.NO_TOKEN);
+        }
+        if (tokenExpiresAt != null && System.currentTimeMillis() > tokenExpiresAt) {
+            throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
         }
         travelerRepository
                 .findByPlanIdAndMemberIdAndStatus(planId, memberId, InvitationStatus.ACCEPTED)
