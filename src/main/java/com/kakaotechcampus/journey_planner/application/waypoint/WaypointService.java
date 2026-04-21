@@ -1,6 +1,8 @@
 package com.kakaotechcampus.journey_planner.application.waypoint;
 
+import com.kakaotechcampus.journey_planner.application.history.NodeEditHistoryService;
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
+import com.kakaotechcampus.journey_planner.domain.node.NodeSort;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.waypoint.Waypoint;
 import com.kakaotechcampus.journey_planner.domain.waypoint.WaypointMapper;
@@ -21,6 +23,7 @@ public class WaypointService {
 
     private final PlanService planService;
     private final WaypointRepository waypointRepository;
+    private final NodeEditHistoryService historyService;
 
     // planId에 해당하는 plan에 waypoint 추가
     @Transactional
@@ -37,7 +40,7 @@ public class WaypointService {
     }
 
     @Transactional
-    public WaypointResponse updateWaypoint(Long planId, Long waypointId, WaypointRequest request) {
+    public WaypointResponse updateWaypoint(Long planId, Long waypointId, WaypointRequest request, Long memberId) {
         Waypoint waypoint = waypointRepository.findByIdAndPlanId(waypointId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
 
@@ -52,7 +55,9 @@ public class WaypointService {
                 request.yPosition()
         );
 
-        return WaypointMapper.toResponse(waypoint);
+        WaypointResponse response = WaypointMapper.toResponse(waypoint);
+        historyService.record(waypoint.getId(), NodeSort.WAYPOINT, memberId, response);
+        return response;
     }
 
     // planId 및 waypointId에 해당하는 waypoint 삭제
@@ -63,6 +68,7 @@ public class WaypointService {
         Waypoint waypoint = waypointRepository.findByIdAndPlanId(waypointId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.WAYPOINT_NOT_FOUND));
 
+        historyService.deleteHistory(waypointId, NodeSort.WAYPOINT);
         //orphanRemoval=true → 컬렉션에서만 제거하면 DB에서도 삭제됨
         plan.removeWaypoint(waypoint);
     }

@@ -2,6 +2,8 @@ package com.kakaotechcampus.journey_planner.presentation.memo;
 
 import com.kakaotechcampus.journey_planner.application.memo.MemoService;
 import com.kakaotechcampus.journey_planner.application.message.MessageService;
+import com.kakaotechcampus.journey_planner.global.auth.WebSocketAuthGuard;
+import com.kakaotechcampus.journey_planner.global.annotation.WsMember;
 import com.kakaotechcampus.journey_planner.global.lock.DistributedLockService;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.request.MemoRequest;
 import com.kakaotechcampus.journey_planner.presentation.memo.dto.response.MemoResponse;
@@ -27,6 +29,7 @@ public class MemoController {
     private final MemoService memoService;
     private final MessageService messageService;
     private final DistributedLockService lockService;
+    private final WebSocketAuthGuard authGuard;
     private static final String DESTINATION = "memos";
 
     // 초기화: 전체 메모 목록 전송
@@ -36,13 +39,14 @@ public class MemoController {
         messageService.sendInitMessage(MEMO, planId, DESTINATION, memoResponses);
     }
 
-
     @MessageMapping("/create")
     public void createMemo(
             @DestinationVariable Long planId,
             @Valid @Payload MemoRequest request,
-            @Header("simpSessionId") String sessionId
+            @Header("simpSessionId") String sessionId,
+            @WsMember Long memberId
     ) {
+        authGuard.requirePlanMember(memberId, planId);
         MemoResponse response = memoService.createMemo(planId, request);
         messageService.sendCreateMessage(MEMO, planId, DESTINATION, response);
     }
@@ -53,12 +57,14 @@ public class MemoController {
             @DestinationVariable Long planId,
             @DestinationVariable Long memoId,
             @Valid @Payload MemoRequest request,
-            @Header("simpSessionId") String sessionId
+            @Header("simpSessionId") String sessionId,
+            @WsMember Long memberId
     ) {
+        authGuard.requirePlanMember(memberId, planId);
         long start = System.currentTimeMillis();
         String lockKey = "lock:MEMO:" + memoId;
         MemoResponse response = lockService.executeWithLock(lockKey,
-                () -> memoService.updateMemo(planId, memoId, request));
+                () -> memoService.updateMemo(planId, memoId, request, memberId));
         messageService.sendUpdateMessage(MEMO, planId, DESTINATION, response, sessionId);
         log.info("[MEMO UPDATE] planId={}, memoId={}, 처리시간={}ms", planId, memoId, System.currentTimeMillis() - start);
     }
@@ -66,8 +72,10 @@ public class MemoController {
     @MessageMapping("/{memoId}/delete")
     public void deleteMemo(
             @DestinationVariable Long planId,
-            @DestinationVariable Long memoId
+            @DestinationVariable Long memoId,
+            @WsMember Long memberId
     ) {
+        authGuard.requirePlanMember(memberId, planId);
         memoService.deleteMemo(planId, memoId);
         messageService.sendDeleteMessage(MEMO, planId, DESTINATION, memoId);
     }

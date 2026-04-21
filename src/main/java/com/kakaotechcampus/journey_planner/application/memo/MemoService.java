@@ -1,11 +1,13 @@
 package com.kakaotechcampus.journey_planner.application.memo;
 
+import com.kakaotechcampus.journey_planner.application.history.NodeEditHistoryService;
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
 import com.kakaotechcampus.journey_planner.application.route.RouteService;
 import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
 import com.kakaotechcampus.journey_planner.domain.memo.Memo;
 import com.kakaotechcampus.journey_planner.domain.memo.MemoMapper;
 import com.kakaotechcampus.journey_planner.domain.memo.repository.MemoRepository;
+import com.kakaotechcampus.journey_planner.domain.node.NodeSort;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.global.exception.BusinessException;
 import com.kakaotechcampus.journey_planner.global.exception.ErrorCode;
@@ -25,6 +27,7 @@ public class MemoService {
     private final PlanService planService;
     private final WaypointService waypointService;
     private final RouteService routeService;
+    private final NodeEditHistoryService historyService;
 
     @Transactional
     public MemoResponse createMemo(Long planId, MemoRequest request) {
@@ -39,7 +42,7 @@ public class MemoService {
     }
 
     @Transactional
-    public MemoResponse updateMemo(Long planId, Long memoId, MemoRequest request) {
+    public MemoResponse updateMemo(Long planId, Long memoId, MemoRequest request, Long memberId) {
         Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 
@@ -52,7 +55,9 @@ public class MemoService {
 
         assignTarget(memo, request);
 
-        return MemoMapper.toResponse(memo);
+        MemoResponse response = MemoMapper.toResponse(memo);
+        historyService.record(memo.getId(), NodeSort.MEMO, memberId, response);
+        return response;
     }
 
     @Transactional
@@ -60,6 +65,7 @@ public class MemoService {
         Memo memo = memoRepository.findByIdAndPlanId(memoId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMO_NOT_FOUND));
 
+        historyService.deleteHistory(memoId, NodeSort.MEMO);
         Plan plan = memo.getPlan();
         plan.removeMemo(memo); // Plan 컬렉션에서 제거 → orphanRemoval 덕분에 DB에서도 삭제
     }

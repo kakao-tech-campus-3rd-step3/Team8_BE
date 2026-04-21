@@ -2,6 +2,8 @@ package com.kakaotechcampus.journey_planner.presentation.route;
 
 import com.kakaotechcampus.journey_planner.application.message.MessageService;
 import com.kakaotechcampus.journey_planner.application.route.RouteService;
+import com.kakaotechcampus.journey_planner.global.annotation.WsMember;
+import com.kakaotechcampus.journey_planner.global.auth.WebSocketAuthGuard;
 import com.kakaotechcampus.journey_planner.global.lock.DistributedLockService;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.request.RouteRequest;
 import com.kakaotechcampus.journey_planner.presentation.route.dto.response.RouteResponse;
@@ -27,8 +29,8 @@ public class RouteController {
     private final RouteService routeService;
     private final MessageService messageService;
     private final DistributedLockService lockService;
+    private final WebSocketAuthGuard authGuard;
     private static final String DESTINATION = "routes";
-
 
     @MessageMapping("/init")
     public void initRoutes(@DestinationVariable Long planId) {
@@ -36,14 +38,14 @@ public class RouteController {
         messageService.sendInitMessage(ROUTE, planId, DESTINATION, routeResponses);
     }
 
-
     @MessageMapping("/create")
     public void createRoute(
             @DestinationVariable Long planId,
             @Valid @Payload RouteRequest request,
-            @Header("simpSessionId") String sessionId
+            @Header("simpSessionId") String sessionId,
+            @WsMember Long memberId
     ) {
-        log.info("🟢 [CREATE ROUTE] sessionId={}", sessionId);
+        authGuard.requirePlanMember(memberId, planId);
         RouteResponse response = routeService.createRoute(planId, request);
         messageService.sendCreateMessage(ROUTE, planId, DESTINATION, response);
     }
@@ -54,22 +56,25 @@ public class RouteController {
             @DestinationVariable Long planId,
             @DestinationVariable Long routeId,
             @Valid @Payload RouteRequest request,
-            @Header("simpSessionId") String sessionId
+            @Header("simpSessionId") String sessionId,
+            @WsMember Long memberId
     ) {
+        authGuard.requirePlanMember(memberId, planId);
         long start = System.currentTimeMillis();
         String lockKey = "lock:ROUTE:" + routeId;
         RouteResponse response = lockService.executeWithLock(lockKey,
-                () -> routeService.updateRoute(planId, routeId, request));
+                () -> routeService.updateRoute(planId, routeId, request, memberId));
         messageService.sendUpdateMessage(ROUTE, planId, DESTINATION, response, sessionId);
         log.info("[ROUTE UPDATE] planId={}, routeId={}, 처리시간={}ms", planId, routeId, System.currentTimeMillis() - start);
     }
 
-
     @MessageMapping("/{routeId}/delete")
     public void deleteRoute(
             @DestinationVariable Long planId,
-            @DestinationVariable Long routeId
+            @DestinationVariable Long routeId,
+            @WsMember Long memberId
     ) {
+        authGuard.requirePlanMember(memberId, planId);
         routeService.deleteRoute(planId, routeId);
         messageService.sendDeleteMessage(ROUTE, planId, DESTINATION, routeId);
     }

@@ -1,7 +1,9 @@
 package com.kakaotechcampus.journey_planner.application.route;
 
+import com.kakaotechcampus.journey_planner.application.history.NodeEditHistoryService;
 import com.kakaotechcampus.journey_planner.application.plan.PlanService;
 import com.kakaotechcampus.journey_planner.application.waypoint.WaypointService;
+import com.kakaotechcampus.journey_planner.domain.node.NodeSort;
 import com.kakaotechcampus.journey_planner.domain.plan.Plan;
 import com.kakaotechcampus.journey_planner.domain.route.Route;
 import com.kakaotechcampus.journey_planner.domain.route.RouteMapper;
@@ -24,6 +26,7 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final PlanService planService;
     private final WaypointService waypointService;
+    private final NodeEditHistoryService historyService;
 
     @Transactional
     public RouteResponse createRoute(Long planId, RouteRequest request) {
@@ -44,7 +47,7 @@ public class RouteService {
     }
 
     @Transactional
-    public RouteResponse updateRoute(Long planId, Long routeId, RouteRequest request) {
+    public RouteResponse updateRoute(Long planId, Long routeId, RouteRequest request, Long memberId) {
         Route route = routeRepository.findByIdAndPlanId(routeId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
@@ -60,7 +63,9 @@ public class RouteService {
                 request.vehicleCategory()
         );
 
-        return RouteMapper.toResponse(route);
+        RouteResponse response = RouteMapper.toResponse(route);
+        historyService.record(route.getId(), NodeSort.ROUTE, memberId, response);
+        return response;
     }
 
     @Transactional
@@ -69,6 +74,7 @@ public class RouteService {
         Route route = routeRepository.findByIdAndPlanId(routeId, planId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ROUTE_NOT_FOUND));
 
+        historyService.deleteHistory(routeId, NodeSort.ROUTE);
         // Plan이 Route 삭제 관리 (orphanRemoval 전파됨)
         plan.removeRoute(route);
     }
