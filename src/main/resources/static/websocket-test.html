@@ -13,11 +13,15 @@
 <div class="flex w-full max-w-6xl gap-4">
     <div class="flex-1 flex flex-col gap-4 min-w-0">
         <div class="bg-white shadow rounded-lg p-4">
-            <div class="flex items-center gap-2 mb-4">
-                <label class="font-medium">연결할 Plan ID:</label>
+            <div class="flex items-center gap-2 mb-3">
+                <label class="font-medium whitespace-nowrap">Plan ID:</label>
                 <input id="planId" type="number" value="1" class="border rounded p-1 w-24" />
                 <button onclick="connect()" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">Connect</button>
                 <button onclick="disconnect()" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Disconnect</button>
+            </div>
+            <div class="flex items-center gap-2 mb-4">
+                <label class="font-medium whitespace-nowrap">JWT Token:</label>
+                <input id="jwtToken" type="text" placeholder="없으면 게스트 연결" class="border rounded p-1 flex-1 text-sm" />
             </div>
             <div class="flex gap-2 mb-4">
                 <button onclick="initData()" class="flex-1 px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Refresh</button>
@@ -106,6 +110,21 @@
             </div>
         </div>
 
+        <!-- 이력 조회 -->
+        <div class="bg-white shadow rounded-lg p-4">
+            <h2 class="font-semibold mb-2">이력 조회</h2>
+            <div class="flex gap-2 mb-2">
+                <input id="historyNodeId" type="number" placeholder="Node ID" class="border rounded p-1 w-28" />
+                <select id="historyNodeSort" class="border rounded p-1">
+                    <option value="MEMO">MEMO</option>
+                    <option value="WAYPOINT">WAYPOINT</option>
+                    <option value="ROUTE">ROUTE</option>
+                </select>
+                <button onclick="fetchHistory()" class="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600">조회</button>
+            </div>
+            <div id="historyResult" class="border rounded p-2 max-h-48 overflow-auto bg-gray-50 text-sm"></div>
+        </div>
+
         <div class="bg-white shadow rounded-lg p-4 flex-1 min-w-0">
             <h2 class="font-semibold mb-2">로그</h2>
             <div id="log" class="border rounded p-2 h-64 overflow-auto bg-gray-50 text-sm font-mono break-all whitespace-pre-wrap"></div>
@@ -167,13 +186,20 @@
             return;
         }
 
+        const token = document.getElementById("jwtToken").value.trim();
+        const connectHeaders = token ? { "Authorization": `Bearer ${token}` } : {};
+
         client = new StompJs.Client({
             webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
-            reconnectDelay: 5000,
+            connectHeaders,
+            reconnectDelay: 0,
+            onStompError: (frame) => {
+                log(`❌ STOMP ERROR: ${frame.headers?.message || JSON.stringify(frame.headers)}`, "error");
+            }
         });
 
         client.onConnect = () => {
-            log(`✅ Connected to WebSocket for Plan ID: ${planId}`, "success");
+            log(`✅ Connected | Plan: ${planId} | ${token ? "인증됨" : "게스트"}`, "success");
 
             // Waypoints 구독
             client.subscribe(`/topic/plans/${planId}/waypoints`, (msg) => {
@@ -362,6 +388,53 @@
         publish(`/app/plans/${planId}/routes/${routeId}/delete`);
     }
 
+    // ---------- 이력 조회 ----------
+    async function fetchHistory() {
+        const planId = document.getElementById("planId").value;
+        const nodeId = document.getElementById("historyNodeId").value;
+        const nodeSort = document.getElementById("historyNodeSort").value;
+        const token = document.getElementById("jwtToken").value.trim();
+        if (!nodeId) return alert("Node ID를 입력하세요");
+
+        const headers = {};
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        const resultBox = document.getElementById("historyResult");
+        try {
+            const res = await fetch(`/plans/${planId}/nodes/${nodeId}/history?nodeSort=${nodeSort}`, { headers });
+            if (!res.ok) {
+                const err = await res.json();
+                resultBox.innerHTML = `<span class="text-red-500">❌ [${err.code}] ${err.message}</span>`;
+                return;
+            }
+            const data = await res.json();
+            if (data.length === 0) {
+                resultBox.innerHTML = `<span class="text-gray-400">이력 없음</span>`;
+                return;
+            }
+            resultBox.innerHTML = data.map((h, i) =>
+                `<div class="border-b py-1">
+                    <span class="text-purple-600 font-semibold">#${i + 1}</span>
+                    memberId: <b>${h.memberId}</b> |
+                    editedAt: <b>${new Date(h.editedAt).toLocaleString()}</b>
+                    <details class="text-xs text-gray-500 mt-1 ml-2">
+                        <summary>snapshot 보기</summary>
+                        <pre class="bg-gray-100 p-1 rounded overflow-auto">${JSON.stringify(JSON.parse(h.snapshot), null, 2)}</pre>
+                    </details>
+                </div>`
+            ).join("");
+        } catch (e) {
+            resultBox.innerHTML = `<span class="text-red-500">요청 실패: ${e.message}</span>`;
+        }
+    }
+
+    function showHistory(nodeId, nodeSort) {
+        document.getElementById("historyNodeId").value = nodeId;
+        document.getElementById("historyNodeSort").value = nodeSort;
+        fetchHistory();
+        document.getElementById("historyResult").scrollIntoView({ behavior: "smooth" });
+    }
+
     // ---------- 렌더링 ----------
     function createWaypointFields(wp) {
         return `
@@ -472,6 +545,8 @@
                         class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm">수정</button>
                     <button onclick="${config.deleteFn}(${config.id})"
                         class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">삭제</button>
+                    <button onclick="showHistory(${config.id}, '${config.nodeSort}')"
+                        class="px-2 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 text-sm">이력</button>
                 </div>
             </div>
             ${config.fieldsHtml}
@@ -486,44 +561,33 @@
         // Waypoints
         waypoints.forEach((wp) => {
             const card = createItemCard({
-                type: 'waypoint',
-                id: wp.id,
-                icon: '📍',
-                title: wp.name,
+                type: 'waypoint', nodeSort: 'WAYPOINT',
+                id: wp.id, icon: '📍', title: wp.name,
                 titleClass: 'text-blue-600',
                 fieldsHtml: createWaypointFields(wp),
-                updateFn: 'updateWaypointById',
-                deleteFn: 'deleteWaypointById'
+                updateFn: 'updateWaypointById', deleteFn: 'deleteWaypointById'
             });
             container.appendChild(card);
         });
 
-        // Memos
         memos.forEach((memo) => {
             const card = createItemCard({
-                type: 'memo',
-                id: memo.id,
-                icon: '📝',
-                title: memo.title,
+                type: 'memo', nodeSort: 'MEMO',
+                id: memo.id, icon: '📝', title: memo.title,
                 titleClass: 'text-purple-700',
                 fieldsHtml: createMemoFields(memo),
-                updateFn: 'updateMemoById',
-                deleteFn: 'deleteMemoById'
+                updateFn: 'updateMemoById', deleteFn: 'deleteMemoById'
             });
             container.appendChild(card);
         });
 
-        // Routes
         routes.forEach((r) => {
             const card = createItemCard({
-                type: 'route',
-                id: r.id,
-                icon: '🛣️',
-                title: r.title,
+                type: 'route', nodeSort: 'ROUTE',
+                id: r.id, icon: '🛣️', title: r.title,
                 titleClass: 'text-teal-700',
                 fieldsHtml: createRouteFields(r),
-                updateFn: 'updateRouteById',
-                deleteFn: 'deleteRouteById'
+                updateFn: 'updateRouteById', deleteFn: 'deleteRouteById'
             });
             container.appendChild(card);
         });
