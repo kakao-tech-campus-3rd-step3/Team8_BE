@@ -29,7 +29,7 @@ public class RouteService {
     private final NodeEditHistoryService historyService;
 
     @Transactional
-    public RouteResponse createRoute(Long planId, RouteRequest request) {
+    public RouteResponse createRoute(Long planId, RouteRequest request, Long memberId) {
 
         Plan plan = planService.getPlanEntity(planId);
         Waypoint fromWaypoint = waypointService.getWaypointEntity(request.fromWaypointId());
@@ -43,7 +43,9 @@ public class RouteService {
         plan.addRoute(route);
 
         Route savedRoute = routeRepository.save(route);
-        return RouteMapper.toResponse(savedRoute);
+        RouteResponse response = RouteMapper.toResponse(savedRoute);
+        historyService.record(savedRoute.getId(), NodeSort.ROUTE, memberId, response);
+        return response;
     }
 
     @Transactional

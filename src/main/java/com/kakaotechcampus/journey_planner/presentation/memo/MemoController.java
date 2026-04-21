@@ -47,7 +47,7 @@ public class MemoController {
             @WsMember Long memberId
     ) {
         authGuard.requirePlanMember(memberId, planId);
-        MemoResponse response = memoService.createMemo(planId, request);
+        MemoResponse response = memoService.createMemo(planId, request, memberId);
         messageService.sendCreateMessage(MEMO, planId, DESTINATION, response);
     }
 

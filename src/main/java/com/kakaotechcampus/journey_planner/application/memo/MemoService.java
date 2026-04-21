@@ -30,7 +30,7 @@ public class MemoService {
     private final NodeEditHistoryService historyService;
 
     @Transactional
-    public MemoResponse createMemo(Long planId, MemoRequest request) {
+    public MemoResponse createMemo(Long planId, MemoRequest request, Long memberId) {
         Memo memo = MemoMapper.toEntity(request);
         Plan plan = planService.getPlanEntity(planId);
 
@@ -38,7 +38,9 @@ public class MemoService {
         assignTarget(memo, request);
         Memo savedMemo = memoRepository.save(memo);
 
-        return MemoMapper.toResponse(savedMemo);
+        MemoResponse response = MemoMapper.toResponse(savedMemo);
+        historyService.record(savedMemo.getId(), NodeSort.MEMO, memberId, response);
+        return response;
     }
 
     @Transactional

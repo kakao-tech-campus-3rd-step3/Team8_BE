@@ -46,7 +46,7 @@ public class RouteController {
             @WsMember Long memberId
     ) {
         authGuard.requirePlanMember(memberId, planId);
-        RouteResponse response = routeService.createRoute(planId, request);
+        RouteResponse response = routeService.createRoute(planId, request, memberId);
         messageService.sendCreateMessage(ROUTE, planId, DESTINATION, response);
     }
 

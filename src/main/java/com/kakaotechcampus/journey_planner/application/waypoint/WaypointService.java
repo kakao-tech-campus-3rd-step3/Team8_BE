@@ -27,7 +27,7 @@ public class WaypointService {
 
     // planId에 해당하는 plan에 waypoint 추가
     @Transactional
-    public WaypointResponse createWaypoint(Long planId, WaypointRequest request) {
+    public WaypointResponse createWaypoint(Long planId, WaypointRequest request, Long memberId) {
         Waypoint waypoint = WaypointMapper.toEntity(request);
 
         Plan plan = planService.getPlanEntity(planId);
@@ -36,7 +36,9 @@ public class WaypointService {
         plan.addWaypoint(waypoint);
         Waypoint savedWaypoint = waypointRepository.save(waypoint);
 
-        return WaypointMapper.toResponse(savedWaypoint);
+        WaypointResponse response = WaypointMapper.toResponse(savedWaypoint);
+        historyService.record(savedWaypoint.getId(), NodeSort.WAYPOINT, memberId, response);
+        return response;
     }
 
     @Transactional

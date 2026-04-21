@@ -46,7 +46,7 @@ public class WaypointController {
             @WsMember Long memberId
     ) {
         authGuard.requirePlanMember(memberId, planId);
-        WaypointResponse response = waypointService.createWaypoint(planId, request);
+        WaypointResponse response = waypointService.createWaypoint(planId, request, memberId);
         messageService.sendCreateMessage(WAYPOINT, planId, DESTINATION, response);
     }
 
