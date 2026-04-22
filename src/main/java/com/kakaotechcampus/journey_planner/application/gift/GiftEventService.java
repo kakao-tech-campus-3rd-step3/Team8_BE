@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class GiftEventService {
@@ -50,6 +52,13 @@ public class GiftEventService {
         event.decreaseRemaining();
         Gift gift = giftRepository.save(Gift.of(event, memberId));
         return GiftResponse.from(gift);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GiftResponse> getMyGifts(Long memberId) {
+        return giftRepository.findAllByMemberId(memberId).stream()
+                .map(GiftResponse::from)
+                .toList();
     }
 
     @Transactional(readOnly = true)
