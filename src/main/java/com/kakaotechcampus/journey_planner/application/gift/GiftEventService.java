@@ -31,7 +31,7 @@ public class GiftEventService {
         if (!plan.getMember().getId().equals(memberId)) {
             throw new BusinessException(ErrorCode.GIFT_EVENT_ACCESS_DENIED);
         }
-        GiftEvent event = GiftEvent.of(plan, memberId, request.totalCount(), request.discountRate());
+        GiftEvent event = GiftEvent.of(plan, memberId, request.totalCount(), request.content());
         return GiftEventResponse.from(giftEventRepository.save(event));
     }
 

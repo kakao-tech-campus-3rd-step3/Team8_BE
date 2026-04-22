@@ -7,7 +7,7 @@ public record GiftEventResponse(
         Long planId,
         int totalCount,
         int remainingCount,
-        int discountRate
+        String content
 ) {
     public static GiftEventResponse from(GiftEvent e) {
         return new GiftEventResponse(
@@ -15,7 +15,7 @@ public record GiftEventResponse(
                 e.getPlan().getId(),
                 e.getTotalCount(),
                 e.getRemainingCount(),
-                e.getDiscountRate()
+                e.getContent()
         );
     }
 }

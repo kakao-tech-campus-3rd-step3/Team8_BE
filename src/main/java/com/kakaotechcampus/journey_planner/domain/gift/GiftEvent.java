@@ -34,15 +34,15 @@ public class GiftEvent extends BaseEntity {
     private int remainingCount;
 
     @Column(nullable = false)
-    private int discountRate;
+    private String content;
 
-    public static GiftEvent of(Plan plan, Long createdBy, int totalCount, int discountRate) {
+    public static GiftEvent of(Plan plan, Long createdBy, int totalCount, String content) {
         GiftEvent event = new GiftEvent();
         event.plan = plan;
         event.createdBy = createdBy;
         event.totalCount = totalCount;
         event.remainingCount = totalCount;
-        event.discountRate = discountRate;
+        event.content = content;
         return event;
     }
 
