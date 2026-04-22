@@ -51,6 +51,12 @@ public enum ErrorCode {
     CANNOT_CREATE(HttpStatus.INTERNAL_SERVER_ERROR, "PDE_001", "PDF 를 생성할 수 없습니다."),
     NO_FILE(HttpStatus.NOT_FOUND, "PDE_002","파일 경로를 찾을 수 없습니다."),
 
+    // * Gift
+    GIFT_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "GE_001", "해당 이벤트를 찾을 수 없습니다."),
+    GIFT_SOLD_OUT(HttpStatus.CONFLICT, "GE_002", "선착순이 마감되었습니다."),
+    GIFT_ALREADY_CLAIMED(HttpStatus.BAD_REQUEST, "GE_003", "이미 수령한 이벤트입니다."),
+    GIFT_EVENT_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "GE_004", "이벤트 생성 권한이 없습니다."),
+
     // * Lock
     NODE_LOCK_FAILED(HttpStatus.CONFLICT, "LE_001", "현재 다른 사용자가 편집 중입니다.")
     ;
